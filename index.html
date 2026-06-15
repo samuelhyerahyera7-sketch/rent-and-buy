@@ -632,6 +632,63 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 }
 .calc-btn:hover { background: #245d44; }
 
+/* ── Auth modal ──────────────────────────────── */
+.auth-modal {
+  background: #fff; border-radius: 16px; padding: 28px 24px 24px;
+  width: 100%; max-width: 420px; position: relative;
+}
+.auth-tabs {
+  display: flex; border-bottom: 2px solid #e5e5e5; margin-bottom: 22px;
+}
+.auth-tab {
+  flex: 1; padding: 10px 0; font-size: 15px; font-weight: 500;
+  background: none; border: none; cursor: pointer; color: #999;
+  border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .15s;
+}
+.auth-tab.on { color: var(--navy); border-bottom-color: var(--navy); font-weight: 700; }
+.auth-field {
+  display: flex; align-items: center; border: 1px solid #d8d8d8;
+  border-radius: 10px; padding: 0 14px; height: 52px; gap: 10px; margin-bottom: 12px;
+}
+.auth-field:focus-within { border-color: var(--sage); }
+.auth-field-icon { color: #aaa; flex-shrink: 0; display: flex; }
+.auth-field input {
+  flex: 1; border: none; outline: none; font-size: 14px; font-family: var(--font);
+  background: transparent; color: var(--ink); min-width: 0;
+}
+.auth-field input::placeholder { color: #bbb; }
+.auth-eye {
+  background: none; border: none; cursor: pointer; color: #aaa; display: flex;
+  padding: 0; flex-shrink: 0;
+}
+.auth-eye:hover { color: var(--ink-2); }
+.auth-submit {
+  width: 100%; padding: 14px; background: var(--navy); color: #fff; border: none;
+  border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer;
+  transition: background .15s; margin-bottom: 4px;
+}
+.auth-submit:hover { background: #0f1f3d; }
+.auth-link { color: var(--sage); font-size: 13px; cursor: pointer; text-decoration: none; }
+.auth-link:hover { text-decoration: underline; }
+.auth-divider {
+  display: flex; align-items: center; gap: 12px; margin: 18px 0;
+  font-size: 13px; color: #bbb;
+}
+.auth-divider::before, .auth-divider::after {
+  content: ''; flex: 1; height: 1px; background: #e5e5e5;
+}
+.auth-social {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 13px; border: 1px solid #d8d8d8; border-radius: 10px;
+  background: #fff; font-size: 14px; font-weight: 500; cursor: pointer;
+  color: var(--ink); transition: background .12s; margin-bottom: 10px;
+}
+.auth-social:hover { background: #f5f5f5; }
+.auth-apple { background: #000; color: #fff; border-color: #000; }
+.auth-apple:hover { background: #1a1a1a; }
+.auth-facebook { background: #1877F2; color: #fff; border-color: #1877F2; }
+.auth-facebook:hover { background: #1464d0; }
+
 /* ── Auth / List modals ─────────────────────── */
 .sm-modal { max-width: 420px; }
 .sm-head { padding: 24px 24px 0; }
@@ -695,6 +752,9 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   .search-filters { display: grid; grid-template-columns: 1fr 1fr; }
   .sf-drop { flex: none; }
   .sf-filters-wrap { grid-column: 1 / -1; margin-left: 0; }
+
+  /* Search bar — hide Map button on mobile so input gets full width */
+  .s-map-btn { display: none; }
 
   /* Nav — tighter on small screens */
   .nav-inner { padding: 0 16px; }
@@ -935,7 +995,7 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 
 
 <!-- Why -->
-<div class="section">
+<div class="section" style="display:none">
   <div class="sec-head">
     <div><h2>Why Rent and Buy?</h2><p>South Africa's most trusted property platform since 2010</p></div>
   </div>
@@ -1142,19 +1202,84 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 
 <!-- Sign In Modal -->
 <div class="backdrop" id="signInBackdrop" onclick="if(event.target===this)closeSignIn()">
-  <div class="modal sm-modal" style="position:relative">
-    <button class="sm-close" onclick="closeSignIn()">✕</button>
-    <div class="sm-head">
-      <h2>Sign in</h2>
-      <p>Access your saved properties and alerts</p>
+  <div class="auth-modal">
+    <button class="sm-close" onclick="closeSignIn()" style="position:absolute;top:14px;right:16px">✕</button>
+
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:18px">
+      <span class="logo-text" style="font-size:22px"><span class="lo-r">Rent</span><span class="lo-a">&amp;</span><span class="lo-b">Buy</span></span>
     </div>
-    <div class="sm-body">
-      <input type="email" placeholder="Email address">
-      <input type="password" placeholder="Password">
-      <button class="sm-submit" onclick="toast('Signed in successfully');closeSignIn()">Sign in</button>
-      <p class="sm-alt">Don't have an account? <a onclick="closeSignIn();openListProp()">Register free</a></p>
-      <p class="sm-alt"><a onclick="toast('Password reset email sent')">Forgot password?</a></p>
+
+    <h2 style="text-align:center;font-size:20px;font-weight:700;margin-bottom:20px">Welcome to Rent&amp;Buy</h2>
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab on" id="tab-signin" onclick="authSwitchTab('signin')">Sign in</button>
+      <button class="auth-tab" id="tab-register" onclick="authSwitchTab('register')">New account</button>
     </div>
+
+    <!-- Sign In form -->
+    <div id="auth-signin-form">
+      <div class="auth-field">
+        <span class="auth-field-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        </span>
+        <input id="si-email" type="email" placeholder="Enter email address" autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <span class="auth-field-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </span>
+        <input id="si-pass" type="password" placeholder="Enter password" autocomplete="current-password">
+        <button class="auth-eye" onclick="authToggleEye('si-pass',this)" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <button class="auth-submit" onclick="authSignIn()">Sign In</button>
+      <p style="text-align:center;margin:10px 0 0"><a class="auth-link" onclick="authForgotPassword()">Forgot your password?</a></p>
+    </div>
+
+    <!-- Register form -->
+    <div id="auth-register-form" style="display:none">
+      <div class="auth-field">
+        <span class="auth-field-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        </span>
+        <input id="reg-email" type="email" placeholder="Enter email address" autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <span class="auth-field-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </span>
+        <input id="reg-pass" type="password" placeholder="Create password" autocomplete="new-password">
+        <button class="auth-eye" onclick="authToggleEye('reg-pass',this)" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <button class="auth-submit" onclick="authRegister()">Create Account</button>
+    </div>
+
+    <!-- Divider -->
+    <div class="auth-divider"><span>OR</span></div>
+
+    <!-- Social -->
+    <button class="auth-social" onclick="authGoogle()">
+      <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Continue with Google
+    </button>
+    <button class="auth-social auth-facebook" onclick="authFacebook()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+      Continue with Facebook
+    </button>
+    <button class="auth-social auth-apple" onclick="authApple()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06c-.22.14-2.15 1.26-2.13 3.76.03 2.99 2.63 3.99 2.66 4-.03.07-.41 1.4-1.38 2.86M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      Continue with Apple
+    </button>
+
+    <p style="text-align:center;font-size:11px;color:#999;margin-top:16px;line-height:1.5">
+      By continuing I understand and agree with Rent&amp;Buy's<br>
+      <a class="auth-link" href="#">Terms &amp; Conditions</a> and <a class="auth-link" href="#">Privacy Policy</a>.
+    </p>
   </div>
 </div>
 
@@ -1786,8 +1911,10 @@ document.addEventListener('click', cdCloseAll);
 // ── Advanced Filters Panel ────────────────────────────────────────────────────
 function advToggle(e) {
   e.stopPropagation();
+  const panel = document.getElementById('adv-panel');
+  const wasOpen = panel.classList.contains('open');
   cdCloseAll();
-  document.getElementById('adv-panel').classList.toggle('open');
+  if (!wasOpen) panel.classList.add('open');
 }
 function advChip(el) {
   el.classList.toggle('on');
@@ -1922,7 +2049,7 @@ function calcBond() {
   document.getElementById('cTotalCost').textContent  = fmtR(totalCost);
 }
 
-// ── Sign In modal ─────────────────────────────────────────────────────────────
+// ── Sign In / Auth modal ──────────────────────────────────────────────────────
 function openSignIn() {
   document.getElementById('signInBackdrop').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1931,6 +2058,66 @@ function closeSignIn() {
   document.getElementById('signInBackdrop').classList.remove('open');
   document.body.style.overflow = '';
 }
+function authSwitchTab(tab) {
+  var isSignin = tab === 'signin';
+  document.getElementById('tab-signin').classList.toggle('on', isSignin);
+  document.getElementById('tab-register').classList.toggle('on', !isSignin);
+  document.getElementById('auth-signin-form').style.display = isSignin ? '' : 'none';
+  document.getElementById('auth-register-form').style.display = isSignin ? 'none' : '';
+}
+function authToggleEye(inputId, btn) {
+  var inp = document.getElementById(inputId);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+async function authSignIn() {
+  var email = document.getElementById('si-email').value.trim();
+  var pass  = document.getElementById('si-pass').value;
+  if (!email || !pass) { toast('Please enter your email and password'); return; }
+  var res = await sb.auth.signInWithPassword({ email: email, password: pass });
+  if (res.error) { toast(res.error.message); return; }
+  toast('Welcome back!');
+  closeSignIn();
+  updateAuthNav(res.data.user);
+}
+async function authRegister() {
+  var email = document.getElementById('reg-email').value.trim();
+  var pass  = document.getElementById('reg-pass').value;
+  if (!email || !pass) { toast('Please enter your email and password'); return; }
+  if (pass.length < 6) { toast('Password must be at least 6 characters'); return; }
+  var res = await sb.auth.signUp({ email: email, password: pass });
+  if (res.error) { toast(res.error.message); return; }
+  toast('Account created! Check your email to confirm.');
+  closeSignIn();
+}
+async function authForgotPassword() {
+  var email = document.getElementById('si-email').value.trim();
+  if (!email) { toast('Enter your email address first'); return; }
+  var res = await sb.auth.resetPasswordForEmail(email);
+  if (res.error) { toast(res.error.message); return; }
+  toast('Password reset email sent');
+}
+async function authGoogle() {
+  await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+}
+async function authFacebook() {
+  await sb.auth.signInWithOAuth({ provider: 'facebook', options: { redirectTo: window.location.href } });
+}
+async function authApple() {
+  await sb.auth.signInWithOAuth({ provider: 'apple', options: { redirectTo: window.location.href } });
+}
+function updateAuthNav(user) {
+  var btn = document.querySelector('.nav-right .btn-ghost');
+  if (!btn) return;
+  if (user) {
+    btn.textContent = user.email.split('@')[0];
+    btn.onclick = function() { sb.auth.signOut().then(function() { btn.textContent = 'Sign In'; btn.onclick = openSignIn; }); };
+  } else {
+    btn.textContent = 'Sign In';
+    btn.onclick = openSignIn;
+  }
+}
+// Check if user is already signed in on load
+sb.auth.getUser().then(function(res) { if (res.data && res.data.user) updateAuthNav(res.data.user); });
 
 // ── List Property modal ───────────────────────────────────────────────────────
 function openListProp() {
