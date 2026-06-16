@@ -890,7 +890,7 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   .swipe-line {
     display: block; position: absolute; bottom: 0; left: 65%; transform: translateX(-50%);
     width: 14px; height: 1.5px; background: rgba(255,255,255,.65); border-radius: 1px;
-    animation: swipe-pulse 1.6s ease-in-out infinite; pointer-events: none;
+    animation: swipe-pulse 1.6s ease-in-out 3; pointer-events: none;
   }
   .swipe-line::after {
     content: ''; position: absolute; right: -4px; top: 50%; transform: translateY(-50%);
@@ -2016,11 +2016,12 @@ function goPage(p) {
   document.getElementById('listGrid').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-// Swipe hint — hide immediately on any scroll
+// Swipe hint — pulses 3 times then disappears; also hides on scroll
 window.addEventListener('DOMContentLoaded', function() {
   var tabs = document.getElementById('heroTabs');
   var hint = document.getElementById('tabsScrollHint');
   if (!tabs || !hint) return;
+  hint.addEventListener('animationend', function() { hint.classList.add('hidden'); });
   tabs.addEventListener('scroll', function() {
     if (tabs.scrollLeft > 1) hint.classList.add('hidden');
   }, { passive: true });
