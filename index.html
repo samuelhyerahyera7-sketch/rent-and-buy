@@ -739,6 +739,7 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 
 /* ── Autocomplete dropdown ──────────────────── */
 .search-bar-outer { position: relative; }
+.sb-row { position: relative; }
 
 /* Search bar focused state — mobile only */
 @media (max-width: 900px) {
@@ -1070,6 +1071,7 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
     </div>
     <h1 id="heroTitle">Find Property for Sale</h1>
     <div class="search-bar-outer">
+    <div class="sb-row">
     <div class="search-bar-wrap">
       <div class="sb-city-block">
         <span class="s-icon">
@@ -1084,6 +1086,7 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
       <button class="s-search-btn" onclick="doSearch()">Search</button>
     </div>
     <div class="ac-dropdown" id="acDropdown"></div>
+    </div>
     <!-- Filter row attached below search bar -->
     <div class="search-filters">
       <!-- Property Type -->
