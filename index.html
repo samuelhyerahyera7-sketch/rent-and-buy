@@ -689,6 +689,30 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 .auth-facebook { background: #1877F2; color: #fff; border-color: #1877F2; }
 .auth-facebook:hover { background: #1464d0; }
 
+/* ── Legal modal ────────────────────────────── */
+.legal-backdrop {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55);
+  z-index: 1100; align-items: center; justify-content: center; padding: 16px;
+}
+.legal-backdrop.open { display: flex; }
+.legal-modal {
+  background: #fff; border-radius: 16px; width: 100%; max-width: 680px;
+  max-height: 88vh; display: flex; flex-direction: column; position: relative;
+}
+.legal-head {
+  padding: 24px 28px 16px; border-bottom: 1px solid #e8e8e8; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.legal-head h2 { font-size: 18px; font-weight: 700; color: var(--navy); }
+.legal-body {
+  padding: 24px 28px; overflow-y: auto; font-size: 13.5px;
+  line-height: 1.7; color: #444;
+}
+.legal-body h3 { font-size: 14px; font-weight: 700; color: var(--navy); margin: 20px 0 6px; }
+.legal-body p { margin-bottom: 12px; }
+.legal-body ul { padding-left: 20px; margin-bottom: 12px; }
+.legal-body ul li { margin-bottom: 4px; }
+
 /* ── Auth / List modals ─────────────────────── */
 .sm-modal { max-width: 420px; }
 .sm-head { padding: 24px 24px 0; }
@@ -779,7 +803,7 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   <div class="w">
     <span>South Africa's property marketplace</span>
     <div class="topbar-links">
-      <a href="#" onclick="toast('Help centre coming soon');return false">Help</a>
+      <a href="mailto:hello@rentandbuy.co.za?subject=Help Request">Help</a>
       <a href="#" onclick="toast('Contact us at hello@rentandbuy.co.za');return false">Advertise</a>
       <a href="#" onclick="openCalc();return false">Bond Calculator</a>
       <a href="#" onclick="goAgents();return false">Find an Agent</a>
@@ -1075,17 +1099,17 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
           <li><a href="#" onclick="switchMode('new',event);scrollToListings()">New developments</a></li>
           <li><a href="#" onclick="openCalc();return false">Bond calculator</a></li>
           <li><a href="#" onclick="openCalc();return false">Affordability check</a></li>
-          <li><a href="#" onclick="toast('Property reports coming soon');return false">Property reports</a></li>
+          <li><a href="mailto:hello@rentandbuy.co.za?subject=Property Report Request">Property reports</a></li>
         </ul>
       </div>
       <div class="foot-col">
         <h4>For Renters</h4>
         <ul>
           <li><a href="#" onclick="switchMode('rent',event);scrollToListings()">Browse rentals</a></li>
-          <li><a href="#" onclick="toast('Student accommodation filter coming soon');return false">Student accommodation</a></li>
-          <li><a href="#" onclick="toast('Short-term rentals coming soon');return false">Short-term rentals</a></li>
+          <li><a href="#" onclick="switchMode('rent',event);scrollToListings()">Student accommodation</a></li>
+          <li><a href="#" onclick="switchMode('rent',event);scrollToListings()">Short-term rentals</a></li>
           <li><a href="#" onclick="switchMode('commercial',event);scrollToListings()">Commercial rentals</a></li>
-          <li><a href="#" onclick="toast('Tenant screening coming soon');return false">Tenant screening</a></li>
+          <li><a href="mailto:hello@rentandbuy.co.za?subject=Tenant Screening Enquiry">Tenant screening</a></li>
         </ul>
       </div>
       <div class="foot-col">
@@ -1093,18 +1117,18 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
         <ul>
           <li><a href="#" onclick="openListProp();return false">List a property</a></li>
           <li><a href="#" onclick="openSignIn();return false">Agent login</a></li>
-          <li><a href="#" onclick="toast('Contact hello@rentandbuy.co.za for packages');return false">Advertising packages</a></li>
-          <li><a href="#" onclick="toast('Market insights coming soon');return false">Market insights</a></li>
-          <li><a href="#" onclick="toast('PPRA compliance resources coming soon');return false">PPRA compliance</a></li>
+          <li><a href="mailto:hello@rentandbuy.co.za?subject=Advertising Packages">Advertising packages</a></li>
+          <li><a href="mailto:hello@rentandbuy.co.za?subject=Market Insights Request">Market insights</a></li>
+          <li><a href="https://www.ppra.org.za" target="_blank">PPRA compliance</a></li>
         </ul>
       </div>
     </div>
     <div class="foot-bottom">
       <span>© 2026 Rent and Buy (Pty) Ltd. All rights reserved. Not a registered estate agency.</span>
       <div>
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Use</a>
-        <a href="#">Cookie Policy</a>
+        <a href="#" onclick="openLegal('privacy');return false">Privacy Policy</a>
+        <a href="#" onclick="openLegal('terms');return false">Terms of Use</a>
+        <a href="#" onclick="openLegal('cookie');return false">Cookie Policy</a>
       </div>
     </div>
   </div>
@@ -1281,7 +1305,7 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 
     <p style="text-align:center;font-size:11px;color:#999;margin-top:16px;line-height:1.5">
       By continuing I understand and agree with Rent&amp;Buy's<br>
-      <a class="auth-link" href="#">Terms &amp; Conditions</a> and <a class="auth-link" href="#">Privacy Policy</a>.
+      <a class="auth-link" href="#" onclick="openLegal('terms');return false">Terms &amp; Conditions</a> and <a class="auth-link" href="#" onclick="openLegal('privacy');return false">Privacy Policy</a>.
     </p>
   </div>
 </div>
@@ -2246,6 +2270,171 @@ renderFeatured();
 renderListings();
 renderAreas();
 loadListingsFromSupabase();
+</script>
+
+<!-- Legal Modal -->
+<div class="legal-backdrop" id="legalBackdrop" onclick="if(event.target===this)closeLegal()">
+  <div class="legal-modal">
+    <div class="legal-head">
+      <h2 id="legalTitle">Policy</h2>
+      <button class="sm-close" style="position:static" onclick="closeLegal()">✕</button>
+    </div>
+    <div class="legal-body" id="legalBody"></div>
+  </div>
+</div>
+
+<script>
+const LEGAL = {
+  privacy: {
+    title: 'Privacy Policy',
+    body: `
+      <p><strong>Effective date: 1 January 2026</strong></p>
+      <p>Rent and Buy (Pty) Ltd ("Rent and Buy", "we", "us", "our") respects your privacy and is committed to protecting your personal information in accordance with the Protection of Personal Information Act 4 of 2013 (POPIA).</p>
+
+      <h3>1. Information We Collect</h3>
+      <p>We may collect the following personal information:</p>
+      <ul>
+        <li>Name, email address, and phone number when you register or submit a listing enquiry</li>
+        <li>Search preferences and saved properties while using the platform</li>
+        <li>Device and browser information, IP address, and usage data collected automatically</li>
+        <li>Information provided when signing in via Google, Facebook, or Apple</li>
+      </ul>
+
+      <h3>2. How We Use Your Information</h3>
+      <ul>
+        <li>To create and manage your account</li>
+        <li>To connect buyers, renters, and sellers with registered property agents</li>
+        <li>To send property alerts and updates you have subscribed to</li>
+        <li>To improve our platform and personalise your experience</li>
+        <li>To comply with our legal obligations under South African law</li>
+      </ul>
+
+      <h3>3. Sharing of Information</h3>
+      <p>We do not sell your personal information. We may share it with:</p>
+      <ul>
+        <li>Registered estate agents and property developers when you submit an enquiry</li>
+        <li>Service providers who assist us in operating the platform (e.g. Supabase for database hosting)</li>
+        <li>Law enforcement or regulators where required by law</li>
+      </ul>
+
+      <h3>4. Your Rights Under POPIA</h3>
+      <p>You have the right to access, correct, or request deletion of your personal information. To exercise these rights, contact us at <strong>privacy@rentandbuy.co.za</strong>.</p>
+
+      <h3>5. Data Retention</h3>
+      <p>We retain your information for as long as your account is active or as required by law. You may request deletion at any time.</p>
+
+      <h3>6. Security</h3>
+      <p>We implement industry-standard security measures including encryption in transit (HTTPS) and secure cloud storage. No method of transmission over the internet is 100% secure.</p>
+
+      <h3>7. Cookies</h3>
+      <p>We use cookies to improve your browsing experience. See our Cookie Policy for details.</p>
+
+      <h3>8. Changes to This Policy</h3>
+      <p>We may update this policy from time to time. Changes will be posted on this page with a revised effective date.</p>
+
+      <h3>9. Contact Us</h3>
+      <p>Rent and Buy (Pty) Ltd<br>Email: privacy@rentandbuy.co.za<br>Website: www.rentandbuy.co.za</p>
+    `
+  },
+  terms: {
+    title: 'Terms of Use',
+    body: `
+      <p><strong>Effective date: 1 January 2026</strong></p>
+      <p>These Terms of Use govern your access to and use of the Rent and Buy platform (www.rentandbuy.co.za) operated by Rent and Buy (Pty) Ltd. By using our platform you agree to these terms.</p>
+
+      <h3>1. Platform Purpose</h3>
+      <p>Rent and Buy is an online property marketplace that connects buyers, renters, and sellers with registered estate agents and property owners across South Africa. We are not a registered estate agency and do not act as an agent in any transaction.</p>
+
+      <h3>2. User Accounts</h3>
+      <ul>
+        <li>You must be 18 years or older to create an account</li>
+        <li>You are responsible for maintaining the security of your login credentials</li>
+        <li>You may not share your account with others or create accounts on behalf of third parties</li>
+        <li>We reserve the right to suspend or terminate accounts that violate these terms</li>
+      </ul>
+
+      <h3>3. Property Listings</h3>
+      <p>Listings on Rent and Buy are submitted by registered agents and property owners. We make reasonable efforts to ensure accuracy but:</p>
+      <ul>
+        <li>We do not guarantee the accuracy, completeness, or availability of any listing</li>
+        <li>Prices, availability, and property details are subject to change without notice</li>
+        <li>Images are for illustrative purposes and may not reflect the current state of a property</li>
+      </ul>
+
+      <h3>4. Prohibited Conduct</h3>
+      <p>You may not use the platform to:</p>
+      <ul>
+        <li>Post false, misleading, or fraudulent property listings</li>
+        <li>Scrape, copy, or redistribute content without our written permission</li>
+        <li>Harass, spam, or solicit other users</li>
+        <li>Violate any applicable South African law or regulation</li>
+      </ul>
+
+      <h3>5. Limitation of Liability</h3>
+      <p>Rent and Buy provides the platform on an "as is" basis. To the maximum extent permitted by law, we are not liable for any loss or damage arising from your use of the platform, including any transactions between users and agents.</p>
+
+      <h3>6. Intellectual Property</h3>
+      <p>All content on the platform, including the Rent and Buy brand, design, and software, is owned by Rent and Buy (Pty) Ltd and may not be used without prior written consent.</p>
+
+      <h3>7. Governing Law</h3>
+      <p>These terms are governed by the laws of the Republic of South Africa. Any disputes will be subject to the jurisdiction of the South African courts.</p>
+
+      <h3>8. Changes to Terms</h3>
+      <p>We may update these terms at any time. Continued use of the platform after changes are posted constitutes acceptance of the revised terms.</p>
+
+      <h3>9. Contact</h3>
+      <p>Rent and Buy (Pty) Ltd<br>Email: legal@rentandbuy.co.za<br>Website: www.rentandbuy.co.za</p>
+    `
+  },
+  cookie: {
+    title: 'Cookie Policy',
+    body: `
+      <p><strong>Effective date: 1 January 2026</strong></p>
+      <p>This Cookie Policy explains how Rent and Buy (Pty) Ltd uses cookies and similar tracking technologies when you visit www.rentandbuy.co.za.</p>
+
+      <h3>1. What Are Cookies?</h3>
+      <p>Cookies are small text files stored on your device when you visit a website. They help us remember your preferences and understand how you use our platform.</p>
+
+      <h3>2. Types of Cookies We Use</h3>
+      <ul>
+        <li><strong>Essential cookies:</strong> Required for the platform to function. These include session authentication cookies from Supabase that keep you logged in. You cannot opt out of these.</li>
+        <li><strong>Preference cookies:</strong> Remember your search filters, saved properties, and display preferences.</li>
+        <li><strong>Analytics cookies:</strong> Help us understand how visitors use the site so we can improve it. We may use anonymised analytics data.</li>
+        <li><strong>Third-party cookies:</strong> When you sign in via Google, Facebook, or Apple, those providers may set their own cookies subject to their own privacy policies.</li>
+      </ul>
+
+      <h3>3. How to Manage Cookies</h3>
+      <p>You can control cookies through your browser settings. Most browsers allow you to:</p>
+      <ul>
+        <li>View cookies that have been set</li>
+        <li>Delete cookies individually or all at once</li>
+        <li>Block cookies from specific websites or all websites</li>
+      </ul>
+      <p>Note that disabling essential cookies will affect your ability to log in and use certain features of the platform.</p>
+
+      <h3>4. Map and Embedded Services</h3>
+      <p>Our interactive property map uses OpenStreetMap tile data. When you use the map, your browser may connect to OpenStreetMap servers which may set their own cookies.</p>
+
+      <h3>5. Updates to This Policy</h3>
+      <p>We may update this Cookie Policy from time to time. The effective date at the top of this page will reflect the most recent revision.</p>
+
+      <h3>6. Contact</h3>
+      <p>If you have questions about our use of cookies, contact us at:<br>Email: privacy@rentandbuy.co.za<br>Website: www.rentandbuy.co.za</p>
+    `
+  }
+};
+
+function openLegal(type) {
+  var doc = LEGAL[type];
+  document.getElementById('legalTitle').textContent = doc.title;
+  document.getElementById('legalBody').innerHTML = doc.body;
+  document.getElementById('legalBackdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLegal() {
+  document.getElementById('legalBackdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
 </script>
 </body>
 </html>
