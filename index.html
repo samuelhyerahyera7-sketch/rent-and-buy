@@ -742,6 +742,13 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   }
   .search-bar-outer.sb-focused .s-search-btn { display: none; }
   .search-bar-outer.sb-focused .s-map-btn { display: none; }
+  .sb-focused-search { display: none; }
+  .search-bar-outer.sb-focused .sb-focused-search {
+    display: block; width: 100%; margin-top: 12px;
+    background: var(--green); color: #fff; border: none; border-radius: 10px;
+    height: 48px; font-size: 16px; font-weight: 700; font-family: var(--font);
+    cursor: pointer; letter-spacing: .3px;
+  }
 }
 .ac-dropdown {
   display: none; position: absolute; top: calc(100% + 6px); left: 0; right: 0;
@@ -1148,6 +1155,7 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
         </div>
       </div>
     </div>
+    <button class="sb-focused-search" onclick="doSearch()">Search</button>
   </div>
 </div>
 
