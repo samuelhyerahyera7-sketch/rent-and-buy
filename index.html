@@ -772,26 +772,20 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   }
   .hero-tabs::-webkit-scrollbar { display: none; }
   .hero-tab { white-space: nowrap; padding: 10px 18px; flex-shrink: 0; font-size: 15px; }
-  .tabs-scroll-hint {
-    display: flex; margin-top: 3px; padding-left: 158px;
-    pointer-events: none; transition: opacity .4s;
-  }
-  .tabs-scroll-hint.hidden { opacity: 0; }
   .swipe-line {
-    display: block; position: relative; width: 14px; height: 1.5px;
-    background: rgba(255,255,255,.6); border-radius: 1px;
-    animation: swipe-pulse 1.6s ease-in-out infinite;
+    display: block; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 14px; height: 1.5px; background: rgba(255,255,255,.65); border-radius: 1px;
+    animation: swipe-pulse 1.6s ease-in-out infinite; pointer-events: none;
   }
   .swipe-line::after {
-    content: ''; position: absolute; right: -4px; top: 50%;
-    transform: translateY(-50%);
-    border-left: 5px solid rgba(255,255,255,.6);
-    border-top: 3px solid transparent;
-    border-bottom: 3px solid transparent;
+    content: ''; position: absolute; right: -4px; top: 50%; transform: translateY(-50%);
+    border-left: 5px solid rgba(255,255,255,.65);
+    border-top: 3px solid transparent; border-bottom: 3px solid transparent;
   }
+  .swipe-line.hidden { opacity: 0; }
   @keyframes swipe-pulse {
-    0%, 100% { opacity: .4; transform: translateX(0); }
-    50% { opacity: 1; transform: translateX(3px); }
+    0%, 100% { opacity: .4; transform: translateX(calc(-50% + 0px)); }
+    50% { opacity: 1; transform: translateX(calc(-50% + 3px)); }
   }
 
   /* Filter pills — 2-column grid, Filters full-width */
@@ -861,11 +855,10 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
     <div class="hero-tabs" id="heroTabs">
       <button class="hero-tab on" onclick="setTab(this,'buy')">Buy</button>
       <button class="hero-tab" onclick="setTab(this,'rent')">Rent</button>
-      <button class="hero-tab" onclick="setTab(this,'new')">Developments</button>
+      <button class="hero-tab" onclick="setTab(this,'new')" style="position:relative">Developments<span class="swipe-line" id="tabsScrollHint"></span></button>
       <button class="hero-tab" onclick="setTab(this,'agents')">Agents</button>
       <button class="hero-tab" onclick="setTab(this,'sold')">Sold Prices</button>
     </div>
-    <div class="tabs-scroll-hint" id="tabsScrollHint"><span class="swipe-line"></span></div>
     <h1 id="heroTitle">Find Property for Sale</h1>
     <div class="search-bar-wrap">
       <span class="s-icon">
@@ -1834,7 +1827,7 @@ function goPage(p) {
   document.getElementById('listGrid').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-// Hide scroll hint when user scrolls the tabs
+// Hide swipe hint when user scrolls the tabs
 (function() {
   var tabs = document.getElementById('heroTabs');
   var hint = document.getElementById('tabsScrollHint');
