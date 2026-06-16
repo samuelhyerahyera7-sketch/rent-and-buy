@@ -2657,9 +2657,10 @@ function sbFocus(inp) {
   }
 }
 function sbBlur() {
-  var el = document.querySelector('.search-bar-outer');
-  if (el) el.classList.remove('sb-focused');
   var inp = document.getElementById('sLoc');
+  var el = document.querySelector('.search-bar-outer');
+  if (inp && inp.value.trim()) return; // keep expanded so the full location stays visible
+  if (el) el.classList.remove('sb-focused');
   if (inp) inp.placeholder = 'City';
 }
 
