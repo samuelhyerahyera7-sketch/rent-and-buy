@@ -2024,14 +2024,25 @@ function goPage(p) {
   document.getElementById('listGrid').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-// Swipe hint — pulses 3 times then disappears; also hides on scroll
+// Swipe hint — pulses 3 times, hides, then reappears every 60s (stops after user swipes)
 window.addEventListener('DOMContentLoaded', function() {
   var tabs = document.getElementById('heroTabs');
   var hint = document.getElementById('tabsScrollHint');
   if (!tabs || !hint) return;
-  hint.addEventListener('animationend', function() { hint.classList.add('hidden'); });
+  var swiped = false;
+  function showHint() {
+    if (swiped) return;
+    hint.style.animation = 'none';
+    hint.classList.remove('hidden');
+    void hint.offsetWidth; // reflow to restart animation
+    hint.style.animation = '';
+  }
+  hint.addEventListener('animationend', function() {
+    hint.classList.add('hidden');
+    if (!swiped) setTimeout(showHint, 60000);
+  });
   tabs.addEventListener('scroll', function() {
-    if (tabs.scrollLeft > 1) hint.classList.add('hidden');
+    if (tabs.scrollLeft > 1) { swiped = true; hint.classList.add('hidden'); }
   }, { passive: true });
 });
 
