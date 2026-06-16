@@ -732,6 +732,25 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 .auth-facebook { background: #1877F2; color: #fff; border-color: #1877F2; }
 .auth-facebook:hover { background: #1464d0; }
 
+/* ── Autocomplete dropdown ──────────────────── */
+.search-bar-wrap { position: relative; }
+.ac-dropdown {
+  display: none; position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+  background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.18);
+  z-index: 800; overflow: hidden; max-height: 320px; overflow-y: auto;
+}
+.ac-dropdown.open { display: block; }
+.ac-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 16px; cursor: pointer; transition: background .1s;
+  border-bottom: 1px solid #f0f0f0;
+}
+.ac-item:last-child { border-bottom: none; }
+.ac-item:hover, .ac-item.focused { background: #f5f8ff; }
+.ac-icon { color: #aaa; flex-shrink: 0; }
+.ac-name { font-size: 14px; font-weight: 500; color: var(--ink); }
+.ac-sub { font-size: 12px; color: var(--ink-4); margin-top: 1px; }
+
 /* ── Mobile search overlay ──────────────────── */
 .mob-search-overlay {
   display: none; position: fixed; inset: 0; background: #fff;
@@ -1033,18 +1052,8 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
       <span class="s-icon">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       </span>
-      <input type="text" id="sLoc" placeholder="City, Suburb or Web Reference" list="areas-list">
-      <datalist id="areas-list">
-        <option value="Sandton, Johannesburg">
-        <option value="Cape Town City Bowl">
-        <option value="Umhlanga, Durban">
-        <option value="Pretoria East">
-        <option value="Stellenbosch">
-        <option value="Fourways, Johannesburg">
-        <option value="Ballito, KZN">
-        <option value="Somerset West">
-        <option value="Centurion">
-      </datalist>
+      <input type="text" id="sLoc" placeholder="City, Suburb or Web Reference" autocomplete="off" oninput="acSearch(this.value)" onfocus="acSearch(this.value)" onkeydown="acKey(event)" onblur="setTimeout(acClose,180)">
+      <div class="ac-dropdown" id="acDropdown"></div>
       <button class="s-map-btn" onclick="openMap()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
         Map
@@ -2477,6 +2486,128 @@ renderFeatured();
 renderListings();
 renderAreas();
 loadListingsFromSupabase();
+
+// ── Autocomplete ───────────────────────────────────────────────────────────
+var AC_LOCATIONS = [
+  // Gauteng — Johannesburg
+  {n:'Sandton',r:'Johannesburg, Gauteng'},{n:'Rosebank',r:'Johannesburg, Gauteng'},
+  {n:'Hyde Park',r:'Johannesburg, Gauteng'},{n:'Houghton',r:'Johannesburg, Gauteng'},
+  {n:'Bryanston',r:'Johannesburg, Gauteng'},{n:'Fourways',r:'Johannesburg, Gauteng'},
+  {n:'Lonehill',r:'Johannesburg, Gauteng'},{n:'Douglasdale',r:'Johannesburg, Gauteng'},
+  {n:'Sunninghill',r:'Johannesburg, Gauteng'},{n:'Morningside',r:'Johannesburg, Gauteng'},
+  {n:'Rivonia',r:'Johannesburg, Gauteng'},{n:'Illovo',r:'Johannesburg, Gauteng'},
+  {n:'Parkhurst',r:'Johannesburg, Gauteng'},{n:'Parktown',r:'Johannesburg, Gauteng'},
+  {n:'Melville',r:'Johannesburg, Gauteng'},{n:'Auckland Park',r:'Johannesburg, Gauteng'},
+  {n:'Greenside',r:'Johannesburg, Gauteng'},{n:'Norwood',r:'Johannesburg, Gauteng'},
+  {n:'Bedfordview',r:'Johannesburg, Gauteng'},{n:'Edenvale',r:'Johannesburg, Gauteng'},
+  {n:'Randburg',r:'Johannesburg, Gauteng'},{n:'Roodepoort',r:'Johannesburg, Gauteng'},
+  {n:'Soweto',r:'Johannesburg, Gauteng'},{n:'Boksburg',r:'Johannesburg, Gauteng'},
+  {n:'Germiston',r:'Johannesburg, Gauteng'},{n:'Benoni',r:'Johannesburg, Gauteng'},
+  {n:'Kempton Park',r:'Johannesburg, Gauteng'},{n:'Kyalami',r:'Johannesburg, Gauteng'},
+  {n:'Midrand',r:'Johannesburg, Gauteng'},{n:'Waterfall',r:'Midrand, Gauteng'},
+  {n:'Johannesburg',r:'Gauteng'},{n:'Johannesburg CBD',r:'Gauteng'},
+  // Gauteng — Pretoria
+  {n:'Pretoria',r:'Gauteng'},{n:'Pretoria East',r:'Gauteng'},
+  {n:'Centurion',r:'Pretoria, Gauteng'},{n:'Midstream',r:'Centurion, Gauteng'},
+  {n:'Irene',r:'Centurion, Gauteng'},{n:'Faerie Glen',r:'Pretoria, Gauteng'},
+  {n:'Lynnwood',r:'Pretoria, Gauteng'},{n:'Menlyn',r:'Pretoria, Gauteng'},
+  {n:'Moreleta Park',r:'Pretoria, Gauteng'},{n:'Garsfontein',r:'Pretoria, Gauteng'},
+  {n:'Montana',r:'Pretoria, Gauteng'},{n:'Hatfield',r:'Pretoria, Gauteng'},
+  {n:'Arcadia',r:'Pretoria, Gauteng'},{n:'Brooklyn',r:'Pretoria, Gauteng'},
+  {n:'Waterkloof',r:'Pretoria, Gauteng'},{n:'Silverton',r:'Pretoria, Gauteng'},
+  {n:'Sunnyside',r:'Pretoria, Gauteng'},{n:'Lyttelton',r:'Centurion, Gauteng'},
+  {n:'The Reeds',r:'Centurion, Gauteng'},{n:'Olievenhoutbosch',r:'Centurion, Gauteng'},
+  // Western Cape — Cape Town
+  {n:'Cape Town',r:'Western Cape'},{n:'Cape Town CBD',r:'Western Cape'},
+  {n:'Sea Point',r:'Cape Town, Western Cape'},{n:'Camps Bay',r:'Cape Town, Western Cape'},
+  {n:'Clifton',r:'Cape Town, Western Cape'},{n:'Bantry Bay',r:'Cape Town, Western Cape'},
+  {n:'Fresnaye',r:'Cape Town, Western Cape'},{n:'Green Point',r:'Cape Town, Western Cape'},
+  {n:'De Waterkant',r:'Cape Town, Western Cape'},{n:'Gardens',r:'Cape Town, Western Cape'},
+  {n:'Tamboerskloof',r:'Cape Town, Western Cape'},{n:'Oranjezicht',r:'Cape Town, Western Cape'},
+  {n:'Vredehoek',r:'Cape Town, Western Cape'},{n:'Woodstock',r:'Cape Town, Western Cape'},
+  {n:'Observatory',r:'Cape Town, Western Cape'},{n:'Salt River',r:'Cape Town, Western Cape'},
+  {n:'Rondebosch',r:'Cape Town, Western Cape'},{n:'Claremont',r:'Cape Town, Western Cape'},
+  {n:'Kenilworth',r:'Cape Town, Western Cape'},{n:'Wynberg',r:'Cape Town, Western Cape'},
+  {n:'Constantia',r:'Cape Town, Western Cape'},{n:'Tokai',r:'Cape Town, Western Cape'},
+  {n:'Hout Bay',r:'Cape Town, Western Cape'},{n:'Llandudno',r:'Cape Town, Western Cape'},
+  {n:'Noordhoek',r:'Cape Town, Western Cape'},{n:'Muizenberg',r:'Cape Town, Western Cape'},
+  {n:'Kalk Bay',r:'Cape Town, Western Cape'},{n:'Fish Hoek',r:'Cape Town, Western Cape'},
+  {n:'Simon\'s Town',r:'Cape Town, Western Cape'},{n:'Bellville',r:'Cape Town, Western Cape'},
+  {n:'Durbanville',r:'Cape Town, Western Cape'},{n:'Brackenfell',r:'Cape Town, Western Cape'},
+  {n:'Kraaifontein',r:'Cape Town, Western Cape'},{n:'Strand',r:'Cape Town, Western Cape'},
+  {n:'Somerset West',r:'Western Cape'},{n:'Stellenbosch',r:'Western Cape'},
+  {n:'Paarl',r:'Western Cape'},{n:'Franschhoek',r:'Western Cape'},
+  {n:'Wellington',r:'Western Cape'},{n:'Hermanus',r:'Western Cape'},
+  {n:'Knysna',r:'Western Cape'},{n:'George',r:'Western Cape'},
+  {n:'Plettenberg Bay',r:'Western Cape'},{n:'Mossel Bay',r:'Western Cape'},
+  {n:'Wilderness',r:'Western Cape'},{n:'Sedgefield',r:'Western Cape'},
+  // KwaZulu-Natal
+  {n:'Durban',r:'KwaZulu-Natal'},{n:'Durban CBD',r:'KwaZulu-Natal'},
+  {n:'Umhlanga',r:'Durban, KwaZulu-Natal'},{n:'Umhlanga Rocks',r:'KwaZulu-Natal'},
+  {n:'Ballito',r:'KwaZulu-Natal'},{n:'La Lucia',r:'Durban, KwaZulu-Natal'},
+  {n:'Morningside',r:'Durban, KwaZulu-Natal'},{n:'Glenwood',r:'Durban, KwaZulu-Natal'},
+  {n:'Berea',r:'Durban, KwaZulu-Natal'},{n:'Westville',r:'Durban, KwaZulu-Natal'},
+  {n:'Pinetown',r:'Durban, KwaZulu-Natal'},{n:'Hillcrest',r:'KwaZulu-Natal'},
+  {n:'Kloof',r:'KwaZulu-Natal'},{n:'Gillitts',r:'KwaZulu-Natal'},
+  {n:'Amanzimtoti',r:'KwaZulu-Natal'},{n:'Margate',r:'KwaZulu-Natal'},
+  {n:'Richards Bay',r:'KwaZulu-Natal'},{n:'Pietermaritzburg',r:'KwaZulu-Natal'},
+  {n:'Tongaat',r:'KwaZulu-Natal'},{n:'Salt Rock',r:'KwaZulu-Natal'},
+  // Eastern Cape
+  {n:'Port Elizabeth',r:'Eastern Cape'},{n:'Gqeberha',r:'Eastern Cape'},
+  {n:'East London',r:'Eastern Cape'},{n:'Jeffreys Bay',r:'Eastern Cape'},
+  {n:'Summerstrand',r:'Port Elizabeth, Eastern Cape'},{n:'Walmer',r:'Port Elizabeth, Eastern Cape'},
+  {n:'Greenacres',r:'Port Elizabeth, Eastern Cape'},{n:'Nahoon',r:'East London, Eastern Cape'},
+  // Free State
+  {n:'Bloemfontein',r:'Free State'},{n:'Langenhoven Park',r:'Bloemfontein, Free State'},
+  {n:'Universitas',r:'Bloemfontein, Free State'},{n:'Westdene',r:'Bloemfontein, Free State'},
+  // Mpumalanga
+  {n:'Nelspruit',r:'Mpumalanga'},{n:'Mbombela',r:'Mpumalanga'},
+  {n:'White River',r:'Mpumalanga'},{n:'Hazyview',r:'Mpumalanga'},
+  // Limpopo
+  {n:'Polokwane',r:'Limpopo'},{n:'Tzaneen',r:'Limpopo'},
+  // North West
+  {n:'Rustenburg',r:'North West'},{n:'Hartbeespoort',r:'North West'},
+  // Northern Cape
+  {n:'Kimberley',r:'Northern Cape'},{n:'Upington',r:'Northern Cape'},
+];
+var acIdx = -1;
+function acSearch(q) {
+  var box = document.getElementById('acDropdown');
+  q = (q || '').trim().toLowerCase();
+  if (!q) { box.classList.remove('open'); acIdx = -1; return; }
+  var matches = AC_LOCATIONS.filter(function(l) {
+    return l.n.toLowerCase().includes(q) || l.r.toLowerCase().includes(q);
+  }).slice(0, 8);
+  if (!matches.length) { box.classList.remove('open'); return; }
+  box.innerHTML = matches.map(function(l, i) {
+    return '<div class="ac-item" data-val="' + l.n + ', ' + l.r + '" onmousedown="acPick(this)">' +
+      '<span class="ac-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>' +
+      '<div><div class="ac-name">' + l.n + '</div><div class="ac-sub">' + l.r + '</div></div>' +
+      '</div>';
+  }).join('');
+  box.classList.add('open');
+  acIdx = -1;
+}
+function acPick(el) {
+  document.getElementById('sLoc').value = el.dataset.val;
+  document.getElementById('acDropdown').classList.remove('open');
+  acIdx = -1;
+}
+function acClose() {
+  document.getElementById('acDropdown').classList.remove('open');
+  acIdx = -1;
+}
+function acKey(e) {
+  var items = document.querySelectorAll('.ac-item');
+  if (!items.length) return;
+  if (e.key === 'ArrowDown') { acIdx = Math.min(acIdx+1, items.length-1); acFocus(items); e.preventDefault(); }
+  else if (e.key === 'ArrowUp') { acIdx = Math.max(acIdx-1, 0); acFocus(items); e.preventDefault(); }
+  else if (e.key === 'Enter' && acIdx >= 0) { acPick(items[acIdx]); e.preventDefault(); }
+  else if (e.key === 'Escape') { acClose(); }
+}
+function acFocus(items) {
+  items.forEach(function(el,i){ el.classList.toggle('focused', i===acIdx); });
+}
 
 // ── Mobile search overlay ──────────────────────────────────────────────────
 function openMobSearch() {
