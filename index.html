@@ -2643,11 +2643,16 @@ function acFocus(items) {
 }
 
 function sbFocus(inp) {
-  if (window.innerWidth <= 900) inp.closest('.search-bar-outer').classList.add('sb-focused');
+  if (window.innerWidth <= 900) {
+    inp.closest('.search-bar-outer').classList.add('sb-focused');
+    inp.placeholder = 'City, Suburb or Web Reference';
+  }
 }
 function sbBlur() {
   var el = document.querySelector('.search-bar-outer');
   if (el) el.classList.remove('sb-focused');
+  var inp = document.getElementById('sLoc');
+  if (inp) inp.placeholder = 'City';
 }
 
 // ── Mobile search overlay ──────────────────────────────────────────────────
