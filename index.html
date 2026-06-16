@@ -763,6 +763,7 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   .topbar-links { display: none; }
 
   /* Hero tabs — horizontal scroll so nothing clips */
+  .hero-tabs-wrap { position: relative; }
   .hero-tabs {
     overflow-x: auto; overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
@@ -771,6 +772,13 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   }
   .hero-tabs::-webkit-scrollbar { display: none; }
   .hero-tab { white-space: nowrap; padding: 10px 18px; flex-shrink: 0; font-size: 15px; }
+  .tabs-scroll-hint {
+    position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+    background: linear-gradient(to right, transparent, rgba(0,0,0,.35) 40%);
+    padding: 6px 6px 6px 18px; pointer-events: none;
+    transition: opacity .3s; display: flex; align-items: center;
+  }
+  .tabs-scroll-hint.hidden { opacity: 0; }
 
   /* Filter pills — 2-column grid, Filters full-width */
   .search-filters { display: grid; grid-template-columns: 1fr 1fr; }
@@ -836,12 +844,17 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 <div class="hero">
   <div class="hero-overlay"></div>
   <div class="hero-inner">
-    <div class="hero-tabs">
-      <button class="hero-tab on" onclick="setTab(this,'buy')">Buy</button>
-      <button class="hero-tab" onclick="setTab(this,'rent')">Rent</button>
-      <button class="hero-tab" onclick="setTab(this,'new')">Developments</button>
-      <button class="hero-tab" onclick="setTab(this,'agents')">Agents</button>
-      <button class="hero-tab" onclick="setTab(this,'sold')">Sold Prices</button>
+    <div class="hero-tabs-wrap">
+      <div class="hero-tabs" id="heroTabs">
+        <button class="hero-tab on" onclick="setTab(this,'buy')">Buy</button>
+        <button class="hero-tab" onclick="setTab(this,'rent')">Rent</button>
+        <button class="hero-tab" onclick="setTab(this,'new')">Developments</button>
+        <button class="hero-tab" onclick="setTab(this,'agents')">Agents</button>
+        <button class="hero-tab" onclick="setTab(this,'sold')">Sold Prices</button>
+      </div>
+      <div class="tabs-scroll-hint" id="tabsScrollHint">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
     </div>
     <h1 id="heroTitle">Find Property for Sale</h1>
     <div class="search-bar-wrap">
@@ -1810,6 +1823,17 @@ function goPage(p) {
   page = p; renderListings();
   document.getElementById('listGrid').scrollIntoView({behavior:'smooth',block:'start'});
 }
+
+// Hide scroll hint when user scrolls the tabs
+(function() {
+  var tabs = document.getElementById('heroTabs');
+  var hint = document.getElementById('tabsScrollHint');
+  if (tabs && hint) {
+    tabs.addEventListener('scroll', function() {
+      if (tabs.scrollLeft > 20) hint.classList.add('hidden');
+    }, { passive: true });
+  }
+})();
 
 function setTab(el, m) {
   document.querySelectorAll('.hero-tab').forEach(t => t.classList.remove('on'));
