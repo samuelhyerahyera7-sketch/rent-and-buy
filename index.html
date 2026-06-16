@@ -732,6 +732,49 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 .auth-facebook { background: #1877F2; color: #fff; border-color: #1877F2; }
 .auth-facebook:hover { background: #1464d0; }
 
+/* ── Mobile search overlay ──────────────────── */
+.mob-search-overlay {
+  display: none; position: fixed; inset: 0; background: #fff;
+  z-index: 1050; flex-direction: column;
+  transform: translateY(100%); transition: transform .28s ease;
+}
+.mob-search-overlay.open { display: flex; transform: translateY(0); }
+.mob-search-top {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; border-bottom: 1px solid var(--line);
+}
+.mob-search-back {
+  background: none; border: none; cursor: pointer; padding: 4px;
+  color: var(--navy); display: flex; flex-shrink: 0;
+}
+.mob-search-input-wrap {
+  flex: 1; display: flex; align-items: center; gap: 8px;
+  background: #f4f6f8; border-radius: 10px; padding: 0 12px; height: 44px;
+}
+.mob-search-input-wrap input {
+  flex: 1; border: none; outline: none; background: transparent;
+  font-size: 15px; font-family: var(--font); color: var(--ink);
+}
+.mob-search-input-wrap input::placeholder { color: #aaa; }
+.mob-search-body { flex: 1; overflow-y: auto; padding: 20px 16px; }
+.mob-search-label { font-size: 11px; font-weight: 700; color: var(--ink-4); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 8px; }
+.mob-filter-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.mob-filter-btn {
+  padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 10px;
+  background: #fff; font-size: 13px; font-weight: 500; color: var(--ink-2);
+  text-align: left; cursor: pointer; transition: border-color .15s;
+}
+.mob-filter-btn.sel { border-color: var(--sage); color: var(--sage); background: #f0faf5; }
+.mob-search-bottom {
+  padding: 14px 16px; border-top: 1px solid var(--line);
+  background: #fff;
+}
+.mob-search-go {
+  width: 100%; padding: 15px; background: var(--sage); color: #fff;
+  border: none; border-radius: 12px; font-size: 16px; font-weight: 700;
+  cursor: pointer;
+}
+
 /* ── Legal modal ────────────────────────────── */
 .legal-backdrop {
   display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55);
@@ -921,6 +964,59 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   </div>
 </div>
 
+<!-- Mobile Search Overlay -->
+<div class="mob-search-overlay" id="mobSearchOverlay">
+  <div class="mob-search-top">
+    <button class="mob-search-back" onclick="closeMobSearch()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="mob-search-input-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="mobSearchInput" type="text" placeholder="City, Suburb or Web Reference" oninput="document.getElementById('sLoc').value=this.value">
+    </div>
+  </div>
+  <div class="mob-search-body">
+    <div class="mob-search-label">Property Type</div>
+    <div class="mob-filter-row" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:24px">
+      <button class="mob-filter-btn sel" onclick="mobSetType(this,'')">All</button>
+      <button class="mob-filter-btn" onclick="mobSetType(this,'House')">House</button>
+      <button class="mob-filter-btn" onclick="mobSetType(this,'Apartment')">Apartment</button>
+      <button class="mob-filter-btn" onclick="mobSetType(this,'Townhouse')">Townhouse</button>
+      <button class="mob-filter-btn" onclick="mobSetType(this,'Plot')">Plot</button>
+      <button class="mob-filter-btn" onclick="mobSetType(this,'Farm')">Farm</button>
+    </div>
+    <div class="mob-search-label">Min Price</div>
+    <div class="mob-filter-row" style="margin-bottom:24px">
+      <button class="mob-filter-btn sel" onclick="mobSetMin(this,0)">No min</button>
+      <button class="mob-filter-btn" onclick="mobSetMin(this,500000)">R 500k</button>
+      <button class="mob-filter-btn" onclick="mobSetMin(this,1000000)">R 1m</button>
+      <button class="mob-filter-btn" onclick="mobSetMin(this,2000000)">R 2m</button>
+      <button class="mob-filter-btn" onclick="mobSetMin(this,3000000)">R 3m</button>
+      <button class="mob-filter-btn" onclick="mobSetMin(this,5000000)">R 5m</button>
+    </div>
+    <div class="mob-search-label">Max Price</div>
+    <div class="mob-filter-row" style="margin-bottom:24px">
+      <button class="mob-filter-btn sel" onclick="mobSetMax(this,999999999)">No max</button>
+      <button class="mob-filter-btn" onclick="mobSetMax(this,1000000)">R 1m</button>
+      <button class="mob-filter-btn" onclick="mobSetMax(this,2000000)">R 2m</button>
+      <button class="mob-filter-btn" onclick="mobSetMax(this,3000000)">R 3m</button>
+      <button class="mob-filter-btn" onclick="mobSetMax(this,5000000)">R 5m</button>
+      <button class="mob-filter-btn" onclick="mobSetMax(this,10000000)">R 10m</button>
+    </div>
+    <div class="mob-search-label">Bedrooms</div>
+    <div class="mob-filter-row" style="grid-template-columns:repeat(5,1fr)">
+      <button class="mob-filter-btn sel" onclick="mobSetBeds(this,0)">Any</button>
+      <button class="mob-filter-btn" onclick="mobSetBeds(this,1)">1+</button>
+      <button class="mob-filter-btn" onclick="mobSetBeds(this,2)">2+</button>
+      <button class="mob-filter-btn" onclick="mobSetBeds(this,3)">3+</button>
+      <button class="mob-filter-btn" onclick="mobSetBeds(this,4)">4+</button>
+    </div>
+  </div>
+  <div class="mob-search-bottom">
+    <button class="mob-search-go" onclick="closeMobSearch();doSearch()">Search</button>
+  </div>
+</div>
+
 <!-- Hero -->
 <div class="hero">
   <div class="hero-overlay"></div>
@@ -937,7 +1033,7 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
       <span class="s-icon">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       </span>
-      <input type="text" id="sLoc" placeholder="City, Suburb or Web Reference" list="areas-list">
+      <input type="text" id="sLoc" placeholder="City, Suburb or Web Reference" list="areas-list" onfocus="if(window.innerWidth<=900)openMobSearch()">
       <datalist id="areas-list">
         <option value="Sandton, Johannesburg">
         <option value="Cape Town City Bowl">
@@ -1900,19 +1996,15 @@ function goPage(p) {
   document.getElementById('listGrid').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-// Swipe hint — reverse arrow at end, hide in middle
-(function() {
+// Swipe hint — hide immediately on any scroll
+window.addEventListener('DOMContentLoaded', function() {
   var tabs = document.getElementById('heroTabs');
   var hint = document.getElementById('tabsScrollHint');
   if (!tabs || !hint) return;
   tabs.addEventListener('scroll', function() {
-    var atEnd = tabs.scrollLeft + tabs.clientWidth >= tabs.scrollWidth - 10;
-    var atStart = tabs.scrollLeft < 10;
-    if (tabs.scrollLeft > 2) {
-      hint.classList.add('hidden');
-    }
+    if (tabs.scrollLeft > 1) hint.classList.add('hidden');
   }, { passive: true });
-})();
+});
 
 // Drawer
 function openDrawer() {
@@ -2385,6 +2477,41 @@ renderFeatured();
 renderListings();
 renderAreas();
 loadListingsFromSupabase();
+
+// ── Mobile search overlay ──────────────────────────────────────────────────
+function openMobSearch() {
+  var overlay = document.getElementById('mobSearchOverlay');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(function() { document.getElementById('mobSearchInput').focus(); }, 100);
+  document.getElementById('sLoc').blur();
+}
+function closeMobSearch() {
+  document.getElementById('mobSearchOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  var val = document.getElementById('mobSearchInput').value;
+  document.getElementById('sLoc').value = val;
+}
+function mobSetType(el, val) {
+  el.closest('.mob-filter-row').querySelectorAll('.mob-filter-btn').forEach(function(b){ b.classList.remove('sel'); });
+  el.classList.add('sel');
+  propType = val;
+}
+function mobSetMin(el, val) {
+  el.closest('.mob-filter-row').querySelectorAll('.mob-filter-btn').forEach(function(b){ b.classList.remove('sel'); });
+  el.classList.add('sel');
+  priceMin = val;
+}
+function mobSetMax(el, val) {
+  el.closest('.mob-filter-row').querySelectorAll('.mob-filter-btn').forEach(function(b){ b.classList.remove('sel'); });
+  el.classList.add('sel');
+  priceMax = val;
+}
+function mobSetBeds(el, val) {
+  el.closest('.mob-filter-row').querySelectorAll('.mob-filter-btn').forEach(function(b){ b.classList.remove('sel'); });
+  el.classList.add('sel');
+  bedMin = val;
+}
 </script>
 
 <!-- Legal Modal -->
