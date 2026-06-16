@@ -802,8 +802,9 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   .foot-grid { grid-template-columns: 1fr; }
   .hero { padding: 48px 20px 56px; }
 
-  /* Topbar — hide links, keep tagline */
+  /* Topbar — hide links, keep tagline left-aligned */
   .topbar-links { display: none; }
+  .topbar .w { justify-content: flex-start; padding-left: 16px; }
 
   /* Hero tabs — horizontal scroll so nothing clips */
   .hero-tabs-wrap { position: relative; }
@@ -1907,13 +1908,7 @@ function goPage(p) {
   tabs.addEventListener('scroll', function() {
     var atEnd = tabs.scrollLeft + tabs.clientWidth >= tabs.scrollWidth - 10;
     var atStart = tabs.scrollLeft < 10;
-    if (atEnd) {
-      hint.style.transform = 'scaleX(-1)';
-      hint.classList.remove('hidden');
-    } else if (atStart) {
-      hint.style.transform = 'scaleX(1)';
-      hint.classList.remove('hidden');
-    } else {
+    if (tabs.scrollLeft > 2) {
       hint.classList.add('hidden');
     }
   }, { passive: true });
