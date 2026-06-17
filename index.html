@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rent and Buy — Property in South Africa</title>
+<!-- PWA -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1a3c5e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Rent & Buy">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -992,8 +1000,6 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
     <a class="drawer-link" href="#" onclick="openCalc();closeDrawer()">Bond Calculator</a>
     <a class="drawer-link" href="#" onclick="goAgents();closeDrawer()">Find an Agent</a>
     <a class="drawer-link" href="mailto:hello@rentandbuy.co.za?subject=Advertising Packages">Advertise with Us</a>
-    <a class="drawer-link sage" href="#" onclick="openLegal('privacy');closeDrawer()">Privacy Policy</a>
-    <a class="drawer-link sage" href="#" onclick="openLegal('terms');closeDrawer()">Terms of Use</a>
   </div>
   <div class="drawer-btns">
     <button class="btn-ghost" onclick="openSignIn();closeDrawer()">Sign In</button>
@@ -1602,8 +1608,11 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
       <!-- Description -->
       <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3);margin-bottom:-4px;margin-top:4px">Description</div>
       <textarea id="lp-desc" placeholder="Describe the property — key features, finishes, location highlights…" style="height:90px"></textarea>
-      <button class="sm-submit" id="lp-submit" onclick="submitListing()">Submit listing</button>
-      <p style="text-align:center;font-size:12px;color:var(--ink-3)">Our team reviews all listings within 24 hours before going live.</p>
+      <!-- Photos -->
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3);margin-bottom:-4px;margin-top:4px">Photo URL <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></div>
+      <input id="lp-photo" type="url" placeholder="https://… paste a direct image link">
+      <button class="sm-submit" id="lp-submit" onclick="submitListing()">Publish listing</button>
+      <p style="text-align:center;font-size:12px;color:var(--ink-3)">Your listing goes live immediately and is visible to all buyers and tenants.</p>
     </div>
   </div>
 </div>
@@ -2618,23 +2627,55 @@ async function submitListing() {
   var garages = parseInt(document.getElementById("lp-garages").value) || null;
   var size    = parseInt(document.getElementById("lp-size").value) || null;
   var desc    = document.getElementById("lp-desc").value.trim();
+  var photo   = document.getElementById("lp-photo").value.trim();
 
   if (!name || !email || !lmode || !price || !addr) {
     toast("Please fill in all required fields"); return;
   }
-  btn.textContent = "Submitting…"; btn.disabled = true;
+  btn.textContent = "Publishing…"; btn.disabled = true;
+
+  // Auto-generate title from key fields
+  var loc = suburb || city || "South Africa";
+  var propType = ltype || "Property";
+  var title = beds ? (beds + "-bed " + propType + " in " + loc) : (propType + " in " + loc);
 
   var payload = {
     agent_name: name, agent_phone: phone || null, agent_email: email,
-    mode: lmode, type: ltype || null, price: price, address: addr,
+    mode: lmode, type: ltype || null, price: price, title: title,
     suburb: suburb || null, city: city || null, province: province || null,
     beds: beds, baths: baths, garages: garages, size: size,
-    description: desc || null, status: "pending"
+    description: desc || null,
+    imgs: photo ? [photo] : [],
+    status: "active"
   };
-  var res = await sb.from("property_listings").insert([payload]);
+  var res = await sb.from("properties").insert([payload]).select().single();
 
-  btn.textContent = "Submit listing"; btn.disabled = false;
-  toast("Listing submitted — our team will review it within 24 hours");
+  btn.textContent = "Publish listing"; btn.disabled = false;
+
+  if (res.error) {
+    toast("Could not publish — " + (res.error.message || "please try again")); return;
+  }
+
+  // Add to local DATA and re-render immediately
+  var row = res.data;
+  DATA.push({
+    id: row.id, mode: row.mode, type: row.type,
+    price: Number(row.price), beds: row.beds||0, baths: row.baths||0,
+    garages: row.garages||0, size: row.size||0, erf: null,
+    title: row.title, suburb: row.suburb||"", city: row.city||"",
+    province: row.province||"", desc: row.description||"",
+    featured: false, lat: null, lng: null,
+    agent: {
+      name: row.agent_name||"",
+      agency: "Rent and Buy",
+      init: (row.agent_name||"RB").substring(0,2).toUpperCase()
+    },
+    imgs: row.imgs||[], soldDate: null, auctionDate: null,
+    days: 0
+  });
+  renderFeatured(); renderListings();
+
+  toast("Your property is now live!");
   closeListProp();
 }
 
@@ -2656,7 +2697,8 @@ async function loadListingsFromSupabase() {
             agency: row.agent_agency||"Rent and Buy",
             init: (row.agent_name||"RB").substring(0,2).toUpperCase()
           },
-          imgs: row.imgs||[], soldDate: row.sold_date, auctionDate: row.auction_date
+          imgs: row.imgs||[], soldDate: row.sold_date, auctionDate: row.auction_date,
+          days: row.created_at ? Math.floor((Date.now() - new Date(row.created_at)) / 86400000) : 0
         });
       });
       renderFeatured(); renderListings();
@@ -3003,6 +3045,13 @@ function openLegal(type) {
 function closeLegal() {
   document.getElementById('legalBackdrop').classList.remove('open');
   document.body.style.overflow = '';
+}
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js');
+  });
 }
 </script>
 </body>
