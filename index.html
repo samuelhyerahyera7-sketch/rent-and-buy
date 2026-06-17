@@ -2473,11 +2473,14 @@ function updateAuthNav(user) {
       el.innerHTML =
         '<div onclick="toggleUserMenu(event)" style="display:flex;align-items:center;gap:7px">' +
           '<div style="width:34px;height:34px;border-radius:50%;background:var(--sage);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center">' + initials + '</div>' +
-          '<span style="font-size:13.5px;font-weight:600;color:var(--ink-2)">' + first + '</span>' +
+          '<span style="font-size:13.5px;font-weight:600;color:var(--ink-2)">' + fullName + '</span>' +
           '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--ink-3)"><polyline points="6 9 12 15 18 9"/></svg>' +
         '</div>' +
-        '<div id="userDropdown" style="display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow-m);min-width:190px;z-index:300;padding:6px 0;white-space:nowrap">' +
-          '<div style="padding:10px 16px 8px;font-size:12px;color:var(--ink-3);border-bottom:1px solid var(--line-2)">' + user.email + '</div>' +
+        '<div id="userDropdown" style="display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow-m);min-width:200px;z-index:300;padding:6px 0;white-space:nowrap">' +
+          '<div style="padding:10px 16px 8px;border-bottom:1px solid var(--line-2)">' +
+            '<div style="font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:2px">' + fullName + '</div>' +
+            '<div style="font-size:12px;color:var(--ink-3)">' + user.email + '</div>' +
+          '</div>' +
           '<button onclick="toast(\'My listings coming soon\')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:var(--ink);font-family:var(--font)">My listings</button>' +
           '<button onclick="openListProp()" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:var(--ink);font-family:var(--font)">List a property</button>' +
           '<button onclick="signOut()" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:#dc2626;font-family:var(--font)">Sign out</button>' +
