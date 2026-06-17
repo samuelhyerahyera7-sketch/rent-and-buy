@@ -942,6 +942,423 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   /* Section padding */
   .section { padding: 36px 16px; }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   LISTING WIZARD — full-screen step-by-step overlay
+══════════════════════════════════════════════════════════════ */
+.lw-overlay {
+  position: fixed; inset: 0; z-index: 2000;
+  background: var(--page);
+  display: flex; flex-direction: column;
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s;
+  overflow: hidden;
+}
+.lw-overlay.open { opacity: 1; pointer-events: all; }
+
+/* ── Top header ── */
+.lw-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+  padding: 0 24px;
+  flex-shrink: 0;
+  display: flex; flex-direction: column; gap: 0;
+}
+.lw-header-top {
+  display: flex; align-items: center; gap: 12px;
+  height: 58px;
+}
+.lw-back {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .15s; flex-shrink: 0;
+  color: var(--ink-2);
+}
+.lw-back:hover { background: var(--line-2); border-color: var(--ink-3); }
+.lw-title-area { flex: 1; }
+.lw-title-area h3 { font-size: 15px; font-weight: 700; color: var(--ink); line-height: 1.2; }
+.lw-title-area p { font-size: 12px; color: var(--ink-3); }
+.lw-close-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 16px; color: var(--ink-3);
+  transition: all .15s; flex-shrink: 0;
+}
+.lw-close-btn:hover { background: var(--line-2); color: var(--ink); }
+
+/* ── Progress stepper ── */
+.lw-progress {
+  padding: 12px 0 14px;
+  display: flex; align-items: center; gap: 0;
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.lw-progress::-webkit-scrollbar { display: none; }
+.lw-step-dot {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  flex-shrink: 0; min-width: 52px;
+  cursor: pointer;
+}
+.lw-dot-circle {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  border: 2px solid var(--line);
+  background: var(--white); color: var(--ink-4);
+  transition: all .25s;
+}
+.lw-step-dot.done .lw-dot-circle {
+  background: var(--sage); border-color: var(--sage); color: var(--white);
+}
+.lw-step-dot.active .lw-dot-circle {
+  background: var(--navy); border-color: var(--navy); color: var(--white);
+  box-shadow: 0 0 0 3px rgba(30,58,95,.18);
+}
+.lw-dot-label {
+  font-size: 9.5px; font-weight: 600; color: var(--ink-4);
+  text-align: center; white-space: nowrap; letter-spacing: .2px;
+  transition: color .2s;
+}
+.lw-step-dot.active .lw-dot-label { color: var(--navy); }
+.lw-step-dot.done .lw-dot-label { color: var(--sage); }
+.lw-step-line {
+  flex: 1; height: 2px; background: var(--line); min-width: 8px;
+  margin-bottom: 20px; transition: background .25s;
+}
+.lw-step-line.done { background: var(--sage); }
+
+/* ── Scrollable body ── */
+.lw-body {
+  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  position: relative;
+}
+.lw-steps-wrap {
+  min-height: 100%;
+  display: flex; flex-direction: column;
+}
+.lw-step-panel {
+  display: none; padding: 28px 24px 100px;
+  max-width: 680px; margin: 0 auto; width: 100%;
+  animation: stepIn .22s ease;
+}
+.lw-step-panel.active { display: block; }
+@keyframes stepIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* ── Step headings ── */
+.lw-step-panel h2 {
+  font-size: 20px; font-weight: 800; color: var(--ink);
+  letter-spacing: -.3px; margin-bottom: 4px;
+}
+.lw-step-panel > p {
+  font-size: 14px; color: var(--ink-3); margin-bottom: 24px;
+}
+
+/* ── Form controls ── */
+.lw-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 16px; }
+.lw-field label {
+  font-size: 12.5px; font-weight: 700; color: var(--ink-2);
+  text-transform: uppercase; letter-spacing: .5px;
+}
+.lw-field label .opt { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--ink-4); }
+.lw-input {
+  padding: 12px 14px; border: 1.5px solid var(--line);
+  border-radius: var(--r); font-size: 15px; font-family: var(--font);
+  color: var(--ink); background: var(--white);
+  transition: border-color .15s, box-shadow .15s;
+  width: 100%; outline: none;
+}
+.lw-input:focus { border-color: var(--sage); box-shadow: 0 0 0 3px rgba(45,106,79,.1); }
+.lw-input::placeholder { color: var(--ink-4); }
+.lw-input.err { border-color: #ef4444; }
+select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+.lw-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.lw-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.lw-textarea {
+  padding: 12px 14px; border: 1.5px solid var(--line);
+  border-radius: var(--r); font-size: 15px; font-family: var(--font);
+  color: var(--ink); background: var(--white); resize: vertical;
+  min-height: 140px; width: 100%; outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.lw-textarea:focus { border-color: var(--sage); box-shadow: 0 0 0 3px rgba(45,106,79,.1); }
+.lw-charcount { font-size: 12px; color: var(--ink-4); text-align: right; }
+.lw-charcount.warn { color: var(--gold); }
+
+/* ── Type selector cards ── */
+.lw-type-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+}
+.lw-type-card {
+  border: 2px solid var(--line); border-radius: 10px;
+  padding: 14px 10px; text-align: center; cursor: pointer;
+  transition: all .18s; background: var(--white);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.lw-type-card:hover { border-color: var(--ink-3); }
+.lw-type-card.sel {
+  border-color: var(--sage); background: var(--sage-l);
+  box-shadow: 0 0 0 3px rgba(45,106,79,.12);
+}
+.lw-type-card-icon {
+  font-size: 22px; line-height: 1;
+}
+.lw-type-card-label {
+  font-size: 12px; font-weight: 600; color: var(--ink-2); line-height: 1.3;
+}
+.lw-type-card.sel .lw-type-card-label { color: var(--sage); }
+
+/* ── Big toggle (For Sale / To Rent) ── */
+.lw-toggle-group {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;
+}
+.lw-toggle-btn {
+  padding: 14px; border: 2px solid var(--line); border-radius: 10px;
+  background: var(--white); font-size: 15px; font-weight: 600; color: var(--ink-2);
+  cursor: pointer; transition: all .18s; text-align: center;
+}
+.lw-toggle-btn:hover { border-color: var(--ink-3); }
+.lw-toggle-btn.sel {
+  border-color: var(--sage); background: var(--sage-l); color: var(--sage);
+  box-shadow: 0 0 0 3px rgba(45,106,79,.12);
+}
+
+/* ── Feature chips ── */
+.lw-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.lw-chip {
+  padding: 8px 14px; border: 1.5px solid var(--line); border-radius: 24px;
+  background: var(--white); font-size: 13px; font-weight: 500; color: var(--ink-2);
+  cursor: pointer; transition: all .15s; user-select: none;
+  display: flex; align-items: center; gap: 5px;
+}
+.lw-chip:hover { border-color: var(--ink-3); }
+.lw-chip.sel {
+  border-color: var(--sage); background: var(--sage-l); color: var(--sage); font-weight: 600;
+}
+.lw-chip.sel::before { content: "✓ "; font-size: 11px; }
+
+/* ── Photo upload zone ── */
+.lw-photo-zone {
+  border: 2px dashed var(--line); border-radius: 12px;
+  padding: 36px 24px; text-align: center; cursor: pointer;
+  transition: all .2s; background: var(--white); margin-bottom: 16px;
+  position: relative;
+}
+.lw-photo-zone:hover, .lw-photo-zone.drag-over {
+  border-color: var(--sage); background: var(--sage-l);
+}
+.lw-photo-zone input[type=file] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+.lw-photo-zone-icon {
+  font-size: 36px; margin-bottom: 8px;
+}
+.lw-photo-zone h4 { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.lw-photo-zone p { font-size: 13px; color: var(--ink-3); }
+.lw-photo-zone .lw-photo-browse {
+  display: inline-block; margin-top: 12px;
+  padding: 8px 20px; border-radius: 6px;
+  border: 1.5px solid var(--sage); color: var(--sage);
+  font-size: 13px; font-weight: 600; background: transparent;
+  pointer-events: none;
+}
+
+/* ── Photo grid ── */
+.lw-photo-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px;
+}
+.lw-photo-thumb {
+  position: relative; border-radius: 8px; overflow: hidden;
+  aspect-ratio: 4/3; background: var(--line-2);
+  border: 2px solid transparent;
+}
+.lw-photo-thumb.cover { border-color: var(--sage); }
+.lw-photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.lw-photo-del {
+  position: absolute; top: 4px; right: 4px;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: rgba(0,0,0,.6); border: none; color: #fff;
+  font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.lw-photo-del:hover { background: #ef4444; }
+.lw-photo-cover-badge {
+  position: absolute; bottom: 4px; left: 4px;
+  background: var(--sage); color: #fff;
+  font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+  text-transform: uppercase; letter-spacing: .4px;
+}
+.lw-photo-set-cover {
+  position: absolute; bottom: 4px; left: 4px;
+  background: rgba(0,0,0,.55); color: rgba(255,255,255,.8);
+  font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+  cursor: pointer; border: none; font-family: var(--font);
+  transition: background .15s;
+}
+.lw-photo-set-cover:hover { background: rgba(0,0,0,.8); color: #fff; }
+
+/* ── Contact checkboxes ── */
+.lw-check-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 14px; border: 1.5px solid var(--line);
+  border-radius: var(--r); cursor: pointer; transition: border-color .15s;
+  margin-bottom: 8px; background: var(--white);
+}
+.lw-check-row:hover { border-color: var(--ink-3); }
+.lw-check-row input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--sage); cursor: pointer; }
+.lw-check-row span { font-size: 14px; color: var(--ink-2); font-weight: 500; }
+
+/* ── Preview card ── */
+.lw-preview-card {
+  border: 1.5px solid var(--line); border-radius: 14px;
+  overflow: hidden; background: var(--white);
+  box-shadow: var(--shadow-m);
+}
+.lw-preview-img {
+  width: 100%; aspect-ratio: 16/9; object-fit: cover; background: var(--line-2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px; color: var(--ink-4);
+}
+.lw-preview-img img { width: 100%; height: 100%; object-fit: cover; }
+.lw-preview-body { padding: 20px; }
+.lw-preview-mode {
+  display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 4px;
+  font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+  background: var(--sage); color: #fff; margin-bottom: 10px;
+}
+.lw-preview-mode.rent { background: var(--gold); }
+.lw-preview-price {
+  font-size: 22px; font-weight: 800; color: var(--ink); letter-spacing: -.5px; margin-bottom: 4px;
+}
+.lw-preview-title { font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+.lw-preview-loc { font-size: 13px; color: var(--ink-3); margin-bottom: 14px; display: flex; gap: 5px; align-items: center; }
+.lw-preview-stats {
+  display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 14px;
+  padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.lw-preview-stat { font-size: 13px; color: var(--ink-2); display: flex; align-items: center; gap: 5px; font-weight: 500; }
+.lw-preview-features {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
+}
+.lw-preview-feature-tag {
+  padding: 3px 10px; background: var(--line-2); border-radius: 12px;
+  font-size: 12px; color: var(--ink-2); font-weight: 500;
+}
+.lw-preview-desc { font-size: 13.5px; color: var(--ink-2); line-height: 1.6; margin-bottom: 14px; }
+.lw-preview-agent {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px; background: var(--line-2); border-radius: 8px;
+}
+.lw-preview-agent-init {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--sage); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; flex-shrink: 0;
+}
+.lw-preview-agent-info p { font-size: 13px; color: var(--ink-2); font-weight: 600; }
+.lw-preview-agent-info span { font-size: 12px; color: var(--ink-3); }
+.lw-preview-wa {
+  margin-left: auto; padding: 8px 14px; border-radius: 20px;
+  background: #25D366; color: #fff; font-size: 13px; font-weight: 600;
+  border: none; cursor: pointer; display: flex; align-items: center; gap: 5px;
+}
+
+/* ── Bottom nav ── */
+.lw-footer {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--white); border-top: 1px solid var(--line);
+  padding: 14px 24px; z-index: 2001;
+  display: flex; align-items: center; gap: 10px;
+}
+.lw-draft-btn {
+  padding: 10px 18px; border-radius: 8px;
+  border: 1.5px solid var(--line); background: var(--white);
+  font-size: 13.5px; font-weight: 600; color: var(--ink-2);
+  cursor: pointer; transition: all .15s;
+}
+.lw-draft-btn:hover { border-color: var(--ink-3); }
+.lw-next-btn {
+  flex: 1; padding: 13px; border-radius: 10px;
+  background: var(--navy); color: var(--white);
+  font-size: 15px; font-weight: 700; border: none; cursor: pointer;
+  transition: background .15s;
+}
+.lw-next-btn:hover { background: #162d4a; }
+.lw-next-btn.publish { background: var(--sage); font-size: 16px; }
+.lw-next-btn.publish:hover { background: #245d44; }
+
+/* ── Publish success ── */
+.lw-success {
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  padding: 60px 24px; text-align: center;
+  min-height: calc(100vh - 160px);
+}
+.lw-success.show { display: flex; }
+.lw-success-icon {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: var(--sage-l); display: flex; align-items: center; justify-content: center;
+  font-size: 40px; margin-bottom: 20px;
+  animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+.lw-success h2 { font-size: 24px; font-weight: 800; color: var(--ink); margin-bottom: 10px; }
+.lw-success p { font-size: 15px; color: var(--ink-3); max-width: 360px; margin-bottom: 28px; line-height: 1.6; }
+.lw-success-btns { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.lw-success-btns button {
+  padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+
+/* ── Autosave indicator ── */
+.lw-autosave {
+  font-size: 11.5px; color: var(--ink-4); margin-right: auto;
+  display: flex; align-items: center; gap: 5px; flex-shrink: 0;
+}
+.lw-autosave.saved { color: var(--sage); }
+
+/* ── Divider ── */
+.lw-divider { height: 1px; background: var(--line); margin: 20px 0; }
+
+/* ── Helper note ── */
+.lw-note {
+  background: var(--navy-l); border-left: 3px solid var(--navy);
+  border-radius: 6px; padding: 10px 14px;
+  font-size: 13px; color: var(--ink-2); line-height: 1.5; margin-bottom: 16px;
+}
+
+/* ── Stepper number input ── */
+.lw-stepper {
+  display: flex; align-items: center; gap: 0;
+  border: 1.5px solid var(--line); border-radius: var(--r);
+  overflow: hidden; background: var(--white);
+  transition: border-color .15s;
+}
+.lw-stepper:focus-within { border-color: var(--sage); box-shadow: 0 0 0 3px rgba(45,106,79,.1); }
+.lw-stepper button {
+  width: 40px; height: 44px; background: var(--line-2); color: var(--ink-2);
+  font-size: 18px; font-weight: 600; border: none; cursor: pointer;
+  transition: background .15s; flex-shrink: 0;
+}
+.lw-stepper button:hover { background: var(--line); }
+.lw-stepper input {
+  flex: 1; border: none; outline: none; text-align: center;
+  font-size: 16px; font-weight: 700; color: var(--ink);
+  font-family: var(--font); min-width: 0; padding: 10px 4px;
+  background: transparent;
+}
+
+/* ── Optional extras section ── */
+.lw-extras-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+@media (max-width: 600px) {
+  .lw-step-panel { padding: 20px 16px 100px; }
+  .lw-type-grid { grid-template-columns: repeat(2, 1fr); }
+  .lw-row-2, .lw-row-3, .lw-extras-grid { grid-template-columns: 1fr; }
+  .lw-header { padding: 0 14px; }
+  .lw-footer { padding: 12px 14px; }
+  .lw-next-btn { font-size: 14px; padding: 12px; }
+}
 </style>
 </head>
 <body>
@@ -1539,83 +1956,410 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   </div>
 </div>
 
-<!-- List Property Modal -->
-<div class="backdrop" id="listPropBackdrop" onclick="if(event.target===this)closeListProp()">
-  <div class="modal sm-modal" style="position:relative;max-width:600px">
-    <button class="sm-close" onclick="closeListProp()">✕</button>
-    <div class="sm-head">
-      <h2>List your property</h2>
-      <p>Reach thousands of verified buyers and tenants across South Africa</p>
+<!-- ══ Listing Wizard ══════════════════════════════════════════════════════ -->
+<div id="listingWizard" class="lw-overlay">
+
+  <!-- Header -->
+  <div class="lw-header">
+    <div class="lw-header-top">
+      <button class="lw-back" id="lwBackBtn" onclick="lwBack()" title="Previous step">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="lw-title-area">
+        <h3 id="lwStepTitle">List your property</h3>
+        <p id="lwStepSub">Step 1 of 8 — Listing information</p>
+      </div>
+      <button class="lw-close-btn" onclick="closeListProp()">✕</button>
     </div>
-    <div class="sm-body">
-      <!-- Your details -->
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3);margin-bottom:-4px">Your details</div>
-      <div class="sm-row">
-        <input id="lp-name" type="text" placeholder="Full name *">
-        <input id="lp-phone" type="tel" placeholder="Phone number">
-      </div>
-      <input id="lp-email" type="email" placeholder="Email address *">
-      <!-- Property details -->
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3);margin-bottom:-4px;margin-top:4px">Property details</div>
-      <div class="sm-row">
-        <select id="lp-mode">
-          <option value="">Listing type *</option>
-          <option value="buy">For Sale</option>
-          <option value="rent">To Rent</option>
-          <option value="new">New Development</option>
-          <option value="commercial">Commercial</option>
-          <option value="farm">Farm / Smallholding</option>
-          <option value="auction">Auction</option>
-        </select>
-        <select id="lp-type">
-          <option value="">Property type</option>
-          <option value="House">House</option>
-          <option value="Apartment">Apartment / Flat</option>
-          <option value="Townhouse">Townhouse</option>
-          <option value="Plot">Plot / Land</option>
-          <option value="Farm">Farm</option>
-          <option value="Commercial">Commercial</option>
-        </select>
-      </div>
-      <div class="sm-row">
-        <input id="lp-price" type="number" placeholder="Asking price (R) *" min="0">
-        <input id="lp-size" type="number" placeholder="Floor size (m²)" min="0">
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-        <input id="lp-beds" type="number" placeholder="Bedrooms" min="0">
-        <input id="lp-baths" type="number" placeholder="Bathrooms" min="0">
-        <input id="lp-garages" type="number" placeholder="Garages" min="0">
-      </div>
-      <!-- Location -->
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3);margin-bottom:-4px;margin-top:4px">Location</div>
-      <input id="lp-address" type="text" placeholder="Street address *">
-      <div class="sm-row">
-        <input id="lp-suburb" type="text" placeholder="Suburb">
-        <input id="lp-city" type="text" placeholder="City">
-      </div>
-      <select id="lp-province">
-        <option value="">Province</option>
-        <option value="Gauteng">Gauteng</option>
-        <option value="Western Cape">Western Cape</option>
-        <option value="KwaZulu-Natal">KwaZulu-Natal</option>
-        <option value="Eastern Cape">Eastern Cape</option>
-        <option value="Free State">Free State</option>
-        <option value="Mpumalanga">Mpumalanga</option>
-        <option value="Limpopo">Limpopo</option>
-        <option value="North West">North West</option>
-        <option value="Northern Cape">Northern Cape</option>
-      </select>
-      <!-- Description -->
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3);margin-bottom:-4px;margin-top:4px">Description</div>
-      <textarea id="lp-desc" placeholder="Describe the property — key features, finishes, location highlights…" style="height:90px"></textarea>
-      <!-- Photos -->
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3);margin-bottom:-4px;margin-top:4px">Photo URL <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></div>
-      <input id="lp-photo" type="url" placeholder="https://… paste a direct image link">
-      <button class="sm-submit" id="lp-submit" onclick="submitListing()">Publish listing</button>
-      <p style="text-align:center;font-size:12px;color:var(--ink-3)">Your listing goes live immediately and is visible to all buyers and tenants.</p>
+    <!-- Progress dots -->
+    <div class="lw-progress" id="lwProgress">
+      <div class="lw-step-dot active" data-s="0" onclick="lwJump(0)"><div class="lw-dot-circle">1</div><div class="lw-dot-label">Type</div></div>
+      <div class="lw-step-line" id="lwLine0"></div>
+      <div class="lw-step-dot" data-s="1" onclick="lwJump(1)"><div class="lw-dot-circle">2</div><div class="lw-dot-label">Details</div></div>
+      <div class="lw-step-line" id="lwLine1"></div>
+      <div class="lw-step-dot" data-s="2" onclick="lwJump(2)"><div class="lw-dot-circle">3</div><div class="lw-dot-label">Location</div></div>
+      <div class="lw-step-line" id="lwLine2"></div>
+      <div class="lw-step-dot" data-s="3" onclick="lwJump(3)"><div class="lw-dot-circle">4</div><div class="lw-dot-label">Features</div></div>
+      <div class="lw-step-line" id="lwLine3"></div>
+      <div class="lw-step-dot" data-s="4" onclick="lwJump(4)"><div class="lw-dot-circle">5</div><div class="lw-dot-label">Description</div></div>
+      <div class="lw-step-line" id="lwLine4"></div>
+      <div class="lw-step-dot" data-s="5" onclick="lwJump(5)"><div class="lw-dot-circle">6</div><div class="lw-dot-label">Photos</div></div>
+      <div class="lw-step-line" id="lwLine5"></div>
+      <div class="lw-step-dot" data-s="6" onclick="lwJump(6)"><div class="lw-dot-circle">7</div><div class="lw-dot-label">Contact</div></div>
+      <div class="lw-step-line" id="lwLine6"></div>
+      <div class="lw-step-dot" data-s="7" onclick="lwJump(7)"><div class="lw-dot-circle">8</div><div class="lw-dot-label">Preview</div></div>
     </div>
   </div>
+
+  <!-- Scrollable body -->
+  <div class="lw-body" id="lwBody">
+    <div class="lw-steps-wrap">
+
+      <!-- ── Step 1: Listing Info ────────────────────────────── -->
+      <div class="lw-step-panel active" id="lwPanel0">
+        <h2>What are you listing?</h2>
+        <p>Tell us the type of listing and who you are.</p>
+
+        <div class="lw-field"><label>Listing purpose</label>
+          <div class="lw-toggle-group">
+            <button class="lw-toggle-btn sel" id="lwModeSale" onclick="lwSetMode('buy',this)">🏷️ For Sale</button>
+            <button class="lw-toggle-btn" id="lwModeRent" onclick="lwSetMode('rent',this)">🔑 To Rent</button>
+          </div>
+        </div>
+
+        <div class="lw-field"><label>Property type</label>
+          <div class="lw-type-grid" id="lwTypeGrid">
+            <div class="lw-type-card sel" onclick="lwSetType('House',this)"><div class="lw-type-card-icon">🏡</div><div class="lw-type-card-label">House</div></div>
+            <div class="lw-type-card" onclick="lwSetType('Apartment',this)"><div class="lw-type-card-icon">🏢</div><div class="lw-type-card-label">Apartment / Flat</div></div>
+            <div class="lw-type-card" onclick="lwSetType('Townhouse',this)"><div class="lw-type-card-icon">🏘️</div><div class="lw-type-card-label">Townhouse</div></div>
+            <div class="lw-type-card" onclick="lwSetType('Plot',this)"><div class="lw-type-card-icon">📐</div><div class="lw-type-card-label">Vacant Land</div></div>
+            <div class="lw-type-card" onclick="lwSetType('Commercial',this)"><div class="lw-type-card-icon">🏪</div><div class="lw-type-card-label">Commercial</div></div>
+            <div class="lw-type-card" onclick="lwSetType('Industrial',this)"><div class="lw-type-card-icon">🏭</div><div class="lw-type-card-label">Industrial</div></div>
+            <div class="lw-type-card" onclick="lwSetType('Farm',this)"><div class="lw-type-card-icon">🌾</div><div class="lw-type-card-label">Farm</div></div>
+            <div class="lw-type-card" onclick="lwSetType('Holiday',this)"><div class="lw-type-card-icon">🏖️</div><div class="lw-type-card-label">Holiday Home</div></div>
+            <div class="lw-type-card" onclick="lwSetType('Retirement',this)"><div class="lw-type-card-icon">🌿</div><div class="lw-type-card-label">Retirement</div></div>
+          </div>
+        </div>
+
+        <div class="lw-field" style="margin-top:4px"><label>Who is listing?</label>
+          <div class="lw-toggle-group">
+            <button class="lw-toggle-btn sel" id="lwUserPrivate" onclick="lwSetUserType('private',this)">👤 Private Owner</button>
+            <button class="lw-toggle-btn" id="lwUserAgent" onclick="lwSetUserType('agent',this)">🏢 Estate Agent</button>
+          </div>
+        </div>
+
+        <div id="lwAgencyRow" class="lw-field" style="display:none"><label>Agency name <span class="opt">(optional)</span></label>
+          <input id="lw-agency" class="lw-input" type="text" placeholder="e.g. Pam Golding Properties">
+        </div>
+      </div>
+
+      <!-- ── Step 2: Property Details ───────────────────────── -->
+      <div class="lw-step-panel" id="lwPanel1">
+        <h2>Property details</h2>
+        <p>The specifics buyers and tenants look for first.</p>
+
+        <div class="lw-field"><label>Property title</label>
+          <input id="lw-title" class="lw-input" type="text" placeholder="e.g. Modern 3 Bedroom House in Centurion" maxlength="100">
+          <div style="font-size:12px;color:var(--ink-4)">A clear title gets more clicks — include key features and area.</div>
+        </div>
+
+        <div id="lwPriceField" class="lw-field"><label>Asking price</label>
+          <div style="position:relative">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:700;color:var(--ink-3)">R</span>
+            <input id="lw-price" class="lw-input" type="number" placeholder="0" min="0" style="padding-left:30px">
+          </div>
+        </div>
+
+        <div id="lwRentField" class="lw-field" style="display:none"><label>Monthly rental</label>
+          <div style="position:relative">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:700;color:var(--ink-3)">R</span>
+            <input id="lw-rental" class="lw-input" type="number" placeholder="0" min="0" style="padding-left:30px">
+          </div>
+        </div>
+
+        <div id="lwDepositField" class="lw-field" style="display:none"><label>Deposit required <span class="opt">(optional)</span></label>
+          <div style="position:relative">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:700;color:var(--ink-3)">R</span>
+            <input id="lw-deposit" class="lw-input" type="number" placeholder="0" min="0" style="padding-left:30px">
+          </div>
+        </div>
+
+        <div class="lw-row-2">
+          <div class="lw-field"><label>Floor size <span class="opt">(m²)</span></label>
+            <input id="lw-size" class="lw-input" type="number" placeholder="e.g. 180" min="0">
+          </div>
+          <div class="lw-field"><label>Land size <span class="opt">(m²)</span></label>
+            <input id="lw-erf" class="lw-input" type="number" placeholder="e.g. 650" min="0">
+          </div>
+        </div>
+
+        <div id="lwBedroomSection">
+          <div class="lw-row-3">
+            <div class="lw-field"><label>Bedrooms</label>
+              <div class="lw-stepper">
+                <button type="button" onclick="lwStep('lw-beds',-1)">−</button>
+                <input id="lw-beds" type="number" value="3" min="0" max="20">
+                <button type="button" onclick="lwStep('lw-beds',1)">+</button>
+              </div>
+            </div>
+            <div class="lw-field"><label>Bathrooms</label>
+              <div class="lw-stepper">
+                <button type="button" onclick="lwStep('lw-baths',-1)">−</button>
+                <input id="lw-baths" type="number" value="2" min="0" max="20">
+                <button type="button" onclick="lwStep('lw-baths',1)">+</button>
+              </div>
+            </div>
+            <div class="lw-field"><label>Garages</label>
+              <div class="lw-stepper">
+                <button type="button" onclick="lwStep('lw-garages',-1)">−</button>
+                <input id="lw-garages" type="number" value="1" min="0" max="10">
+                <button type="button" onclick="lwStep('lw-garages',1)">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="lw-row-2">
+            <div class="lw-field"><label>Covered parking <span class="opt">(optional)</span></label>
+              <div class="lw-stepper">
+                <button type="button" onclick="lwStep('lw-cover-park',-1)">−</button>
+                <input id="lw-cover-park" type="number" value="0" min="0" max="20">
+                <button type="button" onclick="lwStep('lw-cover-park',1)">+</button>
+              </div>
+            </div>
+            <div class="lw-field"><label>Open parking <span class="opt">(optional)</span></label>
+              <div class="lw-stepper">
+                <button type="button" onclick="lwStep('lw-open-park',-1)">−</button>
+                <input id="lw-open-park" type="number" value="0" min="0" max="20">
+                <button type="button" onclick="lwStep('lw-open-park',1)">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lw-divider"></div>
+        <div style="font-size:13px;font-weight:700;color:var(--ink-2);margin-bottom:12px">Extras <span style="font-weight:400;color:var(--ink-4)">(optional)</span></div>
+        <div class="lw-extras-grid">
+          <div class="lw-field"><label>Rates & taxes <span class="opt">/mo</span></label>
+            <div style="position:relative">
+              <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:700;color:var(--ink-3)">R</span>
+              <input id="lw-rates" class="lw-input" type="number" placeholder="0" min="0" style="padding-left:30px">
+            </div>
+          </div>
+          <div class="lw-field"><label>Levies <span class="opt">/mo</span></label>
+            <div style="position:relative">
+              <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:700;color:var(--ink-3)">R</span>
+              <input id="lw-levies" class="lw-input" type="number" placeholder="0" min="0" style="padding-left:30px">
+            </div>
+          </div>
+          <div class="lw-field"><label>Available from <span class="opt">(optional)</span></label>
+            <input id="lw-avail" class="lw-input" type="date">
+          </div>
+          <div class="lw-field"><label>Featured listing</label>
+            <div class="lw-check-row" onclick="this.querySelector('input').click()">
+              <input type="checkbox" id="lw-featured">
+              <span>⭐ Feature my listing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Step 3: Location ────────────────────────────────── -->
+      <div class="lw-step-panel" id="lwPanel2">
+        <h2>Where is it?</h2>
+        <p>Accurate location helps buyers find your property.</p>
+
+        <div class="lw-note">📍 Start typing your street address and we'll help fill in the suburb, city and province automatically.</div>
+
+        <div class="lw-field"><label>Street address <span style="color:#ef4444">*</span></label>
+          <input id="lw-address" class="lw-input" type="text" placeholder="e.g. 14 Oak Avenue">
+        </div>
+        <div class="lw-row-2">
+          <div class="lw-field"><label>Suburb</label>
+            <input id="lw-suburb" class="lw-input" type="text" placeholder="e.g. Sandton">
+          </div>
+          <div class="lw-field"><label>City</label>
+            <input id="lw-city" class="lw-input" type="text" placeholder="e.g. Johannesburg">
+          </div>
+        </div>
+        <div class="lw-row-2">
+          <div class="lw-field"><label>Province</label>
+            <select id="lw-province" class="lw-input">
+              <option value="">Select province</option>
+              <option value="Gauteng">Gauteng</option>
+              <option value="Western Cape">Western Cape</option>
+              <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+              <option value="Eastern Cape">Eastern Cape</option>
+              <option value="Free State">Free State</option>
+              <option value="Mpumalanga">Mpumalanga</option>
+              <option value="Limpopo">Limpopo</option>
+              <option value="North West">North West</option>
+              <option value="Northern Cape">Northern Cape</option>
+            </select>
+          </div>
+          <div class="lw-field"><label>Postal code <span class="opt">(optional)</span></label>
+            <input id="lw-postal" class="lw-input" type="text" placeholder="e.g. 2196" maxlength="4">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Step 4: Features ────────────────────────────────── -->
+      <div class="lw-step-panel" id="lwPanel3">
+        <h2>Property features</h2>
+        <p>Tap all the features that apply — these help buyers filter search results.</p>
+
+        <div class="lw-chips" id="lwFeatureChips">
+          <div class="lw-chip" onclick="lwToggleChip(this,'Pet Friendly')">🐾 Pet Friendly</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Fibre Ready')">📡 Fibre Ready</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Swimming Pool')">🏊 Swimming Pool</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Security Estate')">🔒 Security Estate</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Garden')">🌳 Garden</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Balcony')">🏗️ Balcony</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Built-in Braai')">🔥 Built-in Braai</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Air Conditioning')">❄️ Air Conditioning</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Solar Power')">☀️ Solar Power</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Backup Water')">💧 Backup Water</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Backup Power')">🔋 Backup Power</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Staff Quarters')">🏠 Staff Quarters</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Flatlet')">🛏️ Flatlet</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Wheelchair Friendly')">♿ Wheelchair Friendly</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Furnished')">🪑 Furnished</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Gated Community')">🚧 Gated Community</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'CCTV')">📷 CCTV</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Borehole')">🌊 Borehole</div>
+        </div>
+      </div>
+
+      <!-- ── Step 5: Description ─────────────────────────────── -->
+      <div class="lw-step-panel" id="lwPanel4">
+        <h2>Describe your property</h2>
+        <p>A great description increases enquiries significantly.</p>
+
+        <div class="lw-note">💡 <strong>Tip:</strong> Mention nearby schools, shopping centres, security, transport routes, finishes, and any unique selling points.</div>
+
+        <div class="lw-field">
+          <label>Description <span style="color:#ef4444">*</span></label>
+          <textarea id="lw-desc" class="lw-textarea" maxlength="3000"
+            placeholder="Describe the property, its condition, nearby schools, shopping centres, transport routes, security features and any unique selling points..."
+            oninput="lwUpdateCharCount()"></textarea>
+          <div class="lw-charcount" id="lwCharCount">0 / 3000 characters</div>
+        </div>
+
+        <div class="lw-divider"></div>
+        <div style="font-size:13px;font-weight:700;color:var(--ink-2);margin-bottom:12px">Media links <span style="font-weight:400;color:var(--ink-4)">(optional)</span></div>
+        <div class="lw-field"><label>Virtual tour URL <span class="opt">(Matterport, etc.)</span></label>
+          <input id="lw-vtour" class="lw-input" type="url" placeholder="https://...">
+        </div>
+        <div class="lw-field"><label>YouTube video URL <span class="opt">(optional)</span></label>
+          <input id="lw-video" class="lw-input" type="url" placeholder="https://youtube.com/...">
+        </div>
+      </div>
+
+      <!-- ── Step 6: Photos ──────────────────────────────────── -->
+      <div class="lw-step-panel" id="lwPanel5">
+        <h2>Add photos</h2>
+        <p>Listings with photos get 10× more enquiries. Upload up to 30 images.</p>
+
+        <div class="lw-photo-zone" id="lwDropZone"
+          ondragover="lwDragOver(event)" ondragleave="lwDragLeave(event)" ondrop="lwDrop(event)">
+          <input type="file" id="lwPhotoInput" accept="image/jpeg,image/png,image/webp" multiple onchange="lwFilesAdded(this.files)">
+          <div class="lw-photo-zone-icon">📸</div>
+          <h4>Drag & drop photos here</h4>
+          <p>or tap to browse from your device</p>
+          <p style="margin-top:4px;font-size:12px;color:var(--ink-4)">JPG, PNG, WEBP · Max 10MB each · Up to 30 photos</p>
+          <div class="lw-photo-browse">Browse files</div>
+        </div>
+
+        <div id="lwPhotoGrid" class="lw-photo-grid"></div>
+
+        <div id="lwPhotoCount" style="font-size:13px;color:var(--ink-3);margin-top:8px;text-align:center;display:none">
+          <span id="lwPhotoCountNum">0</span> photo(s) added — <strong>first photo is the cover image</strong>
+        </div>
+      </div>
+
+      <!-- ── Step 7: Contact ─────────────────────────────────── -->
+      <div class="lw-step-panel" id="lwPanel6">
+        <h2>Contact details</h2>
+        <p>How should buyers and tenants reach you?</p>
+
+        <div class="lw-row-2">
+          <div class="lw-field"><label>Your name <span style="color:#ef4444">*</span></label>
+            <input id="lw-name" class="lw-input" type="text" placeholder="Full name">
+          </div>
+          <div class="lw-field"><label>Email address <span style="color:#ef4444">*</span></label>
+            <input id="lw-email" class="lw-input" type="email" placeholder="you@example.com">
+          </div>
+        </div>
+        <div class="lw-row-2">
+          <div class="lw-field"><label>Phone number <span style="color:#ef4444">*</span></label>
+            <input id="lw-phone" class="lw-input" type="tel" placeholder="e.g. 082 000 0000">
+          </div>
+          <div class="lw-field"><label>WhatsApp number <span class="opt">(optional)</span></label>
+            <input id="lw-whatsapp" class="lw-input" type="tel" placeholder="e.g. 082 000 0000">
+          </div>
+        </div>
+
+        <div class="lw-divider"></div>
+        <div style="font-size:13px;font-weight:700;color:var(--ink-2);margin-bottom:10px">Privacy settings</div>
+
+        <label class="lw-check-row">
+          <input type="checkbox" id="lw-show-phone" checked>
+          <span>📞 Show phone number publicly</span>
+        </label>
+        <label class="lw-check-row">
+          <input type="checkbox" id="lw-show-wa" checked>
+          <span>💬 Show WhatsApp number publicly</span>
+        </label>
+        <label class="lw-check-row">
+          <input type="checkbox" id="lw-show-email" checked>
+          <span>✉️ Receive enquiries by email</span>
+        </label>
+      </div>
+
+      <!-- ── Step 8: Preview ─────────────────────────────────── -->
+      <div class="lw-step-panel" id="lwPanel7">
+        <h2>Preview your listing</h2>
+        <p>This is how your property will appear to buyers and tenants.</p>
+
+        <div class="lw-preview-card" id="lwPreviewCard">
+          <div class="lw-preview-img" id="lwPreviewImgWrap">
+            <span>🏡</span>
+          </div>
+          <div class="lw-preview-body">
+            <div class="lw-preview-mode" id="lwPrevMode">For Sale</div>
+            <div class="lw-preview-price" id="lwPrevPrice">R 0</div>
+            <div class="lw-preview-title" id="lwPrevTitle">Property Title</div>
+            <div class="lw-preview-loc" id="lwPrevLoc">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span id="lwPrevLocText">—</span>
+            </div>
+            <div class="lw-preview-stats" id="lwPrevStats"></div>
+            <div class="lw-preview-features" id="lwPrevFeatures"></div>
+            <div class="lw-preview-desc" id="lwPrevDesc" style="display:none"></div>
+            <div class="lw-preview-agent" id="lwPrevAgent">
+              <div class="lw-preview-agent-init" id="lwPrevInit">AB</div>
+              <div class="lw-preview-agent-info">
+                <p id="lwPrevAgentName">Your name</p>
+                <span id="lwPrevAgentPhone">—</span>
+              </div>
+              <button class="lw-preview-wa" id="lwPrevWa" style="display:none">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                WhatsApp
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;padding:16px;background:var(--sage-l);border-radius:10px;border:1px solid rgba(45,106,79,.2)">
+          <div style="font-size:13.5px;font-weight:700;color:var(--sage);margin-bottom:4px">✅ Ready to publish</div>
+          <div style="font-size:13px;color:var(--ink-2)">Your listing will be live immediately and visible to thousands of buyers and tenants across South Africa.</div>
+        </div>
+      </div>
+
+      <!-- ── Success screen ──────────────────────────────────── -->
+      <div class="lw-success" id="lwSuccess">
+        <div class="lw-success-icon">🎉</div>
+        <h2>Your listing is live!</h2>
+        <p>Your property is now visible to thousands of buyers and tenants across South Africa.</p>
+        <div class="lw-success-btns">
+          <button onclick="closeListProp()" style="background:var(--sage);color:#fff;border:none">View listings</button>
+          <button onclick="lwReset();lwGoToStep(0)" style="background:var(--white);color:var(--ink-2);border:1.5px solid var(--line)">List another</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer nav (hidden on success) -->
+  <div class="lw-footer" id="lwFooter">
+    <div class="lw-autosave" id="lwAutosave">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Draft saved
+    </div>
+    <button class="lw-draft-btn" onclick="lwSaveDraft()">Save draft</button>
+    <button class="lw-next-btn" id="lwNextBtn" onclick="lwNext()">Continue →</button>
+  </div>
+
 </div>
+<!-- ══ End Listing Wizard ══════════════════════════════════════════════════ -->
 
 <!-- Map Modal -->
 <div class="backdrop" id="mapBackdrop" onclick="if(event.target===this)closeMap()" style="align-items:flex-start;padding:0">
@@ -2504,33 +3248,6 @@ function updateAuthNav(user) {
     if (drawerSignIn) { drawerSignIn.textContent = 'Sign In'; drawerSignIn.onclick = function(){ openSignIn(); closeDrawer(); }; }
   }
 }
-function preFillListingForm(user) {
-  var email = user.email || '';
-  var name  = (user.user_metadata && user.user_metadata.full_name) ? user.user_metadata.full_name : email.split('@')[0];
-  var emailEl = document.getElementById('lp-email');
-  var nameEl  = document.getElementById('lp-name');
-  if (emailEl) emailEl.value = email;
-  if (nameEl)  nameEl.value  = name;
-}
-
-// ── List Property modal ───────────────────────────────────────────────────────
-function openListProp() {
-  if (currentUser) {
-    preFillListingForm(currentUser);
-    document.getElementById('listPropBackdrop').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  } else {
-    afterAuth = 'list';
-    var prompt = document.getElementById('authListPrompt');
-    if (prompt) prompt.style.display = 'flex';
-    openSignIn();
-  }
-}
-function closeListProp() {
-  document.getElementById('listPropBackdrop').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
 // ── Auth state listener ───────────────────────────────────────────────────────
 sb.auth.onAuthStateChange(function(event, session) {
   currentUser = session ? session.user : null;
@@ -2544,9 +3261,7 @@ sb.auth.onAuthStateChange(function(event, session) {
     if (pending === 'list') {
       setTimeout(function() {
         closeSignIn();
-        preFillListingForm(currentUser);
-        document.getElementById('listPropBackdrop').classList.add('open');
-        document.body.style.overflow = 'hidden';
+        openListProp();
       }, 200);
     } else {
       closeSignIn();
@@ -2609,74 +3324,493 @@ function initMap() {
   setTimeout(() => leafletMap.invalidateSize(), 100);
 }
 
-// ── Supabase: submit listing ──────────────────────────────────────────────────
-async function submitListing() {
-  var btn     = document.getElementById("lp-submit");
-  var name    = document.getElementById("lp-name").value.trim();
-  var phone   = document.getElementById("lp-phone").value.trim();
-  var email   = document.getElementById("lp-email").value.trim();
-  var lmode   = document.getElementById("lp-mode").value;
-  var ltype   = document.getElementById("lp-type").value;
-  var price   = parseInt(document.getElementById("lp-price").value) || 0;
-  var addr    = document.getElementById("lp-address").value.trim();
-  var suburb  = document.getElementById("lp-suburb").value.trim();
-  var city    = document.getElementById("lp-city").value.trim();
-  var province= document.getElementById("lp-province").value;
-  var beds    = parseInt(document.getElementById("lp-beds").value) || null;
-  var baths   = parseInt(document.getElementById("lp-baths").value) || null;
-  var garages = parseInt(document.getElementById("lp-garages").value) || null;
-  var size    = parseInt(document.getElementById("lp-size").value) || null;
-  var desc    = document.getElementById("lp-desc").value.trim();
-  var photo   = document.getElementById("lp-photo").value.trim();
+// ══════════════════════════════════════════════════════════════════════════════
+// LISTING WIZARD CONTROLLER
+// ══════════════════════════════════════════════════════════════════════════════
 
-  if (!name || !email || !lmode || !price || !addr) {
-    toast("Please fill in all required fields"); return;
+var LW = {
+  step: 0,
+  mode: 'buy',
+  propType: 'House',
+  userType: 'private',
+  features: [],
+  photos: [],       // { file, url, isObjectUrl }
+  coverIdx: 0,
+  autoSaveTimer: null,
+  autoSaveInterval: null
+};
+
+var LW_STEPS = [
+  { title: 'Listing information',  sub: 'Step 1 of 8 — What type of property?' },
+  { title: 'Property details',     sub: 'Step 2 of 8 — Price, size and rooms' },
+  { title: 'Location',             sub: 'Step 3 of 8 — Where is the property?' },
+  { title: 'Features',             sub: 'Step 4 of 8 — Select all that apply' },
+  { title: 'Description',          sub: 'Step 5 of 8 — Tell the story' },
+  { title: 'Photos',               sub: 'Step 6 of 8 — Show it off' },
+  { title: 'Contact details',      sub: 'Step 7 of 8 — How to reach you' },
+  { title: 'Preview & publish',    sub: 'Step 8 of 8 — Review your listing' }
+];
+
+function openListProp() {
+  if (!currentUser) {
+    afterAuth = 'list';
+    var prompt = document.getElementById('authListPrompt');
+    if (prompt) prompt.style.display = 'flex';
+    openSignIn(); return;
   }
-  btn.textContent = "Publishing…"; btn.disabled = true;
+  preFillContact();
+  document.getElementById('listingWizard').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  lwGoToStep(0);
+  lwStartAutoSave();
+}
 
-  // Auto-generate title from key fields
-  var loc = suburb || city || "South Africa";
-  var propType = ltype || "Property";
-  var title = beds ? (beds + "-bed " + propType + " in " + loc) : (propType + " in " + loc);
+function closeListProp() {
+  document.getElementById('listingWizard').classList.remove('open');
+  document.body.style.overflow = '';
+  lwStopAutoSave();
+}
+
+function preFillContact() {
+  if (!currentUser) return;
+  var name  = (currentUser.user_metadata && currentUser.user_metadata.full_name) ? currentUser.user_metadata.full_name : currentUser.email.split('@')[0];
+  var email = currentUser.email || '';
+  var n = document.getElementById('lw-name'),  e = document.getElementById('lw-email');
+  if (n && !n.value) n.value = name;
+  if (e && !e.value) e.value = email;
+}
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+function lwGoToStep(s) {
+  var panels = document.querySelectorAll('.lw-step-panel');
+  panels.forEach(function(p) { p.classList.remove('active'); });
+  var target = document.getElementById('lwPanel' + s);
+  if (target) target.classList.add('active');
+
+  LW.step = s;
+
+  // Header text
+  var info = LW_STEPS[s];
+  document.getElementById('lwStepTitle').textContent = info.title;
+  document.getElementById('lwStepSub').textContent   = info.sub;
+
+  // Back button visibility
+  document.getElementById('lwBackBtn').style.visibility = s === 0 ? 'hidden' : 'visible';
+
+  // Next button label
+  var nb = document.getElementById('lwNextBtn');
+  if (s === 7) {
+    nb.textContent = '🚀 Publish Listing';
+    nb.classList.add('publish');
+  } else {
+    nb.textContent = 'Continue →';
+    nb.classList.remove('publish');
+  }
+
+  // Progress dots
+  var dots  = document.querySelectorAll('.lw-step-dot');
+  var lines = document.querySelectorAll('.lw-step-line');
+  dots.forEach(function(d, i) {
+    d.classList.remove('active', 'done');
+    if (i < s) d.classList.add('done');
+    else if (i === s) d.classList.add('active');
+  });
+  lines.forEach(function(l, i) {
+    l.classList.toggle('done', i < s);
+  });
+
+  // Scroll body to top
+  var body = document.getElementById('lwBody');
+  if (body) body.scrollTop = 0;
+
+  // Populate preview on step 8
+  if (s === 7) lwBuildPreview();
+}
+
+function lwNext() {
+  if (LW.step === 7) { lwPublish(); return; }
+  if (!lwValidateStep(LW.step)) return;
+  lwGoToStep(LW.step + 1);
+}
+
+function lwBack() {
+  if (LW.step > 0) lwGoToStep(LW.step - 1);
+}
+
+function lwJump(s) {
+  if (s < LW.step) lwGoToStep(s);
+}
+
+// ── Validation ────────────────────────────────────────────────────────────────
+function lwValidateStep(s) {
+  if (s === 1) {
+    var price = document.getElementById('lw-price').value;
+    var rental = document.getElementById('lw-rental').value;
+    if (LW.mode === 'buy' && !price) { lwShakeField('lw-price'); toast('Please enter an asking price'); return false; }
+    if (LW.mode === 'rent' && !rental) { lwShakeField('lw-rental'); toast('Please enter a monthly rental'); return false; }
+  }
+  if (s === 2) {
+    var addr = document.getElementById('lw-address').value.trim();
+    if (!addr) { lwShakeField('lw-address'); toast('Please enter the street address'); return false; }
+  }
+  if (s === 4) {
+    var desc = document.getElementById('lw-desc').value.trim();
+    if (!desc) { lwShakeField('lw-desc'); toast('Please add a description'); return false; }
+  }
+  if (s === 6) {
+    var name  = document.getElementById('lw-name').value.trim();
+    var email = document.getElementById('lw-email').value.trim();
+    var phone = document.getElementById('lw-phone').value.trim();
+    if (!name)  { lwShakeField('lw-name');  toast('Please enter your name');  return false; }
+    if (!email) { lwShakeField('lw-email'); toast('Please enter your email'); return false; }
+    if (!phone) { lwShakeField('lw-phone'); toast('Please enter your phone number'); return false; }
+  }
+  return true;
+}
+
+function lwShakeField(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add('err');
+  el.style.animation = 'none';
+  el.offsetHeight; // reflow
+  el.style.animation = 'shake .3s ease';
+  setTimeout(function() { el.classList.remove('err'); el.style.animation = ''; }, 2000);
+}
+
+// ── Step 1 setters ────────────────────────────────────────────────────────────
+function lwSetMode(mode, btn) {
+  LW.mode = mode;
+  document.querySelectorAll('.lw-toggle-group .lw-toggle-btn').forEach(function(b) {
+    if (b.id === 'lwModeSale' || b.id === 'lwModeRent') b.classList.remove('sel');
+  });
+  btn.classList.add('sel');
+  document.getElementById('lwPriceField').style.display   = mode === 'buy'  ? '' : 'none';
+  document.getElementById('lwRentField').style.display    = mode === 'rent' ? '' : 'none';
+  document.getElementById('lwDepositField').style.display = mode === 'rent' ? '' : 'none';
+}
+
+function lwSetType(type, card) {
+  LW.propType = type;
+  document.querySelectorAll('#lwTypeGrid .lw-type-card').forEach(function(c) { c.classList.remove('sel'); });
+  card.classList.add('sel');
+  var noRooms = ['Plot','Commercial','Industrial','Farm'];
+  document.getElementById('lwBedroomSection').style.display = noRooms.indexOf(type) === -1 ? '' : 'none';
+}
+
+function lwSetUserType(type, btn) {
+  LW.userType = type;
+  document.querySelectorAll('.lw-toggle-group .lw-toggle-btn').forEach(function(b) {
+    if (b.id === 'lwUserPrivate' || b.id === 'lwUserAgent') b.classList.remove('sel');
+  });
+  btn.classList.add('sel');
+  document.getElementById('lwAgencyRow').style.display = type === 'agent' ? '' : 'none';
+}
+
+// ── Step 2: stepper inputs ─────────────────────────────────────────────────────
+function lwStep(id, delta) {
+  var el = document.getElementById(id);
+  var v = parseInt(el.value) || 0;
+  el.value = Math.max(0, v + delta);
+}
+
+// ── Step 4: feature chips ─────────────────────────────────────────────────────
+function lwToggleChip(el, feature) {
+  var i = LW.features.indexOf(feature);
+  if (i === -1) { LW.features.push(feature); el.classList.add('sel'); }
+  else          { LW.features.splice(i, 1);   el.classList.remove('sel'); }
+}
+
+// ── Step 5: char count ────────────────────────────────────────────────────────
+function lwUpdateCharCount() {
+  var ta  = document.getElementById('lw-desc');
+  var el  = document.getElementById('lwCharCount');
+  var len = ta ? ta.value.length : 0;
+  if (el) {
+    el.textContent = len + ' / 3000 characters';
+    el.className = 'lw-charcount' + (len > 2700 ? ' warn' : '');
+  }
+}
+
+// ── Step 6: photo upload ──────────────────────────────────────────────────────
+function lwDragOver(e) {
+  e.preventDefault(); e.stopPropagation();
+  document.getElementById('lwDropZone').classList.add('drag-over');
+}
+function lwDragLeave(e) {
+  document.getElementById('lwDropZone').classList.remove('drag-over');
+}
+function lwDrop(e) {
+  e.preventDefault(); e.stopPropagation();
+  document.getElementById('lwDropZone').classList.remove('drag-over');
+  lwFilesAdded(e.dataTransfer.files);
+}
+function lwFilesAdded(files) {
+  var max = 30; var maxSize = 10 * 1024 * 1024;
+  for (var i = 0; i < files.length; i++) {
+    if (LW.photos.length >= max) { toast('Maximum 30 photos allowed'); break; }
+    var f = files[i];
+    if (!f.type.match(/image\/(jpeg|png|webp)/)) { toast(f.name + ' is not a supported image type'); continue; }
+    if (f.size > maxSize) { toast(f.name + ' exceeds 10MB'); continue; }
+    (function(file) {
+      var url = URL.createObjectURL(file);
+      LW.photos.push({ file: file, url: url, isObjectUrl: true });
+      lwRenderPhotoGrid();
+    })(f);
+  }
+  // reset input so same file can be re-added
+  var inp = document.getElementById('lwPhotoInput');
+  if (inp) inp.value = '';
+}
+
+function lwRenderPhotoGrid() {
+  var grid  = document.getElementById('lwPhotoGrid');
+  var count = document.getElementById('lwPhotoCount');
+  var num   = document.getElementById('lwPhotoCountNum');
+  if (!grid) return;
+  grid.innerHTML = '';
+  LW.photos.forEach(function(p, i) {
+    var div = document.createElement('div');
+    div.className = 'lw-photo-thumb' + (i === LW.coverIdx ? ' cover' : '');
+    var img = document.createElement('img');
+    img.src = p.url; img.alt = 'Photo ' + (i+1);
+    var del = document.createElement('button');
+    del.className = 'lw-photo-del'; del.textContent = '✕';
+    del.onclick = (function(idx){ return function(e){ e.stopPropagation(); lwDeletePhoto(idx); }; })(i);
+    div.appendChild(img);
+    div.appendChild(del);
+    if (i === LW.coverIdx) {
+      var badge = document.createElement('div');
+      badge.className = 'lw-photo-cover-badge'; badge.textContent = 'Cover';
+      div.appendChild(badge);
+    } else {
+      var setCover = document.createElement('button');
+      setCover.className = 'lw-photo-set-cover'; setCover.textContent = 'Set cover';
+      setCover.onclick = (function(idx){ return function(e){ e.stopPropagation(); LW.coverIdx = idx; lwRenderPhotoGrid(); }; })(i);
+      div.appendChild(setCover);
+    }
+    grid.appendChild(div);
+  });
+  if (count) count.style.display = LW.photos.length ? 'block' : 'none';
+  if (num)   num.textContent = LW.photos.length;
+}
+
+function lwDeletePhoto(idx) {
+  var p = LW.photos[idx];
+  if (p.isObjectUrl) URL.revokeObjectURL(p.url);
+  LW.photos.splice(idx, 1);
+  if (LW.coverIdx >= LW.photos.length) LW.coverIdx = 0;
+  lwRenderPhotoGrid();
+}
+
+// ── Step 8: build preview ─────────────────────────────────────────────────────
+function lwBuildPreview() {
+  var mode    = LW.mode;
+  var price   = parseInt(document.getElementById('lw-price').value) || 0;
+  var rental  = parseInt(document.getElementById('lw-rental').value) || 0;
+  var title   = document.getElementById('lw-title').value.trim();
+  var suburb  = document.getElementById('lw-suburb').value.trim();
+  var city    = document.getElementById('lw-city').value.trim();
+  var province= document.getElementById('lw-province').value;
+  var beds    = parseInt(document.getElementById('lw-beds').value) || 0;
+  var baths   = parseInt(document.getElementById('lw-baths').value) || 0;
+  var garages = parseInt(document.getElementById('lw-garages').value) || 0;
+  var size    = parseInt(document.getElementById('lw-size').value) || 0;
+  var desc    = document.getElementById('lw-desc').value.trim();
+  var name    = document.getElementById('lw-name').value.trim();
+  var phone   = document.getElementById('lw-phone').value.trim();
+  var wa      = document.getElementById('lw-whatsapp').value.trim();
+
+  var modeEl = document.getElementById('lwPrevMode');
+  modeEl.textContent = mode === 'buy' ? 'For Sale' : 'To Rent';
+  modeEl.className   = 'lw-preview-mode' + (mode === 'rent' ? ' rent' : '');
+
+  var displayPrice = mode === 'buy' ? price : rental;
+  document.getElementById('lwPrevPrice').textContent = displayPrice ? 'R ' + displayPrice.toLocaleString() : '—';
+
+  document.getElementById('lwPrevTitle').textContent = title || (beds ? beds + '-bed ' + LW.propType : LW.propType);
+
+  var locParts = [suburb, city, province].filter(Boolean);
+  document.getElementById('lwPrevLocText').textContent = locParts.join(', ') || 'Location not set';
+
+  var stats = '';
+  if (beds)    stats += '<div class="lw-preview-stat">🛏 ' + beds + (beds===1?' bed':' beds') + '</div>';
+  if (baths)   stats += '<div class="lw-preview-stat">🚿 ' + baths + (baths===1?' bath':' baths') + '</div>';
+  if (garages) stats += '<div class="lw-preview-stat">🚗 ' + garages + (garages===1?' garage':' garages') + '</div>';
+  if (size)    stats += '<div class="lw-preview-stat">📐 ' + size + ' m²</div>';
+  document.getElementById('lwPrevStats').innerHTML = stats;
+
+  var feats = '';
+  LW.features.slice(0,6).forEach(function(f) {
+    feats += '<span class="lw-preview-feature-tag">' + f + '</span>';
+  });
+  document.getElementById('lwPrevFeatures').innerHTML = feats;
+
+  var descEl = document.getElementById('lwPrevDesc');
+  if (desc) { descEl.textContent = desc.substring(0, 200) + (desc.length > 200 ? '…' : ''); descEl.style.display = ''; }
+  else descEl.style.display = 'none';
+
+  document.getElementById('lwPrevAgentName').textContent  = name || 'Your name';
+  document.getElementById('lwPrevAgentPhone').textContent = phone || '—';
+  var initials = name ? name.split(' ').map(function(w){ return w[0]||''; }).join('').substring(0,2).toUpperCase() : 'AB';
+  document.getElementById('lwPrevInit').textContent = initials;
+
+  var waBtn = document.getElementById('lwPrevWa');
+  if (wa && document.getElementById('lw-show-wa').checked) {
+    waBtn.style.display = ''; waBtn.onclick = function(){ window.open('https://wa.me/27' + wa.replace(/^0/,'').replace(/\s/g,'')); };
+  } else waBtn.style.display = 'none';
+
+  var imgWrap = document.getElementById('lwPreviewImgWrap');
+  if (LW.photos.length > 0) {
+    imgWrap.innerHTML = '<img src="' + LW.photos[LW.coverIdx].url + '" alt="Cover photo" style="width:100%;height:100%;object-fit:cover">';
+  } else {
+    imgWrap.innerHTML = '<span>🏡</span>';
+  }
+}
+
+// ── Publish ───────────────────────────────────────────────────────────────────
+async function lwPublish() {
+  var btn = document.getElementById('lwNextBtn');
+  btn.textContent = 'Publishing…'; btn.disabled = true;
+
+  // Upload photos to Supabase Storage
+  var imgUrls = [];
+  var userId  = currentUser ? currentUser.id : 'anon';
+  var ts      = Date.now();
+
+  for (var pi = 0; pi < LW.photos.length; pi++) {
+    var ph = LW.photos[pi];
+    if (!ph.file) { imgUrls.push(ph.url); continue; }
+    var ext  = ph.file.name.split('.').pop() || 'jpg';
+    var path = 'listings/' + userId + '/' + ts + '/' + pi + '.' + ext;
+    var up   = await sb.storage.from('property-images').upload(path, ph.file, { upsert: true, contentType: ph.file.type });
+    if (!up.error) {
+      var pub = sb.storage.from('property-images').getPublicUrl(path);
+      imgUrls.push(pub.data.publicUrl);
+    }
+  }
+
+  // Reorder so cover is first
+  if (LW.coverIdx > 0 && imgUrls.length > 1) {
+    var cover = imgUrls.splice(LW.coverIdx, 1)[0];
+    imgUrls.unshift(cover);
+  }
+
+  // Build title
+  var suburb  = document.getElementById('lw-suburb').value.trim();
+  var city    = document.getElementById('lw-city').value.trim();
+  var beds    = parseInt(document.getElementById('lw-beds').value) || 0;
+  var manualTitle = document.getElementById('lw-title').value.trim();
+  var loc     = suburb || city || 'South Africa';
+  var autoTitle = beds ? (beds + '-bed ' + LW.propType + ' in ' + loc) : (LW.propType + ' in ' + loc);
+  var finalTitle = manualTitle || autoTitle;
 
   var payload = {
-    agent_name: name, agent_phone: phone || null, agent_email: email,
-    mode: lmode, type: ltype || null, price: price, title: title,
-    suburb: suburb || null, city: city || null, province: province || null,
-    beds: beds, baths: baths, garages: garages, size: size,
-    description: desc || null,
-    imgs: photo ? [photo] : [],
-    status: "active"
+    mode:         LW.mode,
+    type:         LW.propType,
+    title:        finalTitle,
+    price:        LW.mode === 'buy' ? (parseInt(document.getElementById('lw-price').value) || 0) : (parseInt(document.getElementById('lw-rental').value) || 0),
+    beds:         beds || null,
+    baths:        parseInt(document.getElementById('lw-baths').value) || null,
+    garages:      parseInt(document.getElementById('lw-garages').value) || null,
+    size:         parseInt(document.getElementById('lw-size').value) || null,
+    erf:          parseInt(document.getElementById('lw-erf').value) || null,
+    suburb:       suburb || null,
+    city:         city || null,
+    province:     document.getElementById('lw-province').value || null,
+    description:  document.getElementById('lw-desc').value.trim() || null,
+    agent_name:   document.getElementById('lw-name').value.trim(),
+    agent_phone:  document.getElementById('lw-phone').value.trim() || null,
+    agent_email:  document.getElementById('lw-email').value.trim(),
+    agent_agency: (LW.userType === 'agent' && document.getElementById('lw-agency').value.trim()) ? document.getElementById('lw-agency').value.trim() : 'Rent and Buy',
+    imgs:         imgUrls,
+    featured:     document.getElementById('lw-featured').checked,
+    status:       'active'
   };
-  var res = await sb.from("properties").insert([payload]).select().single();
 
-  btn.textContent = "Publish listing"; btn.disabled = false;
+  var res = await sb.from('properties').insert([payload]).select().single();
+
+  btn.textContent = '🚀 Publish Listing'; btn.disabled = false;
 
   if (res.error) {
-    toast("Could not publish — " + (res.error.message || "please try again")); return;
+    toast('Could not publish — ' + (res.error.message || 'please try again'));
+    return;
   }
 
-  // Add to local DATA and re-render immediately
+  // Add to local DATA and re-render
   var row = res.data;
   DATA.push({
     id: row.id, mode: row.mode, type: row.type,
     price: Number(row.price), beds: row.beds||0, baths: row.baths||0,
-    garages: row.garages||0, size: row.size||0, erf: null,
-    title: row.title, suburb: row.suburb||"", city: row.city||"",
-    province: row.province||"", desc: row.description||"",
-    featured: false, lat: null, lng: null,
+    garages: row.garages||0, size: row.size||0, erf: row.erf||null,
+    title: row.title, suburb: row.suburb||'', city: row.city||'',
+    province: row.province||'', desc: row.description||'',
+    featured: row.featured||false, lat: null, lng: null,
     agent: {
-      name: row.agent_name||"",
-      agency: "Rent and Buy",
-      init: (row.agent_name||"RB").substring(0,2).toUpperCase()
+      name: row.agent_name||'',
+      agency: row.agent_agency||'Rent and Buy',
+      init: (row.agent_name||'RB').substring(0,2).toUpperCase()
     },
-    imgs: row.imgs||[], soldDate: null, auctionDate: null,
-    days: 0
+    imgs: row.imgs||[], soldDate: null, auctionDate: null, days: 0
   });
   renderFeatured(); renderListings();
 
-  toast("Your property is now live!");
-  closeListProp();
+  // Clear draft
+  try { localStorage.removeItem('rab_lw_draft'); } catch(e){}
+
+  // Show success screen
+  document.getElementById('lwFooter').style.display = 'none';
+  document.querySelectorAll('.lw-step-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('lwSuccess').classList.add('show');
+}
+
+// ── Draft save / restore ──────────────────────────────────────────────────────
+function lwSaveDraft() {
+  try {
+    var draft = {
+      mode:     LW.mode, propType: LW.propType, userType: LW.userType,
+      features: LW.features,
+      title:    document.getElementById('lw-title').value,
+      price:    document.getElementById('lw-price').value,
+      rental:   document.getElementById('lw-rental').value,
+      deposit:  document.getElementById('lw-deposit').value,
+      size:     document.getElementById('lw-size').value,
+      erf:      document.getElementById('lw-erf').value,
+      beds:     document.getElementById('lw-beds').value,
+      baths:    document.getElementById('lw-baths').value,
+      garages:  document.getElementById('lw-garages').value,
+      address:  document.getElementById('lw-address').value,
+      suburb:   document.getElementById('lw-suburb').value,
+      city:     document.getElementById('lw-city').value,
+      province: document.getElementById('lw-province').value,
+      postal:   document.getElementById('lw-postal').value,
+      desc:     document.getElementById('lw-desc').value,
+      name:     document.getElementById('lw-name').value,
+      email:    document.getElementById('lw-email').value,
+      phone:    document.getElementById('lw-phone').value,
+      agency:   document.getElementById('lw-agency').value,
+      step:     LW.step
+    };
+    localStorage.setItem('rab_lw_draft', JSON.stringify(draft));
+    var as = document.getElementById('lwAutosave');
+    if (as) { as.textContent = '✓ Draft saved'; as.className = 'lw-autosave saved'; setTimeout(function(){ as.textContent = 'Draft saved'; as.className = 'lw-autosave saved'; }, 1500); }
+  } catch(e) {}
+}
+
+function lwStartAutoSave() {
+  lwStopAutoSave();
+  LW.autoSaveInterval = setInterval(lwSaveDraft, 30000);
+}
+function lwStopAutoSave() {
+  if (LW.autoSaveInterval) { clearInterval(LW.autoSaveInterval); LW.autoSaveInterval = null; }
+}
+
+function lwReset() {
+  LW.step = 0; LW.mode = 'buy'; LW.propType = 'House'; LW.userType = 'private';
+  LW.features = []; LW.photos = []; LW.coverIdx = 0;
+  // Reset footer + success
+  document.getElementById('lwFooter').style.display = '';
+  document.getElementById('lwSuccess').classList.remove('show');
 }
 
 // ── Supabase: load live listings ──────────────────────────────────────────────
