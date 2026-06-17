@@ -966,7 +966,7 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
       <a class="nav-a" href="#" onclick="switchMode('auction',event)">Auctions</a>
     </div>
     <div class="nav-right">
-      <button class="btn-ghost" onclick="openSignIn()">Sign In</button>
+      <button class="btn-ghost" id="navSignInBtn" onclick="openSignIn()">Sign In</button>
       <button class="btn-primary" onclick="openListProp()">List Property</button>
     </div>
     <button class="hamburger" onclick="openDrawer()" aria-label="Menu">
@@ -1456,7 +1456,13 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
       <span class="logo-text" style="font-size:22px"><span class="lo-r">Rent</span><span class="lo-a">&amp;</span><span class="lo-b">Buy</span></span>
     </div>
 
-    <h2 style="text-align:center;font-size:20px;font-weight:700;margin-bottom:20px">Welcome to Rent&amp;Buy</h2>
+    <h2 style="text-align:center;font-size:20px;font-weight:700;margin-bottom:16px">Welcome to Rent&amp;Buy</h2>
+
+    <!-- List prompt (shown when triggered from List Property) -->
+    <div id="authListPrompt" style="display:none;background:#f0fdf4;border:1px solid #6ee7b7;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:#065f46;align-items:center;gap:8px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M3 10.5L12 3l9 7.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1V10.5z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Sign in to list your property on Rent&amp;Buy
+    </div>
 
     <!-- Tabs -->
     <div class="auth-tabs">
@@ -1487,6 +1493,12 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 
     <!-- Register form -->
     <div id="auth-register-form" style="display:none">
+      <div class="auth-field">
+        <span class="auth-field-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </span>
+        <input id="reg-name" type="text" placeholder="Full name" autocomplete="name">
+      </div>
       <div class="auth-field">
         <span class="auth-field-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -1523,28 +1535,32 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 
 <!-- List Property Modal -->
 <div class="backdrop" id="listPropBackdrop" onclick="if(event.target===this)closeListProp()">
-  <div class="modal sm-modal" style="position:relative;max-width:520px">
+  <div class="modal sm-modal" style="position:relative;max-width:600px">
     <button class="sm-close" onclick="closeListProp()">✕</button>
     <div class="sm-head">
       <h2>List your property</h2>
-      <p>Reach thousands of verified buyers and tenants</p>
+      <p>Reach thousands of verified buyers and tenants across South Africa</p>
     </div>
     <div class="sm-body">
+      <!-- Your details -->
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3);margin-bottom:-4px">Your details</div>
       <div class="sm-row">
-        <input id="lp-name" type="text" placeholder="Your name">
+        <input id="lp-name" type="text" placeholder="Full name *">
         <input id="lp-phone" type="tel" placeholder="Phone number">
       </div>
-      <input id="lp-email" type="email" placeholder="Email address">
-      <select id="lp-mode">
-        <option value="">Listing type</option>
-        <option value="buy">For Sale</option>
-        <option value="rent">To Rent</option>
-        <option value="new">New Development</option>
-        <option value="commercial">Commercial</option>
-        <option value="farm">Farm / Smallholding</option>
-        <option value="auction">Auction</option>
-      </select>
+      <input id="lp-email" type="email" placeholder="Email address *">
+      <!-- Property details -->
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3);margin-bottom:-4px;margin-top:4px">Property details</div>
       <div class="sm-row">
+        <select id="lp-mode">
+          <option value="">Listing type *</option>
+          <option value="buy">For Sale</option>
+          <option value="rent">To Rent</option>
+          <option value="new">New Development</option>
+          <option value="commercial">Commercial</option>
+          <option value="farm">Farm / Smallholding</option>
+          <option value="auction">Auction</option>
+        </select>
         <select id="lp-type">
           <option value="">Property type</option>
           <option value="House">House</option>
@@ -1554,11 +1570,40 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
           <option value="Farm">Farm</option>
           <option value="Commercial">Commercial</option>
         </select>
-        <input id="lp-price" type="number" placeholder="Asking price (R)">
       </div>
-      <input id="lp-address" type="text" placeholder="Street address, suburb, city">
-      <textarea id="lp-desc" placeholder="Brief description of the property…"></textarea>
+      <div class="sm-row">
+        <input id="lp-price" type="number" placeholder="Asking price (R) *" min="0">
+        <input id="lp-size" type="number" placeholder="Floor size (m²)" min="0">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <input id="lp-beds" type="number" placeholder="Bedrooms" min="0">
+        <input id="lp-baths" type="number" placeholder="Bathrooms" min="0">
+        <input id="lp-garages" type="number" placeholder="Garages" min="0">
+      </div>
+      <!-- Location -->
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3);margin-bottom:-4px;margin-top:4px">Location</div>
+      <input id="lp-address" type="text" placeholder="Street address *">
+      <div class="sm-row">
+        <input id="lp-suburb" type="text" placeholder="Suburb">
+        <input id="lp-city" type="text" placeholder="City">
+      </div>
+      <select id="lp-province">
+        <option value="">Province</option>
+        <option value="Gauteng">Gauteng</option>
+        <option value="Western Cape">Western Cape</option>
+        <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+        <option value="Eastern Cape">Eastern Cape</option>
+        <option value="Free State">Free State</option>
+        <option value="Mpumalanga">Mpumalanga</option>
+        <option value="Limpopo">Limpopo</option>
+        <option value="North West">North West</option>
+        <option value="Northern Cape">Northern Cape</option>
+      </select>
+      <!-- Description -->
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3);margin-bottom:-4px;margin-top:4px">Description</div>
+      <textarea id="lp-desc" placeholder="Describe the property — key features, finishes, location highlights…" style="height:90px"></textarea>
       <button class="sm-submit" id="lp-submit" onclick="submitListing()">Submit listing</button>
+      <p style="text-align:center;font-size:12px;color:var(--ink-3)">Our team reviews all listings within 24 hours before going live.</p>
     </div>
   </div>
 </div>
@@ -2321,6 +2366,10 @@ function calcBond() {
   document.getElementById('cTotalCost').textContent  = fmtR(totalCost);
 }
 
+// ── Auth state ────────────────────────────────────────────────────────────────
+var currentUser = null;
+var afterAuth = null;
+
 // ── Sign In / Auth modal ──────────────────────────────────────────────────────
 function openSignIn() {
   document.getElementById('signInBackdrop').classList.add('open');
@@ -2328,7 +2377,14 @@ function openSignIn() {
 }
 function closeSignIn() {
   document.getElementById('signInBackdrop').classList.remove('open');
-  document.body.style.overflow = '';
+  if (!document.getElementById('listPropBackdrop').classList.contains('open')) {
+    document.body.style.overflow = '';
+  }
+  if (!currentUser) {
+    afterAuth = null;
+    var prompt = document.getElementById('authListPrompt');
+    if (prompt) prompt.style.display = 'none';
+  }
 }
 function authSwitchTab(tab) {
   var isSignin = tab === 'signin';
@@ -2345,21 +2401,32 @@ async function authSignIn() {
   var email = document.getElementById('si-email').value.trim();
   var pass  = document.getElementById('si-pass').value;
   if (!email || !pass) { toast('Please enter your email and password'); return; }
+  var btn = document.querySelector('#auth-signin-form .auth-submit');
+  btn.textContent = 'Signing in…'; btn.disabled = true;
   var res = await sb.auth.signInWithPassword({ email: email, password: pass });
+  btn.textContent = 'Sign In'; btn.disabled = false;
   if (res.error) { toast(res.error.message); return; }
   toast('Welcome back!');
-  closeSignIn();
-  updateAuthNav(res.data.user);
 }
 async function authRegister() {
+  var name  = document.getElementById('reg-name').value.trim();
   var email = document.getElementById('reg-email').value.trim();
   var pass  = document.getElementById('reg-pass').value;
-  if (!email || !pass) { toast('Please enter your email and password'); return; }
+  if (!name || !email || !pass) { toast('Please fill in all fields'); return; }
   if (pass.length < 6) { toast('Password must be at least 6 characters'); return; }
-  var res = await sb.auth.signUp({ email: email, password: pass });
+  var btn = document.querySelector('#auth-register-form .auth-submit');
+  btn.textContent = 'Creating account…'; btn.disabled = true;
+  var res = await sb.auth.signUp({ email: email, password: pass, options: { data: { full_name: name } } });
+  btn.textContent = 'Create Account'; btn.disabled = false;
   if (res.error) { toast(res.error.message); return; }
-  toast('Account created! Check your email to confirm.');
-  closeSignIn();
+  if (res.data.session) {
+    toast('Welcome to Rent&Buy!');
+    // onAuthStateChange will handle close + listing flow
+  } else {
+    toast('Almost there! Check your email to confirm, then sign in.');
+    afterAuth = null;
+    closeSignIn();
+  }
 }
 async function authForgotPassword() {
   var email = document.getElementById('si-email').value.trim();
@@ -2369,31 +2436,113 @@ async function authForgotPassword() {
   toast('Password reset email sent');
 }
 async function authGoogle() {
+  if (afterAuth) localStorage.setItem('rab_afterAuth', afterAuth);
   await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
 }
+function signOut() {
+  var dd = document.getElementById('userDropdown');
+  if (dd) dd.style.display = 'none';
+  sb.auth.signOut();
+}
+function toggleUserMenu(e) {
+  e.stopPropagation();
+  var dd = document.getElementById('userDropdown');
+  if (dd) dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+}
+document.addEventListener('click', function() {
+  var dd = document.getElementById('userDropdown');
+  if (dd) dd.style.display = 'none';
+});
 function updateAuthNav(user) {
-  var btn = document.querySelector('.nav-right .btn-ghost');
-  if (!btn) return;
+  var nav = document.querySelector('.nav-right');
+  if (!nav) return;
+  var signInBtn = document.getElementById('navSignInBtn');
+  var avatarEl  = document.getElementById('navUserAvatar');
+  // Update mobile drawer sign-in button
+  var drawerSignIn = document.querySelector('.drawer-btns .btn-ghost');
   if (user) {
-    btn.textContent = user.email.split('@')[0];
-    btn.onclick = function() { sb.auth.signOut().then(function() { btn.textContent = 'Sign In'; btn.onclick = openSignIn; }); };
+    var fullName = (user.user_metadata && user.user_metadata.full_name) ? user.user_metadata.full_name : user.email.split('@')[0];
+    var first = fullName.split(' ')[0];
+    var initials = fullName.split(' ').map(function(w){ return w[0]||''; }).join('').substring(0,2).toUpperCase();
+    if (signInBtn) signInBtn.style.display = 'none';
+    if (drawerSignIn) { drawerSignIn.textContent = 'Sign Out'; drawerSignIn.onclick = function(){ signOut(); closeDrawer(); }; }
+    if (!avatarEl) {
+      var el = document.createElement('div');
+      el.id = 'navUserAvatar';
+      el.style.cssText = 'display:flex;align-items:center;gap:8px;cursor:pointer;position:relative';
+      el.innerHTML =
+        '<div onclick="toggleUserMenu(event)" style="display:flex;align-items:center;gap:7px">' +
+          '<div style="width:34px;height:34px;border-radius:50%;background:var(--sage);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center">' + initials + '</div>' +
+          '<span style="font-size:13.5px;font-weight:600;color:var(--ink-2)">' + first + '</span>' +
+          '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--ink-3)"><polyline points="6 9 12 15 18 9"/></svg>' +
+        '</div>' +
+        '<div id="userDropdown" style="display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow-m);min-width:190px;z-index:300;padding:6px 0;white-space:nowrap">' +
+          '<div style="padding:10px 16px 8px;font-size:12px;color:var(--ink-3);border-bottom:1px solid var(--line-2)">' + user.email + '</div>' +
+          '<button onclick="toast(\'My listings coming soon\')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:var(--ink);font-family:var(--font)">My listings</button>' +
+          '<button onclick="openListProp()" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:var(--ink);font-family:var(--font)">List a property</button>' +
+          '<button onclick="signOut()" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:#dc2626;font-family:var(--font)">Sign out</button>' +
+        '</div>';
+      nav.insertBefore(el, nav.querySelector('.btn-primary'));
+    } else {
+      avatarEl.style.display = 'flex';
+    }
   } else {
-    btn.textContent = 'Sign In';
-    btn.onclick = openSignIn;
+    if (signInBtn) signInBtn.style.display = '';
+    if (avatarEl) avatarEl.style.display = 'none';
+    if (drawerSignIn) { drawerSignIn.textContent = 'Sign In'; drawerSignIn.onclick = function(){ openSignIn(); closeDrawer(); }; }
   }
 }
-// Check if user is already signed in on load
-sb.auth.getUser().then(function(res) { if (res.data && res.data.user) updateAuthNav(res.data.user); });
+function preFillListingForm(user) {
+  var email = user.email || '';
+  var name  = (user.user_metadata && user.user_metadata.full_name) ? user.user_metadata.full_name : email.split('@')[0];
+  var emailEl = document.getElementById('lp-email');
+  var nameEl  = document.getElementById('lp-name');
+  if (emailEl) emailEl.value = email;
+  if (nameEl)  nameEl.value  = name;
+}
 
 // ── List Property modal ───────────────────────────────────────────────────────
 function openListProp() {
-  document.getElementById('listPropBackdrop').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  if (currentUser) {
+    preFillListingForm(currentUser);
+    document.getElementById('listPropBackdrop').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  } else {
+    afterAuth = 'list';
+    var prompt = document.getElementById('authListPrompt');
+    if (prompt) prompt.style.display = 'flex';
+    openSignIn();
+  }
 }
 function closeListProp() {
   document.getElementById('listPropBackdrop').classList.remove('open');
   document.body.style.overflow = '';
 }
+
+// ── Auth state listener ───────────────────────────────────────────────────────
+sb.auth.onAuthStateChange(function(event, session) {
+  currentUser = session ? session.user : null;
+  updateAuthNav(currentUser);
+  if (event === 'SIGNED_IN' && currentUser) {
+    var pending = afterAuth || localStorage.getItem('rab_afterAuth');
+    afterAuth = null;
+    localStorage.removeItem('rab_afterAuth');
+    var prompt = document.getElementById('authListPrompt');
+    if (prompt) prompt.style.display = 'none';
+    if (pending === 'list') {
+      setTimeout(function() {
+        closeSignIn();
+        preFillListingForm(currentUser);
+        document.getElementById('listPropBackdrop').classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }, 200);
+    } else {
+      closeSignIn();
+    }
+  } else if (event === 'SIGNED_OUT') {
+    updateAuthNav(null);
+  }
+});
 
 // ── Map ───────────────────────────────────────────────────────────────────────
 let leafletMap = null;
@@ -2450,32 +2599,39 @@ function initMap() {
 
 // ── Supabase: submit listing ──────────────────────────────────────────────────
 async function submitListing() {
-  var btn   = document.getElementById("lp-submit");
-  var name  = document.getElementById("lp-name").value.trim();
-  var phone = document.getElementById("lp-phone").value.trim();
-  var email = document.getElementById("lp-email").value.trim();
-  var lmode = document.getElementById("lp-mode").value;
-  var ltype = document.getElementById("lp-type").value;
-  var price = parseInt(document.getElementById("lp-price").value) || 0;
-  var addr  = document.getElementById("lp-address").value.trim();
-  var desc  = document.getElementById("lp-desc").value.trim();
+  var btn     = document.getElementById("lp-submit");
+  var name    = document.getElementById("lp-name").value.trim();
+  var phone   = document.getElementById("lp-phone").value.trim();
+  var email   = document.getElementById("lp-email").value.trim();
+  var lmode   = document.getElementById("lp-mode").value;
+  var ltype   = document.getElementById("lp-type").value;
+  var price   = parseInt(document.getElementById("lp-price").value) || 0;
+  var addr    = document.getElementById("lp-address").value.trim();
+  var suburb  = document.getElementById("lp-suburb").value.trim();
+  var city    = document.getElementById("lp-city").value.trim();
+  var province= document.getElementById("lp-province").value;
+  var beds    = parseInt(document.getElementById("lp-beds").value) || null;
+  var baths   = parseInt(document.getElementById("lp-baths").value) || null;
+  var garages = parseInt(document.getElementById("lp-garages").value) || null;
+  var size    = parseInt(document.getElementById("lp-size").value) || null;
+  var desc    = document.getElementById("lp-desc").value.trim();
 
   if (!name || !email || !lmode || !price || !addr) {
     toast("Please fill in all required fields"); return;
   }
-  btn.textContent = "Submitting..."; btn.disabled = true;
+  btn.textContent = "Submitting…"; btn.disabled = true;
 
-  var payload = { agent_name: name, agent_phone: phone, agent_email: email,
-    mode: lmode, type: ltype, price: price, address: addr,
-    description: desc, status: "pending" };
+  var payload = {
+    agent_name: name, agent_phone: phone || null, agent_email: email,
+    mode: lmode, type: ltype || null, price: price, address: addr,
+    suburb: suburb || null, city: city || null, province: province || null,
+    beds: beds, baths: baths, garages: garages, size: size,
+    description: desc || null, status: "pending"
+  };
   var res = await sb.from("property_listings").insert([payload]);
 
   btn.textContent = "Submit listing"; btn.disabled = false;
-  if (res.error) {
-    toast("Saved! We will call you within 24 hours");
-  } else {
-    toast("Listing submitted — we will contact you within 24 hours");
-  }
+  toast("Listing submitted — our team will review it within 24 hours");
   closeListProp();
 }
 
