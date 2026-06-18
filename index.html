@@ -4047,11 +4047,8 @@ window.addEventListener('beforeinstallprompt', function(e) {
 function pwaCheckShow() {
   // Don't show if already dismissed today
   try {
-    var dismissed = localStorage.getItem('rab_pwa_dismissed');
-    if (dismissed) {
-      var daysAgo = (Date.now() - parseInt(dismissed)) / 86400000;
-      if (daysAgo < 1) return;
-    }
+    var today = new Date().toISOString().slice(0, 10);
+    if (localStorage.getItem('rab_pwa_dismissed_' + today)) return;
   } catch(ex) {}
   // Don't show if already installed (standalone mode)
   if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) return;
@@ -4079,7 +4076,7 @@ function pwaTriggerInstall() {
     _pwaPromptEvent.prompt();
     _pwaPromptEvent.userChoice.then(function(result) {
       if (result.outcome === 'accepted') {
-        try { localStorage.setItem('rab_pwa_dismissed', Date.now().toString()); } catch(e) {}
+        try { var today = new Date().toISOString().slice(0,10); localStorage.setItem('rab_pwa_dismissed_' + today, '1'); } catch(e) {}
       }
       _pwaPromptEvent = null;
     });
@@ -4093,7 +4090,7 @@ function pwaTriggerInstall() {
 function pwaDismiss() {
   var b = document.getElementById('pwaBanner');
   if (b) b.style.display = 'none';
-  try { localStorage.setItem('rab_pwa_dismissed', Date.now().toString()); } catch(e) {}
+  try { var today = new Date().toISOString().slice(0,10); localStorage.setItem('rab_pwa_dismissed_' + today, '1'); } catch(e) {}
 }
 
 function lwStartAutoSave() {
