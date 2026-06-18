@@ -2051,6 +2051,14 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
     </div>
   </div>
 
+  <!-- Draft restore banner -->
+  <div id="lwDraftBanner" style="display:none;background:#fff;border-bottom:1px solid var(--line);padding:12px 24px;display:none;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+    <span style="font-size:13.5px;color:var(--ink-2);flex:1">You have a saved draft from <strong id="lwDraftDate"></strong></span>
+    <button onclick="lwRestoreDraft()" style="padding:7px 16px;border-radius:7px;background:var(--navy);color:#fff;border:none;font-size:13px;font-weight:600;cursor:pointer">Restore draft</button>
+    <button onclick="lwDismissDraftBanner()" style="padding:7px 12px;border-radius:7px;background:transparent;color:var(--ink-3);border:1px solid var(--line);font-size:13px;cursor:pointer">Discard</button>
+  </div>
+
   <!-- Scrollable body -->
   <div class="lw-body" id="lwBody">
     <div class="lw-steps-wrap">
@@ -2427,6 +2435,19 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
 
 </div>
 <!-- ══ End Listing Wizard ══════════════════════════════════════════════════ -->
+
+<!-- PWA Install Banner -->
+<div id="pwaBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:1500;background:var(--navy);color:#fff;padding:14px 20px;display:none;align-items:center;gap:12px;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
+  <div style="width:40px;height:40px;border-radius:10px;background:var(--sage);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  </div>
+  <div style="flex:1;min-width:0">
+    <div style="font-size:14px;font-weight:700">Add to Home Screen</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:1px">Install Rent &amp; Buy for quick access</div>
+  </div>
+  <button onclick="pwaTriggerInstall()" style="padding:9px 18px;border-radius:8px;background:var(--sage);color:#fff;border:none;font-size:13.5px;font-weight:700;cursor:pointer;white-space:nowrap">Install</button>
+  <button onclick="pwaDismiss()" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.12);border:none;color:rgba(255,255,255,.7);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0" aria-label="Close">✕</button>
+</div>
 
 <!-- Map Modal -->
 <div class="backdrop" id="mapBackdrop" onclick="if(event.target===this)closeMap()" style="align-items:flex-start;padding:0">
@@ -3430,6 +3451,30 @@ function openListProp() {
   document.body.style.overflow = 'hidden';
   lwGoToStep(0);
   lwStartAutoSave();
+  lwCheckDraftBanner();
+}
+
+function lwCheckDraftBanner() {
+  try {
+    var raw = localStorage.getItem('rab_lw_draft');
+    if (!raw) return;
+    var draft = JSON.parse(raw);
+    if (!draft || !draft.savedAt) return;
+    var banner = document.getElementById('lwDraftBanner');
+    var dateEl = document.getElementById('lwDraftDate');
+    if (!banner) return;
+    var saved = new Date(draft.savedAt);
+    var now   = new Date();
+    var diffMs = now - saved;
+    var diffMin = Math.floor(diffMs / 60000);
+    var label;
+    if (diffMin < 2)       label = 'just now';
+    else if (diffMin < 60) label = diffMin + ' minutes ago';
+    else if (diffMin < 1440) label = Math.floor(diffMin/60) + ' hours ago';
+    else                   label = Math.floor(diffMin/1440) + ' days ago';
+    if (dateEl) dateEl.textContent = label;
+    banner.style.display = 'flex';
+  } catch(e) {}
 }
 
 function closeListProp() {
@@ -3936,6 +3981,7 @@ async function lwPublish() {
 function lwSaveDraft() {
   try {
     var draft = {
+      savedAt:  new Date().toISOString(),
       mode:     LW.mode, propType: LW.propType, userType: LW.userType,
       features: LW.features,
       title:    document.getElementById('lw-title').value,
@@ -3963,6 +4009,71 @@ function lwSaveDraft() {
     var as = document.getElementById('lwAutosave');
     if (as) { as.textContent = '✓ Draft saved'; as.className = 'lw-autosave saved'; setTimeout(function(){ as.textContent = 'Draft saved'; as.className = 'lw-autosave saved'; }, 1500); }
   } catch(e) {}
+}
+
+function lwRestoreDraft() {
+  try {
+    var raw = localStorage.getItem('rab_lw_draft');
+    if (!raw) return;
+    var d = JSON.parse(raw);
+    // Restore LW state
+    if (d.mode)     { LW.mode = d.mode; lwSetMode(d.mode, document.getElementById(d.mode==='rent'?'lwModeRent':'lwModeSale')); }
+    if (d.propType) { LW.propType = d.propType; var card = Array.from(document.querySelectorAll('#lwTypeGrid .lw-type-card')).find(function(c){ return c.getAttribute('onclick') && c.getAttribute('onclick').includes("'"+d.propType+"'"); }); if (card) lwSetType(d.propType, card); }
+    if (d.userType) { LW.userType = d.userType; lwSetUserType(d.userType, document.getElementById(d.userType==='agent'?'lwUserAgent':'lwUserPrivate')); }
+    if (d.features) { LW.features = d.features; document.querySelectorAll('#lwFeatureChips .lw-chip').forEach(function(c){ var f = c.getAttribute('onclick').match(/'([^']+)'/); if (f && d.features.indexOf(f[1]) !== -1) c.classList.add('sel'); else c.classList.remove('sel'); }); }
+    // Restore field values
+    var fields = ['title','price','rental','deposit','size','erf','beds','baths','garages','address','suburb','city','province','postal','desc','name','email','phone','agency'];
+    fields.forEach(function(f){ var el = document.getElementById('lw-'+f); if (el && d[f] !== undefined) el.value = d[f]; });
+    // Hide banner, go to saved step
+    lwDismissDraftBanner();
+    lwGoToStep(d.step || 0);
+    toast('Draft restored');
+  } catch(e) { toast('Could not restore draft'); }
+}
+
+function lwDismissDraftBanner() {
+  var b = document.getElementById('lwDraftBanner');
+  if (b) b.style.display = 'none';
+}
+
+// ── PWA install prompt ────────────────────────────────────────────────────────
+var _pwaPromptEvent = null;
+
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  _pwaPromptEvent = e;
+  // Show banner if not dismissed in the last 30 days
+  try {
+    var dismissed = localStorage.getItem('rab_pwa_dismissed');
+    if (dismissed) {
+      var daysAgo = (Date.now() - parseInt(dismissed)) / 86400000;
+      if (daysAgo < 30) return;
+    }
+  } catch(ex) {}
+  setTimeout(function() {
+    var b = document.getElementById('pwaBanner');
+    if (b) b.style.display = 'flex';
+  }, 3000); // wait 3s before showing
+});
+
+function pwaTriggerInstall() {
+  var b = document.getElementById('pwaBanner');
+  if (b) b.style.display = 'none';
+  if (_pwaPromptEvent) {
+    _pwaPromptEvent.prompt();
+    _pwaPromptEvent.userChoice.then(function(result) {
+      if (result.outcome === 'accepted') {
+        try { localStorage.setItem('rab_pwa_dismissed', Date.now().toString()); } catch(e) {}
+      }
+      _pwaPromptEvent = null;
+    });
+  }
+}
+
+function pwaDismiss() {
+  var b = document.getElementById('pwaBanner');
+  if (b) b.style.display = 'none';
+  try { localStorage.setItem('rab_pwa_dismissed', Date.now().toString()); } catch(e) {}
 }
 
 function lwStartAutoSave() {
