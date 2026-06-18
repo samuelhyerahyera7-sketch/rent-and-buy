@@ -4050,10 +4050,8 @@ window.addEventListener('beforeinstallprompt', function(e) {
       if (daysAgo < 1) return;
     }
   } catch(ex) {}
-  setTimeout(function() {
-    var b = document.getElementById('pwaBanner');
-    if (b) b.style.display = 'flex';
-  }, 3000); // wait 3s before showing
+  var b = document.getElementById('pwaBanner');
+  if (b) b.style.display = 'flex';
 });
 
 function pwaTriggerInstall() {
