@@ -4042,12 +4042,12 @@ var _pwaPromptEvent = null;
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
   _pwaPromptEvent = e;
-  // Show banner if not dismissed in the last 30 days
+  // Show banner if not dismissed today
   try {
     var dismissed = localStorage.getItem('rab_pwa_dismissed');
     if (dismissed) {
       var daysAgo = (Date.now() - parseInt(dismissed)) / 86400000;
-      if (daysAgo < 30) return;
+      if (daysAgo < 1) return;
     }
   } catch(ex) {}
   setTimeout(function() {
