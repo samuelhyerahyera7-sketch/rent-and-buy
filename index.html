@@ -1102,8 +1102,10 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
   box-shadow: 0 0 0 3px rgba(45,106,79,.12);
 }
 .lw-type-card-icon {
-  font-size: 22px; line-height: 1;
+  width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+  color: var(--ink-3);
 }
+.lw-type-card.sel .lw-type-card-icon { color: var(--sage); }
 .lw-type-card-label {
   font-size: 12px; font-weight: 600; color: var(--ink-2); line-height: 1.3;
 }
@@ -2002,29 +2004,29 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
 
         <div class="lw-field"><label>Listing purpose</label>
           <div class="lw-toggle-group">
-            <button class="lw-toggle-btn sel" id="lwModeSale" onclick="lwSetMode('buy',this)">🏷️ For Sale</button>
-            <button class="lw-toggle-btn" id="lwModeRent" onclick="lwSetMode('rent',this)">🔑 To Rent</button>
+            <button class="lw-toggle-btn sel" id="lwModeSale" onclick="lwSetMode('buy',this)">For Sale</button>
+            <button class="lw-toggle-btn" id="lwModeRent" onclick="lwSetMode('rent',this)">To Rent</button>
           </div>
         </div>
 
         <div class="lw-field"><label>Property type</label>
           <div class="lw-type-grid" id="lwTypeGrid">
-            <div class="lw-type-card sel" onclick="lwSetType('House',this)"><div class="lw-type-card-icon">🏡</div><div class="lw-type-card-label">House</div></div>
-            <div class="lw-type-card" onclick="lwSetType('Apartment',this)"><div class="lw-type-card-icon">🏢</div><div class="lw-type-card-label">Apartment / Flat</div></div>
-            <div class="lw-type-card" onclick="lwSetType('Townhouse',this)"><div class="lw-type-card-icon">🏘️</div><div class="lw-type-card-label">Townhouse</div></div>
-            <div class="lw-type-card" onclick="lwSetType('Plot',this)"><div class="lw-type-card-icon">📐</div><div class="lw-type-card-label">Vacant Land</div></div>
-            <div class="lw-type-card" onclick="lwSetType('Commercial',this)"><div class="lw-type-card-icon">🏪</div><div class="lw-type-card-label">Commercial</div></div>
-            <div class="lw-type-card" onclick="lwSetType('Industrial',this)"><div class="lw-type-card-icon">🏭</div><div class="lw-type-card-label">Industrial</div></div>
-            <div class="lw-type-card" onclick="lwSetType('Farm',this)"><div class="lw-type-card-icon">🌾</div><div class="lw-type-card-label">Farm</div></div>
-            <div class="lw-type-card" onclick="lwSetType('Holiday',this)"><div class="lw-type-card-icon">🏖️</div><div class="lw-type-card-label">Holiday Home</div></div>
-            <div class="lw-type-card" onclick="lwSetType('Retirement',this)"><div class="lw-type-card-icon">🌿</div><div class="lw-type-card-label">Retirement</div></div>
+            <div class="lw-type-card sel" onclick="lwSetType('House',this)"><div class="lw-type-card-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="lw-type-card-label">House</div></div>
+            <div class="lw-type-card" onclick="lwSetType('Apartment',this)"><div class="lw-type-card-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="1"/><path d="M9 22v-4h6v4"/><rect x="8" y="6" width="3" height="3" rx=".5"/><rect x="13" y="6" width="3" height="3" rx=".5"/><rect x="8" y="12" width="3" height="3" rx=".5"/><rect x="13" y="12" width="3" height="3" rx=".5"/></svg></div><div class="lw-type-card-label">Apartment / Flat</div></div>
+            <div class="lw-type-card" onclick="lwSetType('Townhouse',this)"><div class="lw-type-card-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 22V12l5-5 5 5v10"/><path d="M13 22V12l5-5 5 5v10"/><line x1="1" y1="22" x2="23" y2="22"/></svg></div><div class="lw-type-card-label">Townhouse</div></div>
+            <div class="lw-type-card" onclick="lwSetType('Plot',this)"><div class="lw-type-card-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="1"/><path d="M2 8h20"/><path d="M2 14h20"/><path d="M8 2v20"/><path d="M14 2v20"/></svg></div><div class="lw-type-card-label">Vacant Land</div></div>
+            <div class="lw-type-card" onclick="lwSetType('Commercial',this)"><div class="lw-type-card-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7h20v15H2z"/><path d="M2 7l3-4h14l3 4"/><line x1="10" y1="22" x2="10" y2="14"/><line x1="14" y1="22" x2="14" y2="14"/><rect x="10" y="14" width="4" height="8"/></svg></div><div class="lw-type-card-label">Commercial</div></div>
+            <div class="lw-type-card" onclick="lwSetType('Industrial',this)"><div class="lw-type-card-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20V9l5-3v3l5-3v3l5-3v14H2z"/><rect x="5" y="14" width="3" height="6"/><rect x="11" y="14" width="3" height="6"/><line x1="17" y1="14" x2="19" y2="14"/></svg></div><div class="lw-type-card-label">Industrial</div></div>
+            <div class="lw-type-card" onclick="lwSetType('Farm',this)"><div class="lw-type-card-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V12a1 1 0 0 1 .3-.7l5.5-5.5a1 1 0 0 1 1.4 0L15 10.6"/><path d="M15 22V10.6l4-4 3 3V22"/><line x1="3" y1="22" x2="21" y2="22"/><path d="M6 16h4"/><path d="M6 19h4"/></svg></div><div class="lw-type-card-label">Farm</div></div>
+            <div class="lw-type-card" onclick="lwSetType('Holiday',this)"><div class="lw-type-card-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M12 2v2"/><path d="M12 14v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/><path d="M2 20c2-2 4-3 10-3s8 1 10 3"/></svg></div><div class="lw-type-card-label">Holiday Home</div></div>
+            <div class="lw-type-card" onclick="lwSetType('Retirement',this)"><div class="lw-type-card-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 12C12 7 7 4 3 6c2 4 5 6 9 6z"/><path d="M12 12c0-5 5-8 9-6-2 4-5 6-9 6z"/></svg></div><div class="lw-type-card-label">Retirement</div></div>
           </div>
         </div>
 
         <div class="lw-field" style="margin-top:4px"><label>Who is listing?</label>
           <div class="lw-toggle-group">
-            <button class="lw-toggle-btn sel" id="lwUserPrivate" onclick="lwSetUserType('private',this)">👤 Private Owner</button>
-            <button class="lw-toggle-btn" id="lwUserAgent" onclick="lwSetUserType('agent',this)">🏢 Estate Agent</button>
+            <button class="lw-toggle-btn sel" id="lwUserPrivate" onclick="lwSetUserType('private',this)">Private Owner</button>
+            <button class="lw-toggle-btn" id="lwUserAgent" onclick="lwSetUserType('agent',this)">Estate Agent</button>
           </div>
         </div>
 
@@ -2136,7 +2138,7 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
           <div class="lw-field"><label>Featured listing</label>
             <div class="lw-check-row" onclick="this.querySelector('input').click()">
               <input type="checkbox" id="lw-featured">
-              <span>⭐ Feature my listing</span>
+              <span>Feature my listing</span>
             </div>
           </div>
         </div>
@@ -2147,7 +2149,7 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
         <h2>Where is it?</h2>
         <p>Accurate location helps buyers find your property.</p>
 
-        <div class="lw-note">📍 Start typing your street address and we'll help fill in the suburb, city and province automatically.</div>
+        <div class="lw-note">Start typing your street address and we'll help fill in the suburb, city and province automatically.</div>
 
         <div class="lw-field"><label>Street address <span style="color:#ef4444">*</span></label>
           <input id="lw-address" class="lw-input" type="text" placeholder="e.g. 14 Oak Avenue">
@@ -2187,24 +2189,24 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
         <p>Tap all the features that apply — these help buyers filter search results.</p>
 
         <div class="lw-chips" id="lwFeatureChips">
-          <div class="lw-chip" onclick="lwToggleChip(this,'Pet Friendly')">🐾 Pet Friendly</div>
-          <div class="lw-chip" onclick="lwToggleChip(this,'Fibre Ready')">📡 Fibre Ready</div>
-          <div class="lw-chip" onclick="lwToggleChip(this,'Swimming Pool')">🏊 Swimming Pool</div>
-          <div class="lw-chip" onclick="lwToggleChip(this,'Security Estate')">🔒 Security Estate</div>
-          <div class="lw-chip" onclick="lwToggleChip(this,'Garden')">🌳 Garden</div>
-          <div class="lw-chip" onclick="lwToggleChip(this,'Balcony')">🏗️ Balcony</div>
-          <div class="lw-chip" onclick="lwToggleChip(this,'Built-in Braai')">🔥 Built-in Braai</div>
-          <div class="lw-chip" onclick="lwToggleChip(this,'Air Conditioning')">❄️ Air Conditioning</div>
-          <div class="lw-chip" onclick="lwToggleChip(this,'Solar Power')">☀️ Solar Power</div>
-          <div class="lw-chip" onclick="lwToggleChip(this,'Backup Water')">💧 Backup Water</div>
-          <div class="lw-chip" onclick="lwToggleChip(this,'Backup Power')">🔋 Backup Power</div>
-          <div class="lw-chip" onclick="lwToggleChip(this,'Staff Quarters')">🏠 Staff Quarters</div>
-          <div class="lw-chip" onclick="lwToggleChip(this,'Flatlet')">🛏️ Flatlet</div>
-          <div class="lw-chip" onclick="lwToggleChip(this,'Wheelchair Friendly')">♿ Wheelchair Friendly</div>
-          <div class="lw-chip" onclick="lwToggleChip(this,'Furnished')">🪑 Furnished</div>
-          <div class="lw-chip" onclick="lwToggleChip(this,'Gated Community')">🚧 Gated Community</div>
-          <div class="lw-chip" onclick="lwToggleChip(this,'CCTV')">📷 CCTV</div>
-          <div class="lw-chip" onclick="lwToggleChip(this,'Borehole')">🌊 Borehole</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Pet Friendly')">Pet Friendly</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Fibre Ready')">Fibre Ready</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Swimming Pool')">Swimming Pool</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Security Estate')">Security Estate</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Garden')">Garden</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Balcony')">Balcony</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Built-in Braai')">Built-in Braai</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Air Conditioning')">Air Conditioning</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Solar Power')">Solar Power</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Backup Water')">Backup Water</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Backup Power')">Backup Power</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Staff Quarters')">Staff Quarters</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Flatlet')">Flatlet</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Wheelchair Friendly')">Wheelchair Friendly</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Furnished')">Furnished</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Gated Community')">Gated Community</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'CCTV')">CCTV</div>
+          <div class="lw-chip" onclick="lwToggleChip(this,'Borehole')">Borehole</div>
         </div>
       </div>
 
@@ -2213,7 +2215,7 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
         <h2>Describe your property</h2>
         <p>A great description increases enquiries significantly.</p>
 
-        <div class="lw-note">💡 <strong>Tip:</strong> Mention nearby schools, shopping centres, security, transport routes, finishes, and any unique selling points.</div>
+        <div class="lw-note"><strong>Tip:</strong> Mention nearby schools, shopping centres, security, transport routes, finishes, and any unique selling points.</div>
 
         <div class="lw-field">
           <label>Description <span style="color:#ef4444">*</span></label>
@@ -2241,7 +2243,9 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
         <div class="lw-photo-zone" id="lwDropZone"
           ondragover="lwDragOver(event)" ondragleave="lwDragLeave(event)" ondrop="lwDrop(event)">
           <input type="file" id="lwPhotoInput" accept="image/jpeg,image/png,image/webp" multiple onchange="lwFilesAdded(this.files)">
-          <div class="lw-photo-zone-icon">📸</div>
+          <div class="lw-photo-zone-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink-4)"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
           <h4>Drag & drop photos here</h4>
           <p>or tap to browse from your device</p>
           <p style="margin-top:4px;font-size:12px;color:var(--ink-4)">JPG, PNG, WEBP · Max 10MB each · Up to 30 photos</p>
@@ -2282,15 +2286,15 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
 
         <label class="lw-check-row">
           <input type="checkbox" id="lw-show-phone" checked>
-          <span>📞 Show phone number publicly</span>
+          <span>Show phone number publicly</span>
         </label>
         <label class="lw-check-row">
           <input type="checkbox" id="lw-show-wa" checked>
-          <span>💬 Show WhatsApp number publicly</span>
+          <span>Show WhatsApp number publicly</span>
         </label>
         <label class="lw-check-row">
           <input type="checkbox" id="lw-show-email" checked>
-          <span>✉️ Receive enquiries by email</span>
+          <span>Receive enquiries by email</span>
         </label>
       </div>
 
@@ -2329,14 +2333,16 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
         </div>
 
         <div style="margin-top:20px;padding:16px;background:var(--sage-l);border-radius:10px;border:1px solid rgba(45,106,79,.2)">
-          <div style="font-size:13.5px;font-weight:700;color:var(--sage);margin-bottom:4px">✅ Ready to publish</div>
+          <div style="font-size:13.5px;font-weight:700;color:var(--sage);margin-bottom:4px;display:flex;align-items:center;gap:6px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Ready to publish</div>
           <div style="font-size:13px;color:var(--ink-2)">Your listing will be live immediately and visible to thousands of buyers and tenants across South Africa.</div>
         </div>
       </div>
 
       <!-- ── Success screen ──────────────────────────────────── -->
       <div class="lw-success" id="lwSuccess">
-        <div class="lw-success-icon">🎉</div>
+        <div class="lw-success-icon">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
         <h2>Your listing is live!</h2>
         <p>Your property is now visible to thousands of buyers and tenants across South Africa.</p>
         <div class="lw-success-btns">
@@ -3400,7 +3406,7 @@ function lwGoToStep(s) {
   // Next button label
   var nb = document.getElementById('lwNextBtn');
   if (s === 7) {
-    nb.textContent = '🚀 Publish Listing';
+    nb.textContent = 'Publish Listing';
     nb.classList.add('publish');
   } else {
     nb.textContent = 'Continue →';
@@ -3570,6 +3576,11 @@ function lwRenderPhotoGrid() {
   if (!grid) return;
   grid.innerHTML = '';
   LW.photos.forEach(function(p, i) {
+    // Wrapper card
+    var card = document.createElement('div');
+    card.style.cssText = 'display:flex;flex-direction:column;gap:6px';
+
+    // Thumb
     var div = document.createElement('div');
     div.className = 'lw-photo-thumb' + (i === LW.coverIdx ? ' cover' : '');
     var img = document.createElement('img');
@@ -3589,7 +3600,20 @@ function lwRenderPhotoGrid() {
       setCover.onclick = (function(idx){ return function(e){ e.stopPropagation(); LW.coverIdx = idx; lwRenderPhotoGrid(); }; })(i);
       div.appendChild(setCover);
     }
-    grid.appendChild(div);
+    card.appendChild(div);
+
+    // Caption input
+    var cap = document.createElement('input');
+    cap.type = 'text';
+    cap.placeholder = 'Add a caption…';
+    cap.value = p.caption || '';
+    cap.style.cssText = 'width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px;font-size:12px;font-family:var(--font);color:var(--ink);outline:none;background:var(--white)';
+    cap.addEventListener('focus', function(){ this.style.borderColor = 'var(--sage)'; });
+    cap.addEventListener('blur',  function(){ this.style.borderColor = 'var(--line)'; });
+    (function(idx){ cap.addEventListener('input', function(){ LW.photos[idx].caption = this.value; }); })(i);
+    card.appendChild(cap);
+
+    grid.appendChild(card);
   });
   if (count) count.style.display = LW.photos.length ? 'block' : 'none';
   if (num)   num.textContent = LW.photos.length;
@@ -3662,9 +3686,30 @@ function lwBuildPreview() {
 
   var imgWrap = document.getElementById('lwPreviewImgWrap');
   if (LW.photos.length > 0) {
-    imgWrap.innerHTML = '<img src="' + LW.photos[LW.coverIdx].url + '" alt="Cover photo" style="width:100%;height:100%;object-fit:cover">';
+    // Reorder so cover is first
+    var ordered = LW.photos.slice();
+    if (LW.coverIdx > 0) { var c = ordered.splice(LW.coverIdx,1)[0]; ordered.unshift(c); }
+    var mainHtml = '<img src="' + ordered[0].url + '" alt="Cover photo" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block">';
+    if (ordered.length > 1) {
+      mainHtml += '<div style="display:grid;grid-template-columns:repeat(' + Math.min(ordered.length - 1, 4) + ',1fr);gap:3px;margin-top:3px">';
+      for (var pi = 1; pi < Math.min(ordered.length, 5); pi++) {
+        var caption = ordered[pi].caption ? '<div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.55));color:#fff;font-size:10px;padding:10px 6px 4px;line-height:1.3">' + ordered[pi].caption + '</div>' : '';
+        mainHtml += '<div style="position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--line-2)">';
+        mainHtml += '<img src="' + ordered[pi].url + '" alt="Photo ' + (pi+1) + '" style="width:100%;height:100%;object-fit:cover">';
+        if (ordered.length > 5 && pi === 4) mainHtml += '<div style="position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700">+' + (ordered.length - 4) + ' more</div>';
+        mainHtml += caption + '</div>';
+      }
+      mainHtml += '</div>';
+    }
+    // Caption on main photo
+    if (ordered[0].caption) {
+      mainHtml = '<div style="position:relative">' + mainHtml.replace('<img src="' + ordered[0].url, '<img src="' + ordered[0].url) + '</div>';
+    }
+    imgWrap.innerHTML = mainHtml;
+    imgWrap.style.cssText = '';
   } else {
-    imgWrap.innerHTML = '<span>🏡</span>';
+    imgWrap.innerHTML = '<div style="aspect-ratio:16/9;background:var(--line-2);display:flex;align-items:center;justify-content:center"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--ink-4)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';
+    imgWrap.style.cssText = '';
   }
 }
 
@@ -3730,7 +3775,7 @@ async function lwPublish() {
 
   var res = await sb.from('properties').insert([payload]).select().single();
 
-  btn.textContent = '🚀 Publish Listing'; btn.disabled = false;
+  btn.textContent = 'Publish Listing'; btn.disabled = false;
 
   if (res.error) {
     toast('Could not publish — ' + (res.error.message || 'please try again'));
