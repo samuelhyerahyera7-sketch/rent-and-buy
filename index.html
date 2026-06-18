@@ -2445,7 +2445,7 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
     <div style="font-size:14px;font-weight:700">Add to Home Screen</div>
     <div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:1px">Install Rent &amp; Buy for quick access</div>
   </div>
-  <button onclick="pwaTriggerInstall()" style="padding:9px 18px;border-radius:8px;background:var(--sage);color:#fff;border:none;font-size:13.5px;font-weight:700;cursor:pointer;white-space:nowrap">Install</button>
+  <button id="pwaInstallBtn" onclick="pwaTriggerInstall()" style="padding:9px 18px;border-radius:8px;background:var(--sage);color:#fff;border:none;font-size:13.5px;font-weight:700;cursor:pointer;white-space:nowrap">Install</button>
   <button onclick="pwaDismiss()" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.12);border:none;color:rgba(255,255,255,.7);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0" aria-label="Close">✕</button>
 </div>
 
@@ -4042,7 +4042,10 @@ var _pwaPromptEvent = null;
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
   _pwaPromptEvent = e;
-  // Show banner if not dismissed today
+});
+
+function pwaCheckShow() {
+  // Don't show if already dismissed today
   try {
     var dismissed = localStorage.getItem('rab_pwa_dismissed');
     if (dismissed) {
@@ -4050,8 +4053,23 @@ window.addEventListener('beforeinstallprompt', function(e) {
       if (daysAgo < 1) return;
     }
   } catch(ex) {}
+  // Don't show if already installed (standalone mode)
+  if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) return;
   var b = document.getElementById('pwaBanner');
+  var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+  if (ios) {
+    // iOS: no install prompt, show manual instructions
+    var btn = b.querySelector('#pwaInstallBtn');
+    if (btn) { btn.textContent = 'How to install'; btn.onclick = function() {
+      toast('Tap the Share button ↑ then "Add to Home Screen"');
+      pwaDismiss();
+    }; }
+  }
   if (b) b.style.display = 'flex';
+}
+
+window.addEventListener('load', function() {
+  setTimeout(pwaCheckShow, 500);
 });
 
 function pwaTriggerInstall() {
@@ -4065,6 +4083,10 @@ function pwaTriggerInstall() {
       }
       _pwaPromptEvent = null;
     });
+  } else {
+    // Fallback for browsers that don't support the prompt
+    toast('Tap your browser menu and select "Add to Home Screen"');
+    pwaDismiss();
   }
 }
 
