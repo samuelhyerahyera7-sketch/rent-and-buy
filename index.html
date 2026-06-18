@@ -1353,6 +1353,64 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
 /* ── Optional extras section ── */
 .lw-extras-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
+/* ── Photo carousel (preview) ── */
+.lw-carousel {
+  position: relative; overflow: hidden;
+  border-radius: 12px 12px 0 0; background: var(--line-2);
+  touch-action: pan-y;
+}
+.lw-carousel-track {
+  display: flex; transition: transform .32s cubic-bezier(.25,.46,.45,.94);
+  will-change: transform;
+}
+.lw-carousel-slide {
+  min-width: 100%; position: relative; flex-shrink: 0;
+}
+.lw-carousel-slide img {
+  width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block;
+}
+.lw-carousel-empty {
+  width: 100%; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center;
+  background: var(--line-2); color: var(--ink-4);
+}
+.lw-carousel-caption {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,.58));
+  color: #fff; font-size: 13px; font-weight: 500;
+  padding: 28px 14px 10px; line-height: 1.4;
+}
+.lw-carousel-count {
+  position: absolute; top: 10px; right: 12px; z-index: 2;
+  background: rgba(0,0,0,.48); color: #fff;
+  font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 10px;
+}
+.lw-carousel-dots {
+  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 5px; z-index: 2;
+}
+.lw-carousel-dot {
+  height: 6px; border-radius: 3px; background: rgba(255,255,255,.5);
+  transition: all .22s; width: 6px;
+}
+.lw-carousel-dot.active { width: 18px; background: #fff; }
+.lw-carousel-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,255,255,.92); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2; box-shadow: 0 2px 8px rgba(0,0,0,.22);
+  transition: background .15s; color: var(--ink-2);
+}
+.lw-carousel-btn:hover { background: #fff; }
+.lw-carousel-prev { left: 10px; }
+.lw-carousel-next { right: 10px; }
+.lw-privacy-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--line-2); border: 1px solid var(--line);
+  border-radius: 6px; padding: 5px 10px;
+  font-size: 12px; color: var(--ink-3); margin-bottom: 16px;
+}
+
 @media (max-width: 600px) {
   .lw-step-panel { padding: 20px 16px 100px; }
   .lw-type-grid { grid-template-columns: repeat(2, 1fr); }
@@ -2040,19 +2098,19 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
         <h2>Property details</h2>
         <p>The specifics buyers and tenants look for first.</p>
 
-        <div class="lw-field"><label>Property title</label>
+        <div class="lw-field"><label>Property title <span style="color:#ef4444">*</span></label>
           <input id="lw-title" class="lw-input" type="text" placeholder="e.g. Modern 3 Bedroom House in Centurion" maxlength="100">
           <div style="font-size:12px;color:var(--ink-4)">A clear title gets more clicks — include key features and area.</div>
         </div>
 
-        <div id="lwPriceField" class="lw-field"><label>Asking price</label>
+        <div id="lwPriceField" class="lw-field"><label>Asking price <span style="color:#ef4444">*</span></label>
           <div style="position:relative">
             <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:700;color:var(--ink-3)">R</span>
             <input id="lw-price" class="lw-input" type="number" placeholder="0" min="0" style="padding-left:30px">
           </div>
         </div>
 
-        <div id="lwRentField" class="lw-field" style="display:none"><label>Monthly rental</label>
+        <div id="lwRentField" class="lw-field" style="display:none"><label>Monthly rental <span style="color:#ef4444">*</span></label>
           <div style="position:relative">
             <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:700;color:var(--ink-3)">R</span>
             <input id="lw-rental" class="lw-input" type="number" placeholder="0" min="0" style="padding-left:30px">
@@ -2067,7 +2125,7 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
         </div>
 
         <div class="lw-row-2">
-          <div class="lw-field"><label>Floor size <span class="opt">(m²)</span></label>
+          <div class="lw-field"><label>Floor size (m²) <span style="color:#ef4444">*</span></label>
             <input id="lw-size" class="lw-input" type="number" placeholder="e.g. 180" min="0">
           </div>
           <div class="lw-field"><label>Land size <span class="opt">(m²)</span></label>
@@ -2149,21 +2207,24 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
         <h2>Where is it?</h2>
         <p>Accurate location helps buyers find your property.</p>
 
-        <div class="lw-note">Start typing your street address and we'll help fill in the suburb, city and province automatically.</div>
+        <div class="lw-privacy-badge">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Your street address is kept private — only suburb, city and province are shown publicly.
+        </div>
 
         <div class="lw-field"><label>Street address <span style="color:#ef4444">*</span></label>
           <input id="lw-address" class="lw-input" type="text" placeholder="e.g. 14 Oak Avenue">
         </div>
         <div class="lw-row-2">
-          <div class="lw-field"><label>Suburb</label>
+          <div class="lw-field"><label>Suburb <span style="color:#ef4444">*</span></label>
             <input id="lw-suburb" class="lw-input" type="text" placeholder="e.g. Sandton">
           </div>
-          <div class="lw-field"><label>City</label>
+          <div class="lw-field"><label>City <span style="color:#ef4444">*</span></label>
             <input id="lw-city" class="lw-input" type="text" placeholder="e.g. Johannesburg">
           </div>
         </div>
         <div class="lw-row-2">
-          <div class="lw-field"><label>Province</label>
+          <div class="lw-field"><label>Province <span style="color:#ef4444">*</span></label>
             <select id="lw-province" class="lw-input">
               <option value="">Select province</option>
               <option value="Gauteng">Gauteng</option>
@@ -2304,8 +2365,8 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
         <p>This is how your property will appear to buyers and tenants.</p>
 
         <div class="lw-preview-card" id="lwPreviewCard">
-          <div class="lw-preview-img" id="lwPreviewImgWrap">
-            <span>🏡</span>
+          <div id="lwPreviewImgWrap">
+            <div class="lw-carousel-empty"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
           </div>
           <div class="lw-preview-body">
             <div class="lw-preview-mode" id="lwPrevMode">For Sale</div>
@@ -3450,14 +3511,24 @@ function lwJump(s) {
 // ── Validation ────────────────────────────────────────────────────────────────
 function lwValidateStep(s) {
   if (s === 1) {
+    var title = document.getElementById('lw-title').value.trim();
     var price = document.getElementById('lw-price').value;
     var rental = document.getElementById('lw-rental').value;
-    if (LW.mode === 'buy' && !price) { lwShakeField('lw-price'); toast('Please enter an asking price'); return false; }
-    if (LW.mode === 'rent' && !rental) { lwShakeField('lw-rental'); toast('Please enter a monthly rental'); return false; }
+    var size = document.getElementById('lw-size').value;
+    if (!title)  { lwShakeField('lw-title'); toast('Please enter a property title'); return false; }
+    if (LW.mode === 'buy'  && !price)  { lwShakeField('lw-price');  toast('Please enter an asking price');    return false; }
+    if (LW.mode === 'rent' && !rental) { lwShakeField('lw-rental'); toast('Please enter a monthly rental');   return false; }
+    if (!size)   { lwShakeField('lw-size');  toast('Please enter the floor size');        return false; }
   }
   if (s === 2) {
-    var addr = document.getElementById('lw-address').value.trim();
-    if (!addr) { lwShakeField('lw-address'); toast('Please enter the street address'); return false; }
+    var addr     = document.getElementById('lw-address').value.trim();
+    var suburb   = document.getElementById('lw-suburb').value.trim();
+    var city     = document.getElementById('lw-city').value.trim();
+    var province = document.getElementById('lw-province').value;
+    if (!addr)     { lwShakeField('lw-address');  toast('Please enter the street address'); return false; }
+    if (!suburb)   { lwShakeField('lw-suburb');   toast('Please enter the suburb');         return false; }
+    if (!city)     { lwShakeField('lw-city');      toast('Please enter the city');           return false; }
+    if (!province) { lwShakeField('lw-province');  toast('Please select a province');        return false; }
   }
   if (s === 4) {
     var desc = document.getElementById('lw-desc').value.trim();
@@ -3467,9 +3538,9 @@ function lwValidateStep(s) {
     var name  = document.getElementById('lw-name').value.trim();
     var email = document.getElementById('lw-email').value.trim();
     var phone = document.getElementById('lw-phone').value.trim();
-    if (!name)  { lwShakeField('lw-name');  toast('Please enter your name');  return false; }
-    if (!email) { lwShakeField('lw-email'); toast('Please enter your email'); return false; }
-    if (!phone) { lwShakeField('lw-phone'); toast('Please enter your phone number'); return false; }
+    if (!name)  { lwShakeField('lw-name');  toast('Please enter your name');         return false; }
+    if (!email) { lwShakeField('lw-email'); toast('Please enter your email address'); return false; }
+    if (!phone) { lwShakeField('lw-phone'); toast('Please enter your phone number');  return false; }
   }
   return true;
 }
@@ -3628,6 +3699,8 @@ function lwDeletePhoto(idx) {
 }
 
 // ── Step 8: build preview ─────────────────────────────────────────────────────
+var LW_CAROUSEL_IDX = 0;
+
 function lwBuildPreview() {
   var mode    = LW.mode;
   var price   = parseInt(document.getElementById('lw-price').value) || 0;
@@ -3651,27 +3724,30 @@ function lwBuildPreview() {
 
   var displayPrice = mode === 'buy' ? price : rental;
   document.getElementById('lwPrevPrice').textContent = displayPrice ? 'R ' + displayPrice.toLocaleString() : '—';
-
   document.getElementById('lwPrevTitle').textContent = title || (beds ? beds + '-bed ' + LW.propType : LW.propType);
 
-  var locParts = [suburb, city, province].filter(Boolean);
-  document.getElementById('lwPrevLocText').textContent = locParts.join(', ') || 'Location not set';
+  // Location: suburb + city only — street address stays private
+  var locParts = [suburb, city].filter(Boolean);
+  document.getElementById('lwPrevLocText').textContent = locParts.join(', ') || (province || 'Location not set');
+
+  var bedSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20v-8a2 2 0 012-2h16a2 2 0 012 2v8"/><path d="M2 10V6a2 2 0 012-2h4a2 2 0 012 2v4"/><path d="M2 20h20"/></svg>';
+  var bathSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6 6.5 3.5a1.5 1.5 0 000-2 1.5 1.5 0 00-2 2L7 7"/><path d="M3 11h19v4a7 7 0 01-7 7H10a7 7 0 01-7-7v-4z"/><line x1="10" y1="11" x2="10" y2="5"/></svg>';
+  var carSvg  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="12" width="20" height="8" rx="2"/><path d="M6 12l2-6h8l2 6"/><circle cx="7" cy="19" r="1"/><circle cx="17" cy="19" r="1"/></svg>';
+  var sizeSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>';
 
   var stats = '';
-  if (beds)    stats += '<div class="lw-preview-stat">🛏 ' + beds + (beds===1?' bed':' beds') + '</div>';
-  if (baths)   stats += '<div class="lw-preview-stat">🚿 ' + baths + (baths===1?' bath':' baths') + '</div>';
-  if (garages) stats += '<div class="lw-preview-stat">🚗 ' + garages + (garages===1?' garage':' garages') + '</div>';
-  if (size)    stats += '<div class="lw-preview-stat">📐 ' + size + ' m²</div>';
+  if (beds)    stats += '<div class="lw-preview-stat">' + bedSvg  + beds    + (beds===1?' bed':' beds') + '</div>';
+  if (baths)   stats += '<div class="lw-preview-stat">' + bathSvg + baths   + (baths===1?' bath':' baths') + '</div>';
+  if (garages) stats += '<div class="lw-preview-stat">' + carSvg  + garages + (garages===1?' garage':' garages') + '</div>';
+  if (size)    stats += '<div class="lw-preview-stat">' + sizeSvg + size + ' m²</div>';
   document.getElementById('lwPrevStats').innerHTML = stats;
 
   var feats = '';
-  LW.features.slice(0,6).forEach(function(f) {
-    feats += '<span class="lw-preview-feature-tag">' + f + '</span>';
-  });
+  LW.features.slice(0,6).forEach(function(f) { feats += '<span class="lw-preview-feature-tag">' + f + '</span>'; });
   document.getElementById('lwPrevFeatures').innerHTML = feats;
 
   var descEl = document.getElementById('lwPrevDesc');
-  if (desc) { descEl.textContent = desc.substring(0, 200) + (desc.length > 200 ? '…' : ''); descEl.style.display = ''; }
+  if (desc) { descEl.textContent = desc.substring(0, 220) + (desc.length > 220 ? '…' : ''); descEl.style.display = ''; }
   else descEl.style.display = 'none';
 
   document.getElementById('lwPrevAgentName').textContent  = name || 'Your name';
@@ -3684,33 +3760,80 @@ function lwBuildPreview() {
     waBtn.style.display = ''; waBtn.onclick = function(){ window.open('https://wa.me/27' + wa.replace(/^0/,'').replace(/\s/g,'')); };
   } else waBtn.style.display = 'none';
 
+  // ── Build swipeable photo carousel ──
+  LW_CAROUSEL_IDX = 0;
   var imgWrap = document.getElementById('lwPreviewImgWrap');
-  if (LW.photos.length > 0) {
-    // Reorder so cover is first
-    var ordered = LW.photos.slice();
-    if (LW.coverIdx > 0) { var c = ordered.splice(LW.coverIdx,1)[0]; ordered.unshift(c); }
-    var mainHtml = '<img src="' + ordered[0].url + '" alt="Cover photo" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block">';
-    if (ordered.length > 1) {
-      mainHtml += '<div style="display:grid;grid-template-columns:repeat(' + Math.min(ordered.length - 1, 4) + ',1fr);gap:3px;margin-top:3px">';
-      for (var pi = 1; pi < Math.min(ordered.length, 5); pi++) {
-        var caption = ordered[pi].caption ? '<div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.55));color:#fff;font-size:10px;padding:10px 6px 4px;line-height:1.3">' + ordered[pi].caption + '</div>' : '';
-        mainHtml += '<div style="position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--line-2)">';
-        mainHtml += '<img src="' + ordered[pi].url + '" alt="Photo ' + (pi+1) + '" style="width:100%;height:100%;object-fit:cover">';
-        if (ordered.length > 5 && pi === 4) mainHtml += '<div style="position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700">+' + (ordered.length - 4) + ' more</div>';
-        mainHtml += caption + '</div>';
-      }
-      mainHtml += '</div>';
-    }
-    // Caption on main photo
-    if (ordered[0].caption) {
-      mainHtml = '<div style="position:relative">' + mainHtml.replace('<img src="' + ordered[0].url, '<img src="' + ordered[0].url) + '</div>';
-    }
-    imgWrap.innerHTML = mainHtml;
-    imgWrap.style.cssText = '';
-  } else {
-    imgWrap.innerHTML = '<div style="aspect-ratio:16/9;background:var(--line-2);display:flex;align-items:center;justify-content:center"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--ink-4)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';
-    imgWrap.style.cssText = '';
+
+  if (LW.photos.length === 0) {
+    imgWrap.innerHTML = '<div class="lw-carousel-empty"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';
+    return;
   }
+
+  var ordered = LW.photos.slice();
+  if (LW.coverIdx > 0 && LW.coverIdx < ordered.length) {
+    var c = ordered.splice(LW.coverIdx, 1)[0]; ordered.unshift(c);
+  }
+
+  var slides = ordered.map(function(p, i) {
+    var cap = p.caption ? '<div class="lw-carousel-caption">' + p.caption + '</div>' : '';
+    return '<div class="lw-carousel-slide"><img src="' + p.url + '" alt="Photo ' + (i+1) + '" loading="lazy">' + cap + '</div>';
+  }).join('');
+
+  var dots = ordered.length > 1 ? ordered.map(function(_,i) {
+    return '<div class="lw-carousel-dot' + (i===0?' active':'') + '" onclick="lwCarouselGoTo(' + i + ')"></div>';
+  }).join('') : '';
+
+  var arrows = ordered.length > 1
+    ? '<button class="lw-carousel-btn lw-carousel-prev" onclick="lwCarouselSlide(-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>'
+    + '<button class="lw-carousel-btn lw-carousel-next" onclick="lwCarouselSlide(1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>'
+    : '';
+
+  var counter = ordered.length > 1 ? '<div class="lw-carousel-count">1 / ' + ordered.length + '</div>' : '';
+
+  imgWrap.innerHTML =
+    '<div class="lw-carousel" id="lwCarousel">'
+    + '<div class="lw-carousel-track" id="lwCarouselTrack">' + slides + '</div>'
+    + (dots ? '<div class="lw-carousel-dots" id="lwCarouselDots">' + dots + '</div>' : '')
+    + counter
+    + arrows
+    + '</div>';
+
+  lwCarouselBindTouch();
+}
+
+function lwCarouselSlide(dir) {
+  var track = document.getElementById('lwCarouselTrack');
+  if (!track) return;
+  var total = track.children.length;
+  LW_CAROUSEL_IDX = Math.max(0, Math.min(total - 1, LW_CAROUSEL_IDX + dir));
+  lwCarouselApply();
+}
+
+function lwCarouselGoTo(i) {
+  LW_CAROUSEL_IDX = i;
+  lwCarouselApply();
+}
+
+function lwCarouselApply() {
+  var track = document.getElementById('lwCarouselTrack');
+  if (track) track.style.transform = 'translateX(-' + (LW_CAROUSEL_IDX * 100) + '%)';
+  var total = track ? track.children.length : 0;
+  var counter = document.querySelector('.lw-carousel-count');
+  if (counter) counter.textContent = (LW_CAROUSEL_IDX + 1) + ' / ' + total;
+  var dots = document.querySelectorAll('.lw-carousel-dot');
+  dots.forEach(function(d, i) { d.classList.toggle('active', i === LW_CAROUSEL_IDX); });
+}
+
+function lwCarouselBindTouch() {
+  var carousel = document.getElementById('lwCarousel');
+  if (!carousel) return;
+  var startX = 0, dragging = false;
+  carousel.addEventListener('touchstart', function(e) { startX = e.touches[0].clientX; dragging = true; }, { passive: true });
+  carousel.addEventListener('touchend', function(e) {
+    if (!dragging) return; dragging = false;
+    var delta = startX - e.changedTouches[0].clientX;
+    if (Math.abs(delta) > 40) lwCarouselSlide(delta > 0 ? 1 : -1);
+  }, { passive: true });
 }
 
 // ── Publish ───────────────────────────────────────────────────────────────────
