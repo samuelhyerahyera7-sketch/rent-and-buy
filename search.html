@@ -1512,59 +1512,155 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
   font-family: var(--font); color: var(--ink-2); outline: none;
 }
 
+/* ── Mobile heart btn in nav ── */
+.mob-heart-nav {
+  display: none; background: none; border: none; padding: 6px;
+  color: var(--ink-2); cursor: pointer; align-items: center; justify-content: center;
+}
+/* ── Mobile location row ── */
+.mfb-loc-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 16px 0; gap: 10px;
+}
+.mfb-loc-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: none; border: none; font-size: 14px; font-weight: 600;
+  color: var(--ink-2); padding: 0; cursor: pointer; font-family: var(--font);
+}
+.mfb-save-search {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 13px; font-weight: 600; color: var(--sage); background: none;
+  border: none; cursor: pointer; font-family: var(--font); padding: 0;
+}
+/* ── Mobile view toggle + sort row ── */
+.mfb-view-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 16px 10px; gap: 10px; border-top: 1px solid var(--line-2);
+}
+.mfb-toggle { display: flex; gap: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.mfb-toggle-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 14px; font-size: 13px; font-weight: 500; color: var(--ink-3);
+  background: transparent; border: none; cursor: pointer; font-family: var(--font);
+}
+.mfb-toggle-btn.on { background: var(--line-2); color: var(--ink); font-weight: 600; }
+.mfb-sort-sel {
+  font-size: 13px; border: none; background: transparent;
+  color: var(--ink-2); font-family: var(--font); outline: none; cursor: pointer;
+}
+/* ── Mobile count + area chips ── */
+.mob-count-bar {
+  display: none; padding: 12px 16px 0; background: var(--white);
+}
+.mob-count-text { font-size: 15px; color: var(--ink); margin-bottom: 10px; }
+.mob-count-text strong { font-weight: 800; }
+.mob-area-chips {
+  display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+  padding-bottom: 12px; border-bottom: 1px solid var(--line);
+}
+.mob-area-chips::-webkit-scrollbar { display: none; }
+.mob-area-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 6px 14px; border: 1px solid var(--line); border-radius: 20px;
+  background: var(--white); font-size: 13px; color: var(--ink-2); white-space: nowrap;
+  cursor: pointer; flex-shrink: 0; font-family: var(--font);
+}
+/* ── Mobile bond CTA card ── */
+.mob-bond-card {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px; margin: 0; background: var(--white);
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.mob-bond-icon {
+  width: 52px; height: 52px; border-radius: 12px;
+  background: var(--sage-l); color: var(--sage);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.mob-bond-text { flex: 1; min-width: 0; }
+.mob-bond-text strong { display: block; font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.mob-bond-text span { font-size: 12px; color: var(--ink-3); }
+.mob-bond-btn {
+  background: var(--sage); color: #fff; border: none; border-radius: 8px;
+  padding: 10px 16px; font-size: 13px; font-weight: 700;
+  cursor: pointer; font-family: var(--font); white-space: nowrap; flex-shrink: 0;
+}
+/* ── Mobile sticky bottom bar ── */
+.mob-sticky-bar {
+  display: none; position: fixed; bottom: 56px; left: 0; right: 0; z-index: 200;
+  background: var(--white); border-top: 1px solid var(--line);
+  padding: 10px 16px; align-items: center; gap: 10px;
+}
+.mob-sticky-bar-text { flex: 1; font-size: 12px; color: var(--ink-3); min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mob-sticky-save {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: none; border: 1px solid var(--line); border-radius: 8px;
+  padding: 8px 14px; font-size: 13px; font-weight: 500; color: var(--ink-2);
+  cursor: pointer; font-family: var(--font); white-space: nowrap; flex-shrink: 0;
+}
+.mob-sticky-map {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--sage); color: #fff; border: none; border-radius: 24px;
+  padding: 10px 18px; font-size: 14px; font-weight: 700;
+  cursor: pointer; font-family: var(--font); white-space: nowrap; flex-shrink: 0;
+}
+/* ── Mobile tab nav ── */
+.mob-tab-nav {
+  display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 210;
+  background: var(--white); border-top: 1px solid var(--line);
+  flex-direction: row; align-items: stretch; height: 56px;
+}
+.mob-tab {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 3px; background: none; border: none;
+  font-size: 10px; font-weight: 500; color: var(--ink-3); cursor: pointer;
+  font-family: var(--font); padding: 4px 0 6px; text-decoration: none;
+}
+.mob-tab.on { color: var(--sage); }
+.mob-tab svg { flex-shrink: 0; }
+
 @media (max-width: 900px) {
   /* Show mobile UI, hide desktop UI */
+  .mob-heart-nav { display: inline-flex; }
   .mob-page-hd { display: flex; }
   #mobFilterBar { display: block; }
   #desktopFilterBar { display: none !important; }
   .sec-head { display: none !important; }
   .filter-bar { display: none !important; }
   .section-sm { padding-top: 0 !important; }
-  /* Remove side padding so cards go edge-to-edge */
   .section-sm > .w { padding: 0; }
   .pagination { padding: 16px; }
+  .mob-count-bar { display: block; }
+  .mob-sticky-bar { display: flex; }
+  .mob-tab-nav { display: flex; }
+  body { padding-bottom: 112px; }
+  .topbar { display: none; }
 
-  /* ── Horizontal cards ── */
+  /* ── Vertical cards (Property24 style) ── */
   .prop-grid { gap: 0; grid-template-columns: 1fr; }
   .p-card {
-    border-radius: 0;
-    border-left: none; border-right: none; border-top: none;
-    display: grid;
-    grid-template-columns: 130px 1fr;
-    grid-template-rows: 1fr auto;
-    min-height: 150px;
-    box-shadow: none;
+    border-radius: 0; border-left: none; border-right: none; border-top: none;
+    display: block; box-shadow: none; background: var(--white);
   }
   .p-card:hover { transform: none; box-shadow: none; }
-  /* Image: full height of card, left column */
-  .p-img { grid-column: 1; grid-row: 1 / 3; height: 100%; }
+  .p-img { height: 220px; width: 100%; }
   .p-img img { width: 100%; height: 100%; object-fit: cover; }
-  /* Card body: right column top */
-  .p-body { grid-column: 2; grid-row: 1; padding: 12px 14px 6px; overflow: hidden; }
-  /* Price: green and prominent */
-  .p-price { font-size: 17px; font-weight: 800; color: var(--sage); margin-bottom: 2px; letter-spacing: -.3px; }
-  .p-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; line-height: 1.3; color: var(--ink-2); }
-  .p-loc { font-size: 11px; margin-bottom: 6px; color: var(--ink-3); }
-  /* Features: no separator line, compact */
-  .p-feats { gap: 8px; flex-wrap: wrap; padding-top: 0; border-top: none; }
-  .p-feat { font-size: 11px; gap: 3px; }
-  /* Footer: right column bottom, clean white */
-  .p-foot {
-    grid-column: 2; grid-row: 2;
-    padding: 0 14px 10px;
-    background: transparent;
-    border-top: none;
-  }
-  .agent-row { gap: 6px; min-width: 0; }
-  .agent-av { width: 22px; height: 22px; font-size: 9px; flex-shrink: 0; }
-  .agent-nm { font-size: 11px; min-width: 0; overflow: hidden; }
-  .agent-nm strong { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
-  .agent-nm span, .agent-nm > :not(strong) { display: none; }
-  .p-days { font-size: 11px; white-space: nowrap; flex-shrink: 0; }
-  /* Image overlays: smaller on mobile */
-  .p-count { display: none; }
-  .p-tag { font-size: 9px; padding: 2px 7px; top: 7px; left: 7px; }
-  .p-fav { top: 6px; right: 6px; width: 26px; height: 26px; }
+  .p-body { padding: 14px 16px 8px; }
+  .p-price { font-size: 22px; font-weight: 800; color: var(--sage); margin-bottom: 4px; letter-spacing: -.4px; }
+  .p-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; line-height: 1.3; color: var(--ink); }
+  .p-loc { font-size: 13px; margin-bottom: 8px; color: var(--ink-3); }
+  .p-feats { gap: 14px; flex-wrap: nowrap; padding-top: 0; border-top: none; overflow-x: auto; scrollbar-width: none; }
+  .p-feats::-webkit-scrollbar { display: none; }
+  .p-feat { font-size: 13px; gap: 4px; white-space: nowrap; }
+  .p-foot { padding: 10px 16px 16px; background: transparent; border-top: none; }
+  .agent-row { gap: 8px; min-width: 0; }
+  .agent-av { width: 32px; height: 32px; font-size: 11px; border-radius: 6px; flex-shrink: 0; }
+  .agent-nm { font-size: 13px; min-width: 0; overflow: hidden; }
+  .agent-nm strong { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; color: var(--ink-2); }
+  .agent-nm span { display: block; font-size: 11px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .p-days { font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+  .p-count { display: flex; bottom: 10px; left: 10px; right: auto; }
+  .p-tag { font-size: 10px; padding: 3px 10px; top: 10px; left: 10px; }
+  .p-fav { top: 10px; right: 10px; width: 34px; height: 34px; }
 }
 /* ── Property detail extras ── */
 .detail-layout { display:grid; grid-template-columns:1fr 340px; gap:32px; align-items:start; padding:40px 0; }
@@ -1627,6 +1723,9 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
       <button class="btn-ghost" id="navSignInBtn" onclick="openSignIn()">Sign In</button>
       <button class="btn-primary" onclick="openListProp()">List Property</button>
     </div>
+    <button class="mob-heart-nav" onclick="toast('Saved properties coming soon')" aria-label="Saved">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
     <button class="hamburger" onclick="openDrawer()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -1646,6 +1745,17 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
   <div class="mfb-search">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     <input id="mfbLoc" type="text" placeholder="Search suburb, city or estate" oninput="document.getElementById('sLoc').value=this.value">
+  </div>
+  <div class="mfb-loc-row">
+    <button class="mfb-loc-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <span id="mfbLocLabel">All Areas</span>
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <button class="mfb-save-search" onclick="toast('Search saved!')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      Save Search
+    </button>
   </div>
   <div class="mfb-pills">
     <button id="mfbModeBtn" class="mfb-pill mfb-mode" onclick="mfbToggleMode()">
@@ -1667,9 +1777,34 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
     <a class="mfb-mode-opt" href="search.html?mode=commercial">Commercial</a>
     <a class="mfb-mode-opt" href="search.html?mode=farm">Farms &amp; Smallholdings</a>
   </div>
-  <div class="mfb-count-row">
-    <span id="mfbCount">Loading...</span>
-    <div style="display:flex;align-items:center;gap:4px">Sort: <select onchange="sortBy(this.value)" class="mfb-count-row select"><option value="newest">Newest</option><option value="price-asc">Price ↑</option><option value="price-desc">Price ↓</option><option value="beds">Most beds</option></select></div>
+  <div class="mfb-view-row">
+    <div class="mfb-toggle">
+      <button class="mfb-toggle-btn on" id="mfbListBtn" onclick="mfbSetView('list')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        List
+      </button>
+      <button class="mfb-toggle-btn" id="mfbMapBtn" onclick="mfbSetView('map')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+        Map
+      </button>
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;font-size:13px;color:var(--ink-3)">
+      Sort by: <select class="mfb-sort-sel" onchange="sortBy(this.value)"><option value="newest">Newest</option><option value="price-asc">Price ↑</option><option value="price-desc">Price ↓</option><option value="beds">Most beds</option></select>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile count + area chips -->
+<div class="mob-count-bar" id="mobCountBar">
+  <div class="mob-count-text"><strong id="mobCountNum">8</strong> <span id="mobCountLabel">Properties for Sale</span></div>
+  <div class="mob-area-chips" id="mobAreaChips">
+    <button class="mob-area-chip" onclick="searchArea('Sandton')">Sandton</button>
+    <button class="mob-area-chip" onclick="searchArea('Midrand')">Midrand</button>
+    <button class="mob-area-chip" onclick="searchArea('Centurion')">Centurion</button>
+    <button class="mob-area-chip" onclick="searchArea('Pretoria East')">Pretoria East</button>
+    <button class="mob-area-chip" onclick="searchArea('Fourways')">Fourways</button>
+    <button class="mob-area-chip" onclick="searchArea('Cape Town')">Cape Town</button>
+    <button class="mob-area-chip" onclick="searchArea('Durban')">Durban</button>
   </div>
 </div>
 
@@ -2840,9 +2975,15 @@ function renderListings() {
   document.getElementById('listTitle').textContent = listTitles[mode] || 'Properties';
   var mfbC = document.getElementById('mfbCount');
   if (mfbC) mfbC.textContent = all.length + ' ' + (listTitles[mode] || 'Properties');
+  var mobNum = document.getElementById('mobCountNum');
+  var mobLbl = document.getElementById('mobCountLabel');
+  if (mobNum) mobNum.textContent = all.length;
+  if (mobLbl) mobLbl.textContent = listTitles[mode] || 'Properties';
+
+  const bondCTA = `<div class="mob-bond-card"><div class="mob-bond-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><rect x="9" y="14" width="6" height="8"/></svg></div><div class="mob-bond-text"><strong>Can you afford this property?</strong><span>Use our bond calculator to see your monthly repayments.</span></div><button class="mob-bond-btn" onclick="event.stopPropagation();openCalc()">Calculate Now</button></div>`;
 
   const slice = all.slice((page-1)*PER, page*PER);
-  document.getElementById('listGrid').innerHTML = slice.map(p => {
+  document.getElementById('listGrid').innerHTML = slice.map((p, idx) => {
     const isSold = p.mode === 'sold';
     const isAuction = p.mode === 'auction';
     const tag = p.mode==='rent'?' rent':p.mode==='new'?' new':isSold?' sold-badge':isAuction?' sold-badge':'';
@@ -2878,6 +3019,7 @@ function renderListings() {
         </div>
       </div>
     `;
+    return idx === 2 ? card + bondCTA : card;
   }).join('');
 
   // Pagination
@@ -3024,6 +3166,23 @@ function mfbToggleMode() {
         }
       });
     }, 0);
+  }
+}
+
+function mfbSetView(v) {
+  document.getElementById('mfbListBtn').classList.toggle('on', v==='list');
+  document.getElementById('mfbMapBtn').classList.toggle('on', v==='map');
+  var mapPanel = document.getElementById('inlineMapEl');
+  var listGrid = document.getElementById('listGrid');
+  var pagination = document.getElementById('pagination');
+  if (v === 'map') {
+    if (mapPanel) { mapPanel.style.display='block'; mapPanel.style.height='calc(100vh - 320px)'; mapPanel.style.borderRadius='0'; }
+    if (listGrid) listGrid.style.display = 'none';
+    if (pagination) pagination.style.display = 'none';
+  } else {
+    if (mapPanel) mapPanel.style.display = 'none';
+    if (listGrid) listGrid.style.display = '';
+    if (pagination) pagination.style.display = '';
   }
 }
 
@@ -4679,5 +4838,43 @@ renderListings = function() {
 };
 setTimeout(initInlineMap,300);
 </script>
+
+<!-- Mobile sticky bottom bar -->
+<div class="mob-sticky-bar">
+  <span class="mob-sticky-bar-text">Stay updated on new properties</span>
+  <button class="mob-sticky-save" onclick="toast('Search saved!')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+    Save Search
+  </button>
+  <button class="mob-sticky-map" onclick="openMap()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+    View Map
+  </button>
+</div>
+
+<!-- Mobile tab nav -->
+<div class="mob-tab-nav">
+  <a class="mob-tab" href="index.html">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Home
+  </a>
+  <a class="mob-tab on" href="search.html?mode=buy">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+    For Sale
+  </a>
+  <a class="mob-tab" href="search.html?mode=rent">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+    To Rent
+  </a>
+  <a class="mob-tab" href="#" onclick="toast('Saved properties coming soon');return false">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    Saved
+  </a>
+  <a class="mob-tab" href="#" onclick="openSignIn();return false">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Profile
+  </a>
+</nav>
 </body>
 </html>
+
