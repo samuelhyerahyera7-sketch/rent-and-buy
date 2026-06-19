@@ -4099,10 +4099,10 @@ async function loadListingsFromSupabase() {
   } catch(e) { /* use local data if Supabase table not yet created */ }
 }
 
-renderFeatured();
-renderListings();
-renderAreas();
-loadListingsFromSupabase();
+try { renderFeatured(); } catch(e) {}
+try { renderListings(); } catch(e) {}
+try { renderAreas(); } catch(e) {}
+try { loadListingsFromSupabase(); } catch(e) {}
 
 // ── Autocomplete ───────────────────────────────────────────────────────────
 var AC_LOCATIONS = [
@@ -4518,7 +4518,15 @@ function renderAreas() {
   `).join('');
 }
 
-// Hero tab click
+// Index-specific setTab — just switches the active tab UI, no renderListings
+function setTab(el, m) {
+  document.querySelectorAll('.hero-tab').forEach(function(t){ t.classList.remove('on'); });
+  el.classList.add('on');
+  var titles = {buy:'Find Property for Sale', rent:'Find Property to Rent', new:'New Developments', agents:'Find a Property Agent', sold:'Recently Sold Properties'};
+  var h = document.getElementById('heroTitle');
+  if (h) h.textContent = titles[m] || 'Find Property';
+}
+
 // Init
 renderFeatured();
 renderListings();
