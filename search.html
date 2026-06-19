@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rent and Buy — Property in South Africa</title>
+<title>Search Properties — Rent and Buy</title>
 
 <!-- PWA -->
 <link rel="manifest" href="/manifest.json">
@@ -1567,150 +1567,132 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
     <button class="mob-search-go" onclick="closeMobSearch();doSearch()">Search</button>
   </div>
 </div>
-<div class="hero">
-  <div class="hero-overlay"></div>
-  <div class="hero-inner">
-    <div class="hero-tabs" id="heroTabs">
-      <button class="hero-tab on" onclick="window.location='search.html?mode=buy'">Buy</button>
-      <button class="hero-tab" onclick="window.location='search.html?mode=rent'">Rent</button>
-      <button class="hero-tab" onclick="window.location='search.html?mode=new'" style="position:relative">Developments<span class="swipe-line" id="tabsScrollHint"></span></button>
-      <button class="hero-tab" onclick="window.location='search.html?mode=agents'">Agents</button>
-      <button class="hero-tab" onclick="window.location='search.html?mode=sold'">Sold Prices</button>
-    </div>
-    <h1 id="heroTitle">Find Property for Sale</h1>
-    <div class="search-bar-outer">
-    <div class="sb-row">
-    <div class="search-bar-wrap">
-      <div class="sb-city-block">
-        <span class="s-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        </span>
-        <input type="text" id="sLoc" placeholder="City" autocomplete="off" oninput="acSearch(this.value)" onfocus="acSearch(this.value);sbFocus(this)" onkeydown="acKey(event)" onblur="setTimeout(function(){acClose();sbBlur()},180)">
-      </div>
-      <button class="s-map-btn" onclick="goSearchMap()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-        <span class="map-txt">Map</span>
-      </button>
-      <button class="s-search-btn" onclick="goSearch()">Search</button>
-    </div>
-    <div class="ac-dropdown" id="acDropdown"></div>
-    </div>
-    <!-- Filter row attached below search bar -->
-    <div class="search-filters">
-      <!-- Property Type -->
-      <div class="sf-drop cd" id="cd-type" onclick="cdToggle('cd-type',event)">
-        <span class="cd-val" id="cdv-type">Property Type</span>
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        <div class="cd-panel" id="cdp-type">
-          <div class="cd-opt sel" data-val="" onclick="cdSelect('cd-type','cdv-type','',this,'propType');event.stopPropagation()">All Types</div>
-          <div class="cd-opt" data-val="House" onclick="cdSelect('cd-type','cdv-type','House',this,'propType');event.stopPropagation()">House</div>
-          <div class="cd-opt" data-val="Apartment" onclick="cdSelect('cd-type','cdv-type','Apartment / Flat',this,'propType');event.stopPropagation()">Apartment / Flat</div>
-          <div class="cd-opt" data-val="Townhouse" onclick="cdSelect('cd-type','cdv-type','Townhouse',this,'propType');event.stopPropagation()">Townhouse</div>
-          <div class="cd-opt" data-val="Plot" onclick="cdSelect('cd-type','cdv-type','Plot / Land',this,'propType');event.stopPropagation()">Plot / Land</div>
-          <div class="cd-opt" data-val="Farm" onclick="cdSelect('cd-type','cdv-type','Farm',this,'propType');event.stopPropagation()">Farm</div>
-        </div>
-      </div>
-      <!-- Min Price -->
-      <div class="sf-drop cd" id="cd-min" onclick="cdToggle('cd-min',event)">
-        <span class="cd-val" id="cdv-min">Min Price</span>
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        <div class="cd-panel" id="cdp-min">
-          <div class="cd-opt sel" data-val="0" onclick="cdPrice('cd-min','cdv-min',0,'Min Price','min');event.stopPropagation()">No Min</div>
-          <div class="cd-opt" data-val="500000" onclick="cdPrice('cd-min','cdv-min',500000,'R 500 000','min');event.stopPropagation()">R 500 000</div>
-          <div class="cd-opt" data-val="1000000" onclick="cdPrice('cd-min','cdv-min',1000000,'R 1 000 000','min');event.stopPropagation()">R 1 000 000</div>
-          <div class="cd-opt" data-val="2000000" onclick="cdPrice('cd-min','cdv-min',2000000,'R 2 000 000','min');event.stopPropagation()">R 2 000 000</div>
-          <div class="cd-opt" data-val="3000000" onclick="cdPrice('cd-min','cdv-min',3000000,'R 3 000 000','min');event.stopPropagation()">R 3 000 000</div>
-          <div class="cd-opt" data-val="5000000" onclick="cdPrice('cd-min','cdv-min',5000000,'R 5 000 000','min');event.stopPropagation()">R 5 000 000</div>
-        </div>
-      </div>
-      <!-- Max Price -->
-      <div class="sf-drop cd" id="cd-max" onclick="cdToggle('cd-max',event)">
-        <span class="cd-val" id="cdv-max">Max Price</span>
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        <div class="cd-panel" id="cdp-max">
-          <div class="cd-opt sel" data-val="999999999" onclick="cdPrice('cd-max','cdv-max',999999999,'Max Price','max');event.stopPropagation()">No Max</div>
-          <div class="cd-opt" data-val="1000000" onclick="cdPrice('cd-max','cdv-max',1000000,'R 1 000 000','max');event.stopPropagation()">R 1 000 000</div>
-          <div class="cd-opt" data-val="2000000" onclick="cdPrice('cd-max','cdv-max',2000000,'R 2 000 000','max');event.stopPropagation()">R 2 000 000</div>
-          <div class="cd-opt" data-val="3000000" onclick="cdPrice('cd-max','cdv-max',3000000,'R 3 000 000','max');event.stopPropagation()">R 3 000 000</div>
-          <div class="cd-opt" data-val="5000000" onclick="cdPrice('cd-max','cdv-max',5000000,'R 5 000 000','max');event.stopPropagation()">R 5 000 000</div>
-          <div class="cd-opt" data-val="10000000" onclick="cdPrice('cd-max','cdv-max',10000000,'R 10 000 000','max');event.stopPropagation()">R 10 000 000</div>
-        </div>
-      </div>
-      <!-- Bedrooms -->
-      <div class="sf-drop cd" id="cd-beds" onclick="cdToggle('cd-beds',event)">
-        <span class="cd-val" id="cdv-beds">Bedrooms</span>
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        <div class="cd-panel" id="cdp-beds">
-          <div class="cd-opt sel" data-val="0" onclick="cdBeds('cd-beds','cdv-beds',0,'Bedrooms',this);event.stopPropagation()">Any</div>
-          <div class="cd-opt" data-val="1" onclick="cdBeds('cd-beds','cdv-beds',1,'1+ Beds',this);event.stopPropagation()">1+ Beds</div>
-          <div class="cd-opt" data-val="2" onclick="cdBeds('cd-beds','cdv-beds',2,'2+ Beds',this);event.stopPropagation()">2+ Beds</div>
-          <div class="cd-opt" data-val="3" onclick="cdBeds('cd-beds','cdv-beds',3,'3+ Beds',this);event.stopPropagation()">3+ Beds</div>
-          <div class="cd-opt" data-val="4" onclick="cdBeds('cd-beds','cdv-beds',4,'4+ Beds',this);event.stopPropagation()">4+ Beds</div>
-          <div class="cd-opt" data-val="5" onclick="cdBeds('cd-beds','cdv-beds',5,'5+ Beds',this);event.stopPropagation()">5+ Beds</div>
-        </div>
-      </div>
-      <!-- Advanced Filters button -->
-      <div class="sf-filters-wrap">
-        <button class="sf-filters" id="adv-btn" onclick="advToggle(event)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
-          Filters
-        </button>
-        <div class="adv-panel" id="adv-panel" onclick="event.stopPropagation()">
-          <h4>More Filters</h4>
-          <div style="color:rgba(255,255,255,.6);font-size:12px;margin-bottom:8px">Features</div>
-          <div class="adv-row" id="adv-features">
-            <button class="adv-chip" data-key="pool" onclick="advChip(this)">Pool</button>
-            <button class="adv-chip" data-key="garden" onclick="advChip(this)">Garden</button>
-            <button class="adv-chip" data-key="garage" onclick="advChip(this)">Garage</button>
-            <button class="adv-chip" data-key="pets" onclick="advChip(this)">Pet-friendly</button>
-            <button class="adv-chip" data-key="security" onclick="advChip(this)">Security Estate</button>
-            <button class="adv-chip" data-key="solar" onclick="advChip(this)">Solar / Backup Power</button>
-            <button class="adv-chip" data-key="flatlet" onclick="advChip(this)">Flatlet</button>
-            <button class="adv-chip" data-key="sea" onclick="advChip(this)">Sea Views</button>
-          </div>
-          <button class="adv-apply" onclick="advApply()">Apply Filters</button>
-        </div>
-      </div>
-    </div>
-    <button class="sb-focused-search" onclick="goSearch()">Search</button>
-    </div>
-  </div>
-</div>
-<!-- Featured -->
-<div class="section" id="featured-section">
-  <div class="sec-head">
-    <div><h2>Featured Properties</h2><p>Hand-picked premium listings</p></div>
-    <a class="see-all" href="search.html?mode=buy">View all featured</a>
-  </div>
-  <div class="feat-grid" id="featGrid"></div>
-</div>
-<!-- Latest Listings -->
-<div class="section-sm" id="listings-section">
-  <div class="sec-head">
-    <div><h2>Latest Properties for Sale</h2><p>Showing recent listings</p></div>
-    <a class="see-all" href="search.html?mode=buy">View all</a>
-  </div>
-  <div class="prop-grid" id="listGrid"></div>
-  <div style="text-align:center;margin-top:32px">
-    <a href="search.html?mode=buy" style="display:inline-block;padding:13px 32px;background:var(--navy);color:#fff;border-radius:8px;font-size:15px;font-weight:700;text-decoration:none">View all properties</a>
-  </div>
-</div>
-<!-- Stats -->
-<div class="stats-band">
+<!-- Search filter bar -->
+<div style="background:var(--white);border-bottom:1px solid var(--line);padding:16px 0;position:sticky;top:60px;z-index:90">
   <div class="w">
-    <div class="stat-item"><div class="stat-num">45 000+</div><div class="stat-lbl">Active Listings</div></div>
-    <div class="stat-item"><div class="stat-num">12 000+</div><div class="stat-lbl">Registered Agents</div></div>
-    <div class="stat-item"><div class="stat-num">3.2M</div><div class="stat-lbl">Monthly Visitors</div></div>
-    <div class="stat-item"><div class="stat-num">R 24B+</div><div class="stat-lbl">In Property Sold</div></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div class="search-bar-outer" style="flex:1;min-width:200px">
+        <div class="sb-row">
+          <div class="search-bar-wrap">
+            <div class="sb-city-block">
+              <span class="s-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
+              <input type="text" id="sLoc" placeholder="City or suburb" autocomplete="off" oninput="acSearch(this.value)" onfocus="acSearch(this.value)" onkeydown="acKey(event)" onblur="setTimeout(function(){acClose()},180)">
+            </div>
+            <button class="s-map-btn" onclick="openMap()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+              <span class="map-txt">Map</span>
+            </button>
+            <button class="s-search-btn" onclick="doSearch()">Search</button>
+          </div>
+          <div class="ac-dropdown" id="acDropdown"></div>
+        </div>
+      </div>
+      <!-- Dropdowns -->
+      <div class="sf-drop cd" id="cd-type" onclick="cdToggle('cd-type',event)" style="background:var(--white);border-color:var(--line);flex:none;min-width:130px">
+        <span class="cd-val" id="cdv-type" style="color:var(--ink-2)">Property Type</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--ink-3)" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="cd-panel" id="cdp-type" style="background:var(--white);border-color:var(--line);top:calc(100% + 6px)">
+          <div class="cd-opt sel" data-val="" onclick="cdSelect('cd-type','cdv-type','',this,'propType');event.stopPropagation()" style="color:var(--ink-2)">All Types</div>
+          <div class="cd-opt" data-val="House" onclick="cdSelect('cd-type','cdv-type','House',this,'propType');event.stopPropagation()" style="color:var(--ink-2)">House</div>
+          <div class="cd-opt" data-val="Apartment" onclick="cdSelect('cd-type','cdv-type','Apartment / Flat',this,'propType');event.stopPropagation()" style="color:var(--ink-2)">Apartment / Flat</div>
+          <div class="cd-opt" data-val="Townhouse" onclick="cdSelect('cd-type','cdv-type','Townhouse',this,'propType');event.stopPropagation()" style="color:var(--ink-2)">Townhouse</div>
+          <div class="cd-opt" data-val="Plot" onclick="cdSelect('cd-type','cdv-type','Plot / Land',this,'propType');event.stopPropagation()" style="color:var(--ink-2)">Plot / Land</div>
+          <div class="cd-opt" data-val="Farm" onclick="cdSelect('cd-type','cdv-type','Farm',this,'propType');event.stopPropagation()" style="color:var(--ink-2)">Farm</div>
+        </div>
+      </div>
+      <div class="sf-drop cd" id="cd-min" onclick="cdToggle('cd-min',event)" style="background:var(--white);border-color:var(--line);flex:none;min-width:110px">
+        <span class="cd-val" id="cdv-min" style="color:var(--ink-2)">Min Price</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--ink-3)" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="cd-panel" id="cdp-min" style="background:var(--white);border-color:var(--line)">
+          <div class="cd-opt sel" data-val="0" onclick="cdPrice('cd-min','cdv-min',0,'Min Price','min');event.stopPropagation()" style="color:var(--ink-2)">No Min</div>
+          <div class="cd-opt" data-val="500000" onclick="cdPrice('cd-min','cdv-min',500000,'R 500 000','min');event.stopPropagation()" style="color:var(--ink-2)">R 500 000</div>
+          <div class="cd-opt" data-val="1000000" onclick="cdPrice('cd-min','cdv-min',1000000,'R 1 000 000','min');event.stopPropagation()" style="color:var(--ink-2)">R 1 000 000</div>
+          <div class="cd-opt" data-val="2000000" onclick="cdPrice('cd-min','cdv-min',2000000,'R 2 000 000','min');event.stopPropagation()" style="color:var(--ink-2)">R 2 000 000</div>
+          <div class="cd-opt" data-val="3000000" onclick="cdPrice('cd-min','cdv-min',3000000,'R 3 000 000','min');event.stopPropagation()" style="color:var(--ink-2)">R 3 000 000</div>
+          <div class="cd-opt" data-val="5000000" onclick="cdPrice('cd-min','cdv-min',5000000,'R 5 000 000','min');event.stopPropagation()" style="color:var(--ink-2)">R 5 000 000</div>
+        </div>
+      </div>
+      <div class="sf-drop cd" id="cd-max" onclick="cdToggle('cd-max',event)" style="background:var(--white);border-color:var(--line);flex:none;min-width:110px">
+        <span class="cd-val" id="cdv-max" style="color:var(--ink-2)">Max Price</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--ink-3)" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="cd-panel" id="cdp-max" style="background:var(--white);border-color:var(--line)">
+          <div class="cd-opt sel" data-val="999999999" onclick="cdPrice('cd-max','cdv-max',999999999,'Max Price','max');event.stopPropagation()" style="color:var(--ink-2)">No Max</div>
+          <div class="cd-opt" data-val="1000000" onclick="cdPrice('cd-max','cdv-max',1000000,'R 1 000 000','max');event.stopPropagation()" style="color:var(--ink-2)">R 1 000 000</div>
+          <div class="cd-opt" data-val="2000000" onclick="cdPrice('cd-max','cdv-max',2000000,'R 2 000 000','max');event.stopPropagation()" style="color:var(--ink-2)">R 2 000 000</div>
+          <div class="cd-opt" data-val="3000000" onclick="cdPrice('cd-max','cdv-max',3000000,'R 3 000 000','max');event.stopPropagation()" style="color:var(--ink-2)">R 3 000 000</div>
+          <div class="cd-opt" data-val="5000000" onclick="cdPrice('cd-max','cdv-max',5000000,'R 5 000 000','max');event.stopPropagation()" style="color:var(--ink-2)">R 5 000 000</div>
+          <div class="cd-opt" data-val="10000000" onclick="cdPrice('cd-max','cdv-max',10000000,'R 10 000 000','max');event.stopPropagation()" style="color:var(--ink-2)">R 10 000 000</div>
+        </div>
+      </div>
+      <div class="sf-drop cd" id="cd-beds" onclick="cdToggle('cd-beds',event)" style="background:var(--white);border-color:var(--line);flex:none;min-width:110px">
+        <span class="cd-val" id="cdv-beds" style="color:var(--ink-2)">Bedrooms</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--ink-3)" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="cd-panel" id="cdp-beds" style="background:var(--white);border-color:var(--line)">
+          <div class="cd-opt sel" data-val="0" onclick="cdBeds('cd-beds','cdv-beds',0,'Bedrooms',this);event.stopPropagation()" style="color:var(--ink-2)">Any</div>
+          <div class="cd-opt" data-val="1" onclick="cdBeds('cd-beds','cdv-beds',1,'1+ Beds',this);event.stopPropagation()" style="color:var(--ink-2)">1+ Beds</div>
+          <div class="cd-opt" data-val="2" onclick="cdBeds('cd-beds','cdv-beds',2,'2+ Beds',this);event.stopPropagation()" style="color:var(--ink-2)">2+ Beds</div>
+          <div class="cd-opt" data-val="3" onclick="cdBeds('cd-beds','cdv-beds',3,'3+ Beds',this);event.stopPropagation()" style="color:var(--ink-2)">3+ Beds</div>
+          <div class="cd-opt" data-val="4" onclick="cdBeds('cd-beds','cdv-beds',4,'4+ Beds',this);event.stopPropagation()" style="color:var(--ink-2)">4+ Beds</div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-<!-- Explore by Area -->
-<div class="areas-wrap">
-  <div class="section">
-    <div class="sec-head">
-      <div><h2>Explore by Area</h2><p>Browse properties in popular locations</p></div>
+
+<!-- Results -->
+<div class="section-sm" style="padding-top:32px">
+  <div class="w">
+    <div class="sec-head" style="margin-bottom:16px">
+      <div>
+        <h2 id="listTitle">Properties for Sale</h2>
+        <p>Showing <span id="listCount">0</span> properties</p>
+      </div>
+      <div class="f-sort" style="margin-left:0">
+        Sort by
+        <select onchange="sortBy(this.value)">
+          <option value="newest">Newest</option>
+          <option value="price-asc">Price: low to high</option>
+          <option value="price-desc">Price: high to low</option>
+          <option value="beds">Most bedrooms</option>
+          <option value="size">Largest</option>
+        </select>
+      </div>
     </div>
-    <div class="areas-grid" id="areasGrid"></div>
+    <div class="search-layout">
+      <div>
+        <div class="filter-bar">
+          <button class="f-chip on" onclick="fBeds(0,this)">All</button>
+          <button class="f-chip" onclick="fBeds(1,this)">1+ bed</button>
+          <button class="f-chip" onclick="fBeds(2,this)">2+ beds</button>
+          <button class="f-chip" onclick="fBeds(3,this)">3+ beds</button>
+          <button class="f-chip" onclick="fBeds(4,this)">4+ beds</button>
+          <div class="f-div"></div>
+          <button class="f-chip on" onclick="fType('',this)">All types</button>
+          <button class="f-chip" onclick="fType('House',this)">House</button>
+          <button class="f-chip" onclick="fType('Apartment',this)">Apartment</button>
+          <button class="f-chip" onclick="fType('Townhouse',this)">Townhouse</button>
+        </div>
+        <div class="prop-grid" id="listGrid"></div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+      <div class="search-map-panel" id="inlineMapEl"></div>
+    </div>
+
+    <!-- Agents section -->
+    <div id="agents-section" style="display:none">
+      <div class="sec-head"><div><h2>Find an Agent</h2><p>PPRA-registered agents across South Africa</p></div></div>
+      <div class="agents-search">
+        <input type="text" id="agentSearch" placeholder="Search by name, agency or area..." oninput="renderAgents()">
+        <select id="agentCity" onchange="renderAgents()">
+          <option value="">All cities</option>
+          <option value="Johannesburg">Johannesburg</option>
+          <option value="Cape Town">Cape Town</option>
+          <option value="Durban">Durban</option>
+          <option value="Pretoria">Pretoria</option>
+        </select>
+      </div>
+      <div class="agents-grid" id="agentsGrid"></div>
+    </div>
   </div>
 </div>
 <!-- CTA -->
@@ -4384,99 +4366,71 @@ document.querySelectorAll('.nav-a[data-mode]').forEach(function(a){
 });
 </script>
 <script>
-// On index: featured cards go to property.html?id=X
+// Override openModal to go to property detail page
 function openModal(id) { window.location = 'property.html?id=' + id; }
-function goSearch() {
-  var loc = document.getElementById('sLoc').value.trim();
-  var mode = document.querySelector('.hero-tab.on')?.dataset?.mode || 'buy';
-  window.location = 'search.html?mode=' + mode + (loc ? '&q=' + encodeURIComponent(loc) : '');
+function goAgents() {
+  document.getElementById('agents-section').style.display = '';
+  document.getElementById('listGrid').closest('.search-layout').style.display = 'none';
+  document.getElementById('agents-section').scrollIntoView({behavior:'smooth',block:'start'});
+  renderAgents();
 }
-function goSearchMap() { goSearch(); }
-function goAgents() { window.location = 'search.html?mode=buy#agents'; }
-function scrollToListings() { document.getElementById('listings-section').scrollIntoView({behavior:'smooth',block:'start'}); }
-function switchMode(m,e){ if(e)e.preventDefault(); window.location='search.html?mode='+m; }
+function scrollToListings() { document.getElementById('listGrid').scrollIntoView({behavior:'smooth',block:'start'}); }
+function switchMode(m,e){ if(e)e.preventDefault(); mode=m; page=1; renderListings(); }
 
-// Render featured (cards link to property.html)
-function renderFeatured() {
-  document.getElementById('featGrid').innerHTML = DATA.filter(p=>p.featured).map(p=>`
-    <div class="feat-card" onclick="openModal(${p.id})">
-      <img src="${p.imgs[0]}" alt="${p.title}" loading="lazy">
-      <div class="feat-overlay"></div>
-      <div class="feat-body">
-        <span class="feat-tag${p.mode==='rent'?' rent':p.mode==='new'?' new':''}">${p.mode==='rent'?'To Rent':p.mode==='new'?'New Development':'For Sale'}</span>
-        <h3>${p.title}</h3>
-        <div class="price">${fmtPrice(p.price, p.mode)}</div>
-        <div class="loc">${p.suburb}, ${p.city}</div>
-      </div>
-    </div>
-  `).join('');
+// Read URL params on load
+(function() {
+  var p = new URLSearchParams(location.search);
+  var m = p.get('mode') || 'buy';
+  var q = p.get('q') || '';
+  mode = m;
+  if (q) {
+    document.getElementById('sLoc').value = q;
+  }
+  // Highlight active nav link
+  document.querySelectorAll('.nav-a[data-mode]').forEach(function(a){
+    a.classList.toggle('on', a.dataset.mode === m);
+  });
+  // Update title
+  var titles = {buy:'Properties for Sale',rent:'Properties to Rent',new:'New Developments',
+    commercial:'Commercial Properties',farm:'Farms & Smallholdings',auction:'Properties at Auction',sold:'Recently Sold'};
+  document.getElementById('listTitle').textContent = titles[m] || 'Properties';
+  renderListings();
+  // Check for agents hash
+  if (location.hash === '#agents') goAgents();
+})();
+
+// Inline map for sidebar
+var inlineMap = null;
+function initInlineMap() {
+  var el = document.getElementById('inlineMapEl');
+  if (!el || el.offsetWidth === 0) return;
+  if (!inlineMap) {
+    inlineMap = L.map('inlineMapEl', {zoomControl:true}).setView([-29,25],5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      attribution:'&copy; OpenStreetMap', maxZoom:19
+    }).addTo(inlineMap);
+  }
+  inlineMap.eachLayer(function(l){ if(l instanceof L.Marker) inlineMap.removeLayer(l); });
+  var listings = getFiltered();
+  var bounds = [];
+  listings.filter(function(p){return p.lat&&p.lng;}).forEach(function(p){
+    var icon = L.divIcon({className:'',
+      html:'<div style="background:'+(p.mode==='rent'?'#b45309':p.mode==='new'?'#1e3a5f':'#2d6a4f')+';color:#fff;font-size:11px;font-weight:700;padding:4px 8px;border-radius:14px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.22);border:2px solid #fff">'+(p.price>=1000000?'R '+(p.price/1000000).toFixed(1)+'M':'R '+Math.round(p.price/1000)+'k')+'</div>',
+      iconAnchor:[0,0]});
+    var mk = L.marker([p.lat,p.lng],{icon}).addTo(inlineMap);
+    mk.bindPopup('<div style="min-width:180px;font-family:system-ui"><b>'+p.title+'</b><br><span style="color:#2d6a4f;font-weight:700">'+(p.mode==='rent'?'R '+p.price.toLocaleString()+'/mo':'R '+p.price.toLocaleString())+'</span><br><small>'+p.suburb+', '+p.city+'</small></div>');
+    bounds.push([p.lat,p.lng]);
+  });
+  if(bounds.length) inlineMap.fitBounds(bounds,{padding:[32,32],maxZoom:12});
+  setTimeout(function(){if(inlineMap)inlineMap.invalidateSize();},100);
 }
-
-// Render latest 6 buy listings
-function renderListings() {
-  const all = DATA.filter(p=>p.mode==='buy').sort((a,b)=>a.days-b.days).slice(0,6);
-  document.getElementById('listGrid').innerHTML = all.map(p => {
-    const feats = [
-      p.beds>0?'<span class="p-feat">'+featIcon('bed')+' <strong>'+p.beds+'</strong> '+(p.beds===1?'bed':'beds')+'</span>':'',
-      p.baths>0?'<span class="p-feat">'+featIcon('bath')+' <strong>'+p.baths+'</strong> '+(p.baths===1?'bath':'baths')+'</span>':'',
-      p.size>0?'<span class="p-feat">'+featIcon('area')+' <strong>'+p.size+'</strong> m²</span>':'',
-    ].filter(Boolean).join('');
-    return `<div class="p-card" onclick="openModal(${p.id})">
-      <div class="p-img"><img src="${p.imgs[0]}" alt="${p.title}" loading="lazy">
-        <span class="p-tag">For Sale</span>
-        <span class="p-count">${camIcon} ${p.imgs.length}</span>
-      </div>
-      <div class="p-body">
-        <div class="p-price">${fmtPrice(p.price, 'buy')}</div>
-        <div class="p-title">${p.title}</div>
-        <div class="p-loc">${pinIcon} ${p.suburb}, ${p.city}</div>
-        <div class="p-feats">${feats}</div>
-      </div>
-      <div class="p-foot">
-        <div class="agent-row">
-          <div class="agent-av">${p.agent.init}</div>
-          <div class="agent-nm"><strong>${p.agent.name}</strong>${p.agent.agency}</div>
-        </div>
-        <span class="p-days">${daysLabel(p.days)}</span>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function renderAreas() {
-  document.getElementById('areasGrid').innerHTML = AREAS.map(a=>`
-    <div class="area-card" onclick="window.location='search.html?mode=buy&q='+encodeURIComponent('${a.name}')">
-      <img src="${a.img}" alt="${a.name}" loading="lazy">
-      <div class="area-ov"></div>
-      <div class="area-txt"><strong>${a.name}</strong></div>
-    </div>
-  `).join('');
-}
-
-// Hero tab click
-function setTab(el, m) {
-  window.location = 'search.html?mode=' + m;
-}
-
-// Init
-renderFeatured();
-renderListings();
-renderAreas();
-
-// Swipe hint
-window.addEventListener('DOMContentLoaded', function() {
-  var tabs = document.getElementById('heroTabs');
-  var hint = document.getElementById('tabsScrollHint');
-  if (!tabs || !hint) return;
-  var swiped = false;
-  function showHint() { if(swiped) return; hint.style.animation='none'; hint.classList.remove('hidden'); void hint.offsetWidth; hint.style.animation=''; }
-  hint.addEventListener('animationend', function(){ hint.classList.add('hidden'); if(!swiped) setTimeout(showHint,60000); });
-  tabs.addEventListener('scroll', function(){ if(tabs.scrollLeft>1){swiped=true;hint.classList.add('hidden');}},{passive:true});
-});
-
-// Mobile search
-function doSearch() { goSearch(); }
-function openMap() { goSearchMap(); }
+// Init inline map after render
+var _origRenderListings = renderListings;
+renderListings = function() {
+  _origRenderListings();
+  setTimeout(initInlineMap,150);
+};
+setTimeout(initInlineMap,300);
 </script>
 </body>
 </html>
