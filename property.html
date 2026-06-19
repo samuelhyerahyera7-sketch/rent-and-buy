@@ -647,6 +647,16 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   font-family: var(--font); transition: background .15s;
 }
 .calc-btn:hover { background: #245d44; }
+@media (max-width: 640px) {
+  .calc-modal { max-width: 100%; width: calc(100vw - 32px); margin: 16px; }
+  .calc-body { grid-template-columns: 1fr; gap: 20px; padding: 20px 16px; }
+  .calc-head { padding: 16px 20px; }
+  .calc-monthly { font-size: 26px; white-space: nowrap; }
+  .calc-result { padding: 18px 16px; }
+  .calc-row { flex-wrap: nowrap; gap: 8px; }
+  .calc-row .ck { flex-shrink: 0; }
+  .calc-row .cv { text-align: right; white-space: nowrap; }
+}
 
 /* ── Hamburger / Drawer ─────────────────────── */
 .hamburger {
