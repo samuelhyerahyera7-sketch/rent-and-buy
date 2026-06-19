@@ -658,35 +658,65 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   border-radius: 2px; transition: all .2s;
 }
 .drawer-overlay {
-  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6);
   z-index: 1200; opacity: 0; transition: opacity .25s;
 }
 .drawer-overlay.open { display: block; opacity: 1; }
 .drawer {
-  position: fixed; top: 0; right: -100%; width: 82%; max-width: 340px;
-  height: 100vh; background: #fff; z-index: 1201; transition: right .28s ease;
-  display: flex; flex-direction: column; box-shadow: -4px 0 24px rgba(0,0,0,.15);
-  overflow: hidden;
+  position: fixed; top: 0; right: -100%; width: 86%; max-width: 360px;
+  height: 100vh; background: #0f2236; z-index: 1201; transition: right .28s ease;
+  overflow: hidden; box-shadow: -4px 0 32px rgba(0,0,0,.4);
 }
 .drawer.open { right: 0; }
+.dlv {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  display: flex; flex-direction: column;
+  transition: transform .26s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+}
+.dlv-2 { transform: translateX(100%); }
+.drawer.sub-open .dlv-1 { transform: translateX(-25%); opacity: .4; }
+.drawer.sub-open .dlv-2 { transform: translateX(0); opacity: 1; }
 .drawer-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 20px 20px 16px; border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; gap: 10px;
+  padding: 18px 18px 15px; border-bottom: 1px solid rgba(255,255,255,.1); flex-shrink: 0;
 }
+.drawer-head-logo { flex: 1; font-size: 18px; font-weight: 800; letter-spacing: -.3px; }
+.drawer-head-logo .lo-r { color: var(--sage); }
+.drawer-head-logo .lo-a { color: rgba(255,255,255,.4); font-weight: 400; font-size: 14px; margin: 0 1px; }
+.drawer-head-logo .lo-b { color: #fff; }
+.drawer-back {
+  background: none; border: none; color: rgba(255,255,255,.65); cursor: pointer;
+  display: flex; align-items: center; gap: 5px; font-size: 13.5px; font-weight: 600;
+  padding: 4px 0; flex-shrink: 0; letter-spacing: .2px;
+}
+.drawer-head-title { flex: 1; font-size: 17px; font-weight: 700; color: #fff; }
 .drawer-close {
-  background: none; border: none; font-size: 22px; cursor: pointer; color: var(--ink-2);
-  flex-shrink: 0; padding: 4px 8px; line-height: 1;
+  background: rgba(255,255,255,.08); border: none; border-radius: 50%;
+  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; cursor: pointer; color: rgba(255,255,255,.6); flex-shrink: 0;
 }
-.drawer-links { flex: 1; min-height: 0; overflow-y: auto; padding: 12px 0; }
+.drawer-close:hover { background: rgba(255,255,255,.15); }
+.drawer-links { flex: 1; min-height: 0; overflow-y: auto; }
 .drawer-link {
-  display: block; padding: 13px 22px; font-size: 15px; font-weight: 500;
-  color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line-2);
-  transition: background .12s;
+  display: flex; align-items: center; gap: 15px;
+  padding: 16px 20px; font-size: 15px; font-weight: 500;
+  color: rgba(255,255,255,.88); text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  transition: background .12s; cursor: pointer;
+  background: none; border-left: none; border-right: none; border-top: none;
+  width: 100%; text-align: left; font-family: var(--font);
 }
-.drawer-link:hover { background: var(--line-2); }
-.drawer-link.sage { color: var(--sage); font-weight: 600; }
-.drawer-btns { padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
-.drawer-btns .btn-ghost { width: 100%; text-align: center; padding: 11px; }
+.drawer-link:hover, .drawer-link:active { background: rgba(255,255,255,.07); color: #fff; }
+.d-icon { width: 22px; height: 22px; flex-shrink: 0; color: rgba(255,255,255,.45); }
+.d-chev { margin-left: auto; flex-shrink: 0; color: rgba(255,255,255,.25); }
+.drawer-grp-label {
+  padding: 14px 20px 6px; font-size: 10.5px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: rgba(255,255,255,.3);
+}
+.drawer-btns { padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; border-top: 1px solid rgba(255,255,255,.1); }
+.drawer-btns .btn-ghost { width: 100%; text-align: center; padding: 11px; border-color: rgba(255,255,255,.25); color: rgba(255,255,255,.8); background: transparent; }
+.drawer-btns .btn-ghost:hover { border-color: rgba(255,255,255,.5); color: #fff; }
 .drawer-btns .btn-primary { width: 100%; text-align: center; padding: 11px; border-radius: 6px; }
 @media (max-width: 900px) {
   .hamburger { display: flex; }
@@ -1499,24 +1529,66 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
 <!-- Mobile Drawer -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
 <div class="drawer" id="drawer">
-  <div class="drawer-head">
-    <span class="logo-text"><span class="lo-r">Rent</span><span class="lo-a">&amp;</span><span class="lo-b">Buy</span></span>
-    <button class="drawer-close" onclick="closeDrawer()">&#x2715;</button>
+  <!-- Level 1: main menu -->
+  <div class="dlv dlv-1" id="dLv1">
+    <div class="drawer-head">
+      <span class="drawer-head-logo"><span class="lo-r">Rent</span><span class="lo-a">&amp;</span><span class="lo-b">Buy</span></span>
+      <button class="drawer-close" onclick="closeDrawer()">&#x2715;</button>
+    </div>
+    <div class="drawer-links">
+      <button class="drawer-link" onclick="dOpenSub('buy')">
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Buy
+        <svg class="d-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <button class="drawer-link" onclick="dOpenSub('rent')">
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Rent
+        <svg class="d-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <button class="drawer-link" onclick="dOpenSub('new')">
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        New Developments
+        <svg class="d-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <a class="drawer-link" href="search.html?mode=commercial">
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M9 22V12h6v10M8 7h1m4 0h1M8 11h1m4 0h1"/></svg>
+        Commercial
+      </a>
+      <a class="drawer-link" href="search.html?mode=farm">
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/><path d="M5 22H2v-4l4-2"/></svg>
+        Farms &amp; Smallholdings
+      </a>
+      <a class="drawer-link" href="search.html?mode=auction">
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l4-8 4 4 4-6 4 4"/><path d="M21 21H3"/></svg>
+        Auctions
+      </a>
+      <div class="drawer-grp-label">Tools</div>
+      <a class="drawer-link" href="#" onclick="openCalc();closeDrawer()">
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>
+        Bond Calculator
+      </a>
+      <a class="drawer-link" href="mailto:hello@rentandbuy.co.za?subject=Advertising Packages">
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Advertise with Us
+      </a>
+    </div>
+    <div class="drawer-btns">
+      <button class="btn-ghost" id="drawerAuthBtn" onclick="openSignIn();closeDrawer()">Sign In</button>
+      <button class="btn-primary" onclick="openListProp();closeDrawer()">List Property</button>
+    </div>
   </div>
-  <div class="drawer-links">
-    <a class="drawer-link" href="search.html?mode=buy">Buy Property</a>
-    <a class="drawer-link" href="search.html?mode=rent">Rent Property</a>
-    <a class="drawer-link" href="search.html?mode=new">New Developments</a>
-    <a class="drawer-link" href="search.html?mode=commercial">Commercial</a>
-    <a class="drawer-link" href="search.html?mode=farm">Farms</a>
-    <a class="drawer-link" href="search.html?mode=auction">Auctions</a>
-    <a class="drawer-link" href="#" onclick="openCalc();closeDrawer()">Bond Calculator</a>
-    <a class="drawer-link" href="search.html?mode=buy#agents">Find an Agent</a>
-    <a class="drawer-link" href="mailto:hello@rentandbuy.co.za?subject=Advertising Packages">Advertise with Us</a>
-  </div>
-  <div class="drawer-btns">
-    <button class="btn-ghost" onclick="openSignIn();closeDrawer()">Sign In</button>
-    <button class="btn-primary" onclick="openListProp();closeDrawer()">List Property</button>
+  <!-- Level 2: sub-menu -->
+  <div class="dlv dlv-2" id="dLv2">
+    <div class="drawer-head">
+      <button class="drawer-back" onclick="dCloseSub()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+      <span class="drawer-head-title" id="dSubTitle"></span>
+      <button class="drawer-close" onclick="closeDrawer()">&#x2715;</button>
+    </div>
+    <div class="drawer-links" id="dSubLinks"></div>
   </div>
 </div>
 <div class="mob-search-overlay" id="mobSearchOverlay">
@@ -2820,9 +2892,48 @@ function openDrawer() {
   document.body.style.overflow = 'hidden';
 }
 function closeDrawer() {
-  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open', 'sub-open');
   document.getElementById('drawerOverlay').classList.remove('open');
   document.body.style.overflow = '';
+}
+var D_SUBS = {
+  buy: { title: 'Buy', items: [
+    {icon:'home', label:'All Properties for Sale', href:'search.html?mode=buy'},
+    {icon:'new', label:'New Developments', href:'search.html?mode=new'},
+    {icon:'office', label:'Commercial for Sale', href:'search.html?mode=commercial'},
+    {icon:'farm', label:'Farms for Sale', href:'search.html?mode=farm'},
+    {icon:'auction', label:'Auctions', href:'search.html?mode=auction'}
+  ]},
+  rent: { title: 'Rent', items: [
+    {icon:'home', label:'All Properties to Rent', href:'search.html?mode=rent'},
+    {icon:'office', label:'Commercial to Rent', href:'search.html?mode=commercial'}
+  ]},
+  new: { title: 'New Developments', items: [
+    {icon:'home', label:'New Houses', href:'search.html?mode=new&type=House'},
+    {icon:'apt', label:'New Apartments', href:'search.html?mode=new&type=Apartment'},
+    {icon:'townhouse', label:'New Townhouses', href:'search.html?mode=new&type=Townhouse'},
+    {icon:'new', label:'All New Developments', href:'search.html?mode=new'}
+  ]}
+};
+var D_ICONS = {
+  home: '<svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+  new: '<svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>',
+  office: '<svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M9 22V12h6v10"/></svg>',
+  farm: '<svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg>',
+  auction: '<svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l4-8 4 4 4-6 4 4"/><path d="M21 21H3"/></svg>',
+  apt: '<svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h1m3 0h1M8 10h1m3 0h1M8 14h1m3 0h1M8 18h1m3 0h1"/></svg>',
+  townhouse: '<svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 11l11-9 11 9"/><rect x="3" y="11" width="7" height="10"/><rect x="14" y="11" width="7" height="10"/></svg>'
+};
+function dOpenSub(mode) {
+  var sub = D_SUBS[mode]; if (!sub) return;
+  document.getElementById('dSubTitle').textContent = sub.title;
+  document.getElementById('dSubLinks').innerHTML = sub.items.map(function(it){
+    return '<a class="drawer-link" href="' + it.href + '">' + (D_ICONS[it.icon]||D_ICONS.home) + it.label + '</a>';
+  }).join('');
+  document.getElementById('drawer').classList.add('sub-open');
+}
+function dCloseSub() {
+  document.getElementById('drawer').classList.remove('sub-open');
 }
 
 function setTab(el, m) {
