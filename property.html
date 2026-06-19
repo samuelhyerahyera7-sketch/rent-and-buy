@@ -668,14 +668,22 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   overflow: hidden; box-shadow: -4px 0 24px rgba(0,0,0,.15);
 }
 .drawer.open { right: 0; }
-.dlv {
-  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  display: flex; flex-direction: column;
-  transition: transform .26s cubic-bezier(.4,0,.2,1);
+.drawer-inner {
+  display: flex; flex-direction: column; height: 100%;
 }
-.dlv-2 { transform: translateX(100%); }
-.drawer.sub-open .dlv-1 { transform: translateX(-20%); opacity: .3; }
-.drawer.sub-open .dlv-2 { transform: translateX(0); }
+.d-acc-body {
+  max-height: 0; overflow: hidden;
+  transition: max-height .22s ease;
+}
+.d-acc-body.open { max-height: 400px; }
+.d-acc-item {
+  display: block; padding: 11px 22px 11px 30px;
+  font-size: 14px; color: var(--ink-2); text-decoration: none;
+  border-bottom: 1px solid var(--line-2); background: #f8f9fa;
+}
+.d-acc-item:hover, .d-acc-item:active { background: #f0f0f0; }
+.d-chev { color: var(--ink-4); flex-shrink: 0; transition: transform .22s ease; }
+.drawer-link.acc-open .d-chev { transform: rotate(180deg); }
 .drawer-head {
   display: flex; align-items: center; gap: 10px;
   padding: 18px 20px 15px; border-bottom: 1px solid var(--line); flex-shrink: 0;
@@ -684,13 +692,7 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 .drawer-head-logo .lo-r { color: var(--sage); }
 .drawer-head-logo .lo-a { color: var(--ink-4); font-weight: 400; font-size: 14px; margin: 0 1px; }
 .drawer-head-logo .lo-b { color: var(--navy); }
-.drawer-back {
-  background: none; border: none; color: var(--ink-3); cursor: pointer;
-  display: flex; align-items: center; gap: 5px; font-size: 13.5px; font-weight: 600;
-  padding: 4px 0; flex-shrink: 0;
-}
-.drawer-back:hover { color: var(--ink); }
-.drawer-head-title { flex: 1; font-size: 16px; font-weight: 700; color: var(--ink); }
+
 .drawer-close {
   background: none; border: none; font-size: 20px; cursor: pointer;
   color: var(--ink-3); flex-shrink: 0; padding: 4px 6px; line-height: 1;
@@ -1523,16 +1525,32 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
 <!-- Mobile Drawer -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
 <div class="drawer" id="drawer">
-  <!-- Level 1: main menu -->
-  <div class="dlv dlv-1" id="dLv1">
+  <div class="drawer-inner">
     <div class="drawer-head">
       <span class="drawer-head-logo"><span class="lo-r">Rent</span><span class="lo-a">&amp;</span><span class="lo-b">Buy</span></span>
       <button class="drawer-close" onclick="closeDrawer()">&#x2715;</button>
     </div>
     <div class="drawer-links">
-      <button class="drawer-link" onclick="dOpenSub('buy')">Buy <svg class="d-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
-      <button class="drawer-link" onclick="dOpenSub('rent')">Rent <svg class="d-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
-      <button class="drawer-link" onclick="dOpenSub('new')">New Developments <svg class="d-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <button class="drawer-link" id="dacc-buy" onclick="dToggle('buy')">Buy <svg class="d-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="d-acc-body" id="dacc-body-buy">
+        <a class="d-acc-item" href="search.html?mode=buy">All Properties for Sale</a>
+        <a class="d-acc-item" href="search.html?mode=new">New Developments</a>
+        <a class="d-acc-item" href="search.html?mode=commercial">Commercial for Sale</a>
+        <a class="d-acc-item" href="search.html?mode=farm">Farms for Sale</a>
+        <a class="d-acc-item" href="search.html?mode=auction">Auctions</a>
+      </div>
+      <button class="drawer-link" id="dacc-rent" onclick="dToggle('rent')">Rent <svg class="d-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="d-acc-body" id="dacc-body-rent">
+        <a class="d-acc-item" href="search.html?mode=rent">All Properties to Rent</a>
+        <a class="d-acc-item" href="search.html?mode=commercial-rent">Commercial to Rent</a>
+      </div>
+      <button class="drawer-link" id="dacc-new" onclick="dToggle('new')">New Developments <svg class="d-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="d-acc-body" id="dacc-body-new">
+        <a class="d-acc-item" href="search.html?mode=new&type=House">New Houses</a>
+        <a class="d-acc-item" href="search.html?mode=new&type=Apartment">New Apartments</a>
+        <a class="d-acc-item" href="search.html?mode=new&type=Townhouse">New Townhouses</a>
+        <a class="d-acc-item" href="search.html?mode=new">All New Developments</a>
+      </div>
       <a class="drawer-link" href="search.html?mode=commercial">Commercial</a>
       <a class="drawer-link" href="search.html?mode=farm">Farms &amp; Smallholdings</a>
       <a class="drawer-link" href="search.html?mode=auction">Auctions</a>
@@ -1543,18 +1561,6 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
       <button class="btn-ghost" id="drawerAuthBtn" onclick="openSignIn();closeDrawer()">Sign In</button>
       <button class="btn-primary" onclick="openListProp();closeDrawer()">List Property</button>
     </div>
-  </div>
-  <!-- Level 2: sub-menu -->
-  <div class="dlv dlv-2" id="dLv2">
-    <div class="drawer-head">
-      <button class="drawer-back" onclick="dCloseSub()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-        Back
-      </button>
-      <span class="drawer-head-title" id="dSubTitle"></span>
-      <button class="drawer-close" onclick="closeDrawer()">&#x2715;</button>
-    </div>
-    <div class="drawer-links" id="dSubLinks"></div>
   </div>
 </div>
 <!-- Property Detail -->
@@ -2803,36 +2809,28 @@ function openDrawer() {
   document.body.style.overflow = 'hidden';
 }
 function closeDrawer() {
-  document.getElementById('drawer').classList.remove('open', 'sub-open');
+  document.getElementById('drawer').classList.remove('open');
   document.getElementById('drawerOverlay').classList.remove('open');
   document.body.style.overflow = '';
+  ['buy','rent','new'].forEach(function(m) {
+    var btn = document.getElementById('dacc-' + m);
+    var body = document.getElementById('dacc-body-' + m);
+    if (btn) btn.classList.remove('acc-open');
+    if (body) body.classList.remove('open');
+  });
 }
-var D_SUBS = {
-  buy: { title: 'Buy', items: [
-    {icon:'home', label:'All Properties for Sale', href:'search.html?mode=buy'},
-    {icon:'new', label:'New Developments', href:'search.html?mode=new'},
-    {icon:'office', label:'Commercial for Sale', href:'search.html?mode=commercial'},
-    {icon:'farm', label:'Farms for Sale', href:'search.html?mode=farm'},
-    {icon:'auction', label:'Auctions', href:'search.html?mode=auction'}
-  ]},
-  rent: { title: 'Rent', items: [
-    {icon:'home', label:'All Properties to Rent', href:'search.html?mode=rent'},
-    {icon:'office', label:'Commercial to Rent', href:'search.html?mode=commercial'}
-  ]},
-  new: { title: 'New Developments', items: [
-    {icon:'home', label:'New Houses', href:'search.html?mode=new&type=House'},
-    {icon:'apt', label:'New Apartments', href:'search.html?mode=new&type=Apartment'},
-    {icon:'townhouse', label:'New Townhouses', href:'search.html?mode=new&type=Townhouse'},
-    {icon:'new', label:'All New Developments', href:'search.html?mode=new'}
-  ]}
-};
-function dOpenSub(mode) {
-  var sub = D_SUBS[mode]; if (!sub) return;
-  document.getElementById('dSubTitle').textContent = sub.title;
-  document.getElementById('dSubLinks').innerHTML = sub.items.map(function(it){
-    return '<a class="drawer-link" href="' + it.href + '">' + it.label + '</a>';
-  }).join('');
-  document.getElementById('drawer').classList.add('sub-open');
+function dToggle(mode) {
+  var btn = document.getElementById('dacc-' + mode);
+  var body = document.getElementById('dacc-body-' + mode);
+  var isOpen = body.classList.contains('open');
+  ['buy','rent','new'].forEach(function(m) {
+    document.getElementById('dacc-' + m).classList.remove('acc-open');
+    document.getElementById('dacc-body-' + m).classList.remove('open');
+  });
+  if (!isOpen) {
+    btn.classList.add('acc-open');
+    body.classList.add('open');
+  }
 }
 function dCloseSub() {
   document.getElementById('drawer').classList.remove('sub-open');
