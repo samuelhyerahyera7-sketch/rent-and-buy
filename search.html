@@ -1466,26 +1466,76 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
   background: none; border: none; cursor: pointer; flex-shrink: 0;
   color: var(--ink-2); padding: 2px; display: flex; align-items: center;
 }
-@media (max-width: 900px) { .mob-page-hd { display: flex; } }
+
+/* ── Mobile filter bar ───────────────────── */
+#mobFilterBar { display: none; background: var(--white); border-bottom: 1px solid var(--line); position: relative; }
+.mfb-search {
+  display: flex; align-items: center; gap: 10px;
+  margin: 10px 16px 0; padding: 10px 14px;
+  background: #f5f7f9; border-radius: 10px;
+}
+.mfb-search input {
+  flex: 1; border: none; outline: none; background: transparent;
+  font-size: 14px; font-family: var(--font); color: var(--ink);
+}
+.mfb-search input::placeholder { color: #aaa; }
+.mfb-pills {
+  display: flex; gap: 8px; padding: 10px 16px;
+  overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;
+}
+.mfb-pills::-webkit-scrollbar { display: none; }
+.mfb-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 13px; border: 1.5px solid #ddd; border-radius: 20px;
+  background: #fff; font-size: 13px; font-weight: 500; color: var(--ink-2);
+  white-space: nowrap; cursor: pointer; flex-shrink: 0; font-family: var(--font);
+}
+.mfb-mode { background: var(--navy) !important; border-color: var(--navy) !important; color: #fff !important; }
+.mfb-mode-dd {
+  position: absolute; left: 16px; right: 16px; top: calc(100% - 0px);
+  background: #fff; border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.14); z-index: 300;
+}
+.mfb-mode-opt {
+  display: block; padding: 13px 18px; font-size: 15px; color: var(--ink);
+  text-decoration: none; border-bottom: 1px solid var(--line-2);
+}
+.mfb-mode-opt:last-child { border-bottom: none; }
+.mfb-mode-opt:active { background: var(--line-2); }
+.mfb-count-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 16px 10px; font-size: 12px; color: var(--ink-3);
+  border-top: 1px solid var(--line-2);
+}
+.mfb-count-row select {
+  border: none; background: transparent; font-size: 12px;
+  font-family: var(--font); color: var(--ink-2); outline: none;
+}
+
+@media (max-width: 900px) {
+  .mob-page-hd { display: flex; }
+  #mobFilterBar { display: block; }
+  #desktopFilterBar { display: none !important; }
+  .sec-head { display: none !important; }
+  .filter-bar { display: none !important; }
+  .section-sm { padding-top: 0 !important; }
+}
 
 /* ── Horizontal property cards on mobile ─ */
-@media (max-width: 600px) {
+@media (max-width: 900px) {
   .prop-grid { gap: 0; grid-template-columns: 1fr; }
   .p-card {
     border-radius: 0; border-left: none; border-right: none; border-top: none;
-    display: grid; grid-template-columns: 115px 1fr; grid-template-rows: auto auto;
-    box-shadow: none;
+    display: grid; grid-template-columns: 120px 1fr; grid-template-rows: 1fr auto;
+    min-height: 140px; box-shadow: none;
   }
   .p-card:hover { transform: none; box-shadow: none; }
-  .p-img {
-    grid-column: 1; grid-row: 1 / 3;
-    height: auto; min-height: 120px; max-height: 160px;
-  }
+  .p-img { grid-column: 1; grid-row: 1 / 3; height: 100%; }
   .p-img img { width: 100%; height: 100%; object-fit: cover; }
-  .p-body { grid-column: 2; grid-row: 1; padding: 10px 12px 4px; }
+  .p-body { grid-column: 2; grid-row: 1; padding: 10px 12px 4px; overflow: hidden; }
   .p-foot { grid-column: 2; grid-row: 2; padding: 0 12px 10px; }
   .p-price { font-size: 16px; margin-bottom: 2px; }
-  .p-title { font-size: 13px; margin-bottom: 4px; }
+  .p-title { font-size: 13px; margin-bottom: 4px; line-height: 1.3; }
   .p-loc { font-size: 11px; margin-bottom: 6px; }
   .p-feats { gap: 5px; flex-wrap: wrap; }
   .p-feat { font-size: 11px; gap: 3px; }
@@ -1566,6 +1616,38 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
   </button>
   <h1 id="mobPageTitle">Properties for Sale</h1>
+</div>
+
+<!-- Mobile filter bar -->
+<div id="mobFilterBar">
+  <div class="mfb-search">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input id="mfbLoc" type="text" placeholder="Search suburb, city or estate" oninput="document.getElementById('sLoc').value=this.value">
+  </div>
+  <div class="mfb-pills">
+    <button id="mfbModeBtn" class="mfb-pill mfb-mode" onclick="mfbToggleMode()">
+      <span id="mfbModeLabel">Buy</span>
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <button class="mfb-pill" onclick="cdToggle('cd-min',event)">Price <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+    <button class="mfb-pill" onclick="cdToggle('cd-beds',event)">Beds <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+    <button class="mfb-pill" onclick="cdToggle('cd-type',event)">Property Type <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+    <button class="mfb-pill" onclick="openMobSearch()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/></svg>
+      More Filters
+    </button>
+  </div>
+  <div id="mfbModeDD" class="mfb-mode-dd" style="display:none">
+    <a class="mfb-mode-opt" href="search.html?mode=buy">Buy</a>
+    <a class="mfb-mode-opt" href="search.html?mode=rent">Rent</a>
+    <a class="mfb-mode-opt" href="search.html?mode=new">New Developments</a>
+    <a class="mfb-mode-opt" href="search.html?mode=commercial">Commercial</a>
+    <a class="mfb-mode-opt" href="search.html?mode=farm">Farms &amp; Smallholdings</a>
+  </div>
+  <div class="mfb-count-row">
+    <span id="mfbCount">Loading...</span>
+    <div style="display:flex;align-items:center;gap:4px">Sort: <select onchange="sortBy(this.value)" class="mfb-count-row select"><option value="newest">Newest</option><option value="price-asc">Price ↑</option><option value="price-desc">Price ↓</option><option value="beds">Most beds</option></select></div>
+  </div>
 </div>
 
 <!-- Mobile Drawer -->
@@ -1661,7 +1743,7 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
   </div>
 </div>
 <!-- Search filter bar -->
-<div style="background:var(--white);border-bottom:1px solid var(--line);padding:16px 0;position:sticky;top:60px;z-index:90">
+<div id="desktopFilterBar" style="background:var(--white);border-bottom:1px solid var(--line);padding:16px 0;position:sticky;top:60px;z-index:90">
   <div class="w">
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <div class="search-bar-outer" style="flex:1;min-width:200px">
@@ -2733,6 +2815,8 @@ function renderListings() {
   const listTitles = {buy:'Properties for Sale', rent:'Properties to Rent', new:'New Developments',
     commercial:'Commercial Properties', farm:'Farms & Smallholdings', auction:'Properties at Auction', sold:'Recently Sold Properties'};
   document.getElementById('listTitle').textContent = listTitles[mode] || 'Properties';
+  var mfbC = document.getElementById('mfbCount');
+  if (mfbC) mfbC.textContent = all.length + ' ' + (listTitles[mode] || 'Properties');
 
   const slice = all.slice((page-1)*PER, page*PER);
   document.getElementById('listGrid').innerHTML = slice.map(p => {
@@ -2902,6 +2986,23 @@ window.addEventListener('DOMContentLoaded', function() {
     if (tabs.scrollLeft > 1) { swiped = true; hint.classList.add('hidden'); }
   }, { passive: true });
 });
+
+// Mobile filter bar
+function mfbToggleMode() {
+  var dd = document.getElementById('mfbModeDD');
+  var open = dd.style.display !== 'none';
+  dd.style.display = open ? 'none' : 'block';
+  if (!open) {
+    setTimeout(function() {
+      document.addEventListener('click', function close(e) {
+        if (!e.target.closest('#mfbModeDD') && !e.target.closest('#mfbModeBtn')) {
+          dd.style.display = 'none';
+          document.removeEventListener('click', close);
+        }
+      });
+    }, 0);
+  }
+}
 
 // Drawer
 function openDrawer() {
@@ -4512,6 +4613,11 @@ function switchMode(m,e){ if(e)e.preventDefault(); mode=m; page=1; renderListing
   document.getElementById('listTitle').textContent = pageTitle;
   var mobT = document.getElementById('mobPageTitle');
   if (mobT) mobT.textContent = pageTitle;
+  var modeLabelMap = {buy:'Buy',rent:'Rent',new:'New Dev',commercial:'Commercial',farm:'Farms',auction:'Auctions'};
+  var mfbLbl = document.getElementById('mfbModeLabel');
+  if (mfbLbl) mfbLbl.textContent = modeLabelMap[m] || 'Buy';
+  var mfbLocEl = document.getElementById('mfbLoc');
+  if (mfbLocEl && q) mfbLocEl.value = q;
   renderListings();
   // Check for agents hash
   if (location.hash === '#agents') goAgents();
