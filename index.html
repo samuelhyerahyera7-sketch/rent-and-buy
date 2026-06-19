@@ -1617,11 +1617,11 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
   <div class="hero-overlay"></div>
   <div class="hero-inner">
     <div class="hero-tabs" id="heroTabs">
-      <button class="hero-tab on" onclick="window.location='search.html?mode=buy'">Buy</button>
-      <button class="hero-tab" onclick="window.location='search.html?mode=rent'">Rent</button>
-      <button class="hero-tab" onclick="window.location='search.html?mode=new'" style="position:relative">Developments<span class="swipe-line" id="tabsScrollHint"></span></button>
-      <button class="hero-tab" onclick="window.location='search.html?mode=agents'">Agents</button>
-      <button class="hero-tab" onclick="window.location='search.html?mode=sold'">Sold Prices</button>
+      <button class="hero-tab on" data-mode="buy" onclick="setTab(this,'buy')">Buy</button>
+      <button class="hero-tab" data-mode="rent" onclick="setTab(this,'rent')">Rent</button>
+      <button class="hero-tab" data-mode="new" onclick="setTab(this,'new')" style="position:relative">Developments<span class="swipe-line" id="tabsScrollHint"></span></button>
+      <button class="hero-tab" data-mode="agents" onclick="setTab(this,'agents')">Agents</button>
+      <button class="hero-tab" data-mode="sold" onclick="setTab(this,'sold')">Sold Prices</button>
     </div>
     <h1 id="heroTitle">Find Property for Sale</h1>
     <div class="search-bar-outer">
@@ -4519,10 +4519,6 @@ function renderAreas() {
 }
 
 // Hero tab click
-function setTab(el, m) {
-  window.location = 'search.html?mode=' + m;
-}
-
 // Init
 renderFeatured();
 renderListings();
