@@ -611,12 +611,12 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 .sold-badge { background: #dc2626; color: #fff; }
 
 /* ── Bond calculator modal ──────────────────── */
-.calc-modal { max-width: 860px; max-height: 90vh; overflow: hidden; }
+.calc-modal { max-width: 1100px; overflow: hidden; border-radius: 20px; box-shadow: 0 8px 40px rgba(0,0,0,.13); }
 .calc-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 0; }
 .calc-left {
   background: var(--navy); color: #fff; padding: 28px;
-  display: flex; flex-direction: column; overflow: hidden;
-  border-radius: 16px 0 0 16px;
+  display: flex; flex-direction: column;
+  border-radius: 20px 0 0 20px;
 }
 .calc-brand { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
 .calc-brand-icon {
@@ -676,9 +676,9 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 }
 @media (max-width: 640px) {
   .backdrop.open { padding: 0; align-items: flex-end; }
-  .calc-modal { max-width: 100%; width: 100%; margin: 0; border-radius: 20px 20px 0 0; max-height: 92vh; overflow-y: auto; }
+  .calc-modal { max-width: 100%; width: 100%; margin: 0; border-radius: 20px 20px 0 0; max-height: 88vh; overflow-y: auto; }
   .calc-body { grid-template-columns: 1fr; }
-  .calc-left { border-radius: 20px 20px 0 0; padding: 20px; }
+  .calc-left { border-radius: 20px 20px 0 0; padding: 20px; min-height: 0; }
   .calc-brand { margin-bottom: 16px; }
   .calc-brand-icon { width: 44px; height: 44px; }
   .calc-brand-name { font-size: 17px; }
@@ -952,9 +952,7 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 }
 .sm-close:hover { background: var(--line); }
 
-@media (max-width: 700px) {
-  .calc-body { grid-template-columns: 1fr; }
-}
+
 @media (max-width: 900px) {
   .nav-links { display: none; }
   .feat-grid { grid-template-columns: 1fr; }
@@ -1013,8 +1011,7 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   .nav-inner { padding: 0 16px; }
   .logo { font-size: 17px; }
 
-  /* Calc modal — full width on mobile */
-  .calc-body { padding: 16px; gap: 20px; }
+
   .sm-modal { max-width: 100%; margin: 0 12px; }
 
   /* Section padding */
@@ -4993,6 +4990,8 @@ setTimeout(initInlineMap,300);
 </nav>
 </body>
 </html>
+
+
 
 
 
