@@ -611,89 +611,51 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 .sold-badge { background: #dc2626; color: #fff; }
 
 /* ── Bond calculator modal ──────────────────── */
-.calc-modal { max-width: 1100px; overflow: hidden; border-radius: 20px; box-shadow: 0 8px 40px rgba(0,0,0,.13); }
-.calc-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 0; }
-.calc-left {
-  background: var(--navy); color: #fff; padding: 28px;
-  display: flex; flex-direction: column;
-  border-radius: 20px 0 0 20px;
+.calc-modal { max-width: 740px; max-height: 90vh; overflow-y: auto; }
+.calc-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 28px; border-bottom: 1px solid var(--line);
 }
-.calc-brand { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
-.calc-brand-icon {
-  width: 52px; height: 52px; border-radius: 50%;
-  background: rgba(255,255,255,.15);
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+.calc-head h2 { font-size: 18px; font-weight: 700; }
+.calc-body { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding: 28px; }
+.calc-inputs {}
+.calc-field { margin-bottom: 20px; }
+.calc-field label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--ink-3); margin-bottom: 6px; }
+.calc-field .val-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.calc-field .cval { font-size: 16px; font-weight: 700; color: var(--navy); }
+.calc-field .csub { font-size: 12px; color: var(--ink-4); }
+.calc-field input[type=range] {
+  width: 100%; -webkit-appearance: none; height: 4px; background: var(--line); border-radius: 2px; outline: none;
 }
-.calc-brand-name { font-size: 20px; font-weight: 800; }
-.calc-brand-sub { font-size: 12px; opacity: .55; margin-top: 2px; }
-.calc-repay-card {
-  background: rgba(255,255,255,.1); border-radius: 12px;
-  padding: 18px 20px; margin-bottom: 22px;
+.calc-field input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--sage); cursor: pointer; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--sage);
 }
-.calc-repay-lbl { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; opacity: .6; margin-bottom: 8px; }
-.calc-repay-amt { font-size: 34px; font-weight: 800; letter-spacing: -1px; margin-bottom: 4px; }
-.calc-repay-note { font-size: 12px; opacity: .5; }
-.calc-sum-rows { flex: 1; }
-.calc-sum-row {
-  display: flex; align-items: center; gap: 12px;
-  padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,.1);
+.calc-result { background: var(--navy); border-radius: var(--r-lg); padding: 24px; color: #fff; }
+.calc-monthly-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; opacity: .6; margin-bottom: 6px; }
+.calc-monthly { font-size: 34px; font-weight: 800; letter-spacing: -.5px; margin-bottom: 4px; }
+.calc-monthly-note { font-size: 12px; opacity: .55; margin-bottom: 20px; }
+.calc-divider { border: none; border-top: 1px solid rgba(255,255,255,.12); margin: 16px 0; }
+.calc-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; }
+.calc-row .ck { opacity: .65; }
+.calc-row .cv { font-weight: 600; }
+.calc-duty { margin-top: 16px; }
+.calc-duty-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; opacity: .55; margin-bottom: 8px; }
+.calc-btn {
+  margin-top: 20px; width: 100%; padding: 12px; background: var(--sage); color: #fff;
+  border: none; border-radius: var(--r); font-size: 14px; font-weight: 700; cursor: pointer;
+  font-family: var(--font); transition: background .15s;
 }
-.calc-sum-row:last-child { border-bottom: none; }
-.calc-sum-ico {
-  width: 34px; height: 34px; border-radius: 9px;
-  background: rgba(255,255,255,.14);
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.calc-sum-lbl { flex: 1; font-size: 13px; opacity: .8; }
-.calc-sum-val { font-size: 13px; font-weight: 700; white-space: nowrap; }
-.calc-house-art { margin-top: 20px; opacity: .18; line-height: 0; }
-.calc-right { padding: 24px 28px; display: flex; flex-direction: column; overflow-y: auto; }
-.calc-right-hd { display: flex; align-items: center; justify-content: flex-end; margin-bottom: 18px; }
-.calc-field2 { margin-bottom: 22px; }
-.calc-field2-hd { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-.calc-field2-ico {
-  width: 34px; height: 34px; border-radius: 9px;
-  background: rgba(30,58,138,.08); color: var(--navy);
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.calc-field2-lbl { font-size: 10px; font-weight: 700; letter-spacing: .7px; text-transform: uppercase; color: var(--ink-3); flex: 1; }
-.calc-field2-val { font-size: 15px; font-weight: 800; color: var(--navy); white-space: nowrap; }
-.calc-slider {
-  width: 100%; -webkit-appearance: none; height: 4px; border-radius: 2px; outline: none; cursor: pointer;
-  background: linear-gradient(to right, var(--navy) 40%, #e2e8f0 40%);
-}
-.calc-slider::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
-  background: #fff; cursor: pointer;
-  border: 2.5px solid var(--navy); box-shadow: 0 1px 4px rgba(0,0,0,.2);
-}
-.calc-minmax { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-4); margin-top: 6px; }
-.calc-disclaimer {
-  font-size: 12px; color: #2563eb; line-height: 1.5;
-  padding: 12px 14px; background: rgba(37,99,235,.06); border-radius: 10px;
-  border: 1px solid rgba(37,99,235,.15); margin-top: auto;
-  display: flex; gap: 8px; align-items: flex-start;
-}
+.calc-btn:hover { background: #245d44; }
 @media (max-width: 640px) {
-  .backdrop.open { padding: 0; align-items: flex-end; }
-  .calc-modal { max-width: 100%; width: 100%; margin: 0; border-radius: 20px 20px 0 0; max-height: 88vh; overflow-y: auto; }
-  .calc-body { grid-template-columns: 1fr; }
-  .calc-left { border-radius: 20px 20px 0 0; padding: 20px; min-height: 0; }
-  .calc-brand { margin-bottom: 16px; }
-  .calc-brand-icon { width: 44px; height: 44px; }
-  .calc-brand-name { font-size: 17px; }
-  .calc-repay-card { padding: 14px 16px; margin-bottom: 14px; }
-  .calc-repay-amt { font-size: 28px; }
-  .calc-sum-row { padding: 9px 0; }
-  .calc-sum-ico { width: 28px; height: 28px; border-radius: 7px; }
-  .calc-sum-lbl,.calc-sum-val { font-size: 12px; }
-  .calc-house-art { display: none; }
-  .calc-right { padding: 16px 18px; }
-  .calc-right-hd { margin-bottom: 12px; }
-  .calc-field2 { margin-bottom: 16px; }
-  .calc-field2-ico { width: 28px; height: 28px; border-radius: 7px; }
-  .calc-field2-val { font-size: 14px; }
-  .calc-disclaimer { font-size: 11px; padding: 10px 12px; }
+  .calc-modal { max-width: 100%; width: calc(100vw - 32px); margin: 16px; }
+  .calc-body { grid-template-columns: 1fr; gap: 20px; padding: 20px 16px; }
+  .calc-head { padding: 16px 20px; }
+  .calc-monthly { font-size: 26px; white-space: nowrap; }
+  .calc-result { padding: 18px 16px; }
+  .calc-row { flex-wrap: nowrap; gap: 8px; }
+  .calc-row .ck { flex-shrink: 0; }
+  .calc-row .cv { text-align: right; white-space: nowrap; }
 }
 
 /* ── Hamburger / Drawer ─────────────────────── */
@@ -1803,115 +1765,56 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
 </footer>
 <div class="backdrop" id="calcBackdrop" onclick="if(event.target===this)closeCalc()">
   <div class="modal calc-modal">
+    <div class="calc-head">
+      <h2>Bond Calculator</h2>
+      <button class="sm-close" onclick="closeCalc()">✕</button>
+    </div>
     <div class="calc-body">
-      <div class="calc-left">
-        <div class="calc-brand">
-          <div class="calc-brand-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          </div>
-          <div>
-            <div class="calc-brand-name">Bond Calculator</div>
-            <div class="calc-brand-sub">Your estimated bond repayment</div>
-          </div>
+      <div class="calc-inputs">
+        <div class="calc-field">
+          <label>Purchase Price</label>
+          <div class="val-row"><span class="cval" id="cPriceVal">R 2 000 000</span></div>
+          <input type="range" id="cPrice" min="500000" max="20000000" step="50000" value="2000000" oninput="calcBond()">
         </div>
-        <div class="calc-repay-card">
-          <div class="calc-repay-lbl">Monthly Repayment</div>
-          <div class="calc-repay-amt" id="cMonthly">R 15 840</div>
-          <div class="calc-repay-note calc-monthly-note">on a R 1 800 000 bond</div>
+        <div class="calc-field">
+          <label>Deposit</label>
+          <div class="val-row"><span class="cval" id="cDepositVal">10%</span><span class="csub" id="cDepositRand">R 200 000</span></div>
+          <input type="range" id="cDeposit" min="0" max="50" step="1" value="10" oninput="calcBond()">
         </div>
-        <div class="calc-sum-rows">
-          <div class="calc-sum-row">
-            <div class="calc-sum-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-            <span class="calc-sum-lbl">Purchase price</span>
-            <span class="calc-sum-val" id="cRowPrice">R 2 000 000</span>
-          </div>
-          <div class="calc-sum-row">
-            <div class="calc-sum-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
-            <span class="calc-sum-lbl">Deposit</span>
-            <span class="calc-sum-val" id="cRowDeposit">R 200 000</span>
-          </div>
-          <div class="calc-sum-row">
-            <div class="calc-sum-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-            <span class="calc-sum-lbl">Loan amount</span>
-            <span class="calc-sum-val" id="cRowLoan">R 1 800 000</span>
-          </div>
-          <div class="calc-sum-row">
-            <div class="calc-sum-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></div>
-            <span class="calc-sum-lbl">Total interest</span>
-            <span class="calc-sum-val" id="cRowInterest">R 2 001 571</span>
-          </div>
-          <div class="calc-sum-row">
-            <div class="calc-sum-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-            <span class="calc-sum-lbl">Total repayment</span>
-            <span class="calc-sum-val" id="cRowTotal">R 3 801 571</span>
-          </div>
+        <div class="calc-field">
+          <label>Interest Rate (Prime + margin)</label>
+          <div class="val-row"><span class="cval" id="cRateVal">11.75%</span><span class="csub">Current prime: 11.25%</span></div>
+          <input type="range" id="cRate" min="8" max="18" step="0.25" value="11.75" oninput="calcBond()">
         </div>
-        <div class="calc-house-art">
-          <svg viewBox="0 0 280 110" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:auto">
-            <rect x="70" y="50" width="140" height="60" rx="2"/>
-            <polygon points="70,50 140,12 210,50"/>
-            <rect x="85" y="68" width="30" height="26" rx="1"/>
-            <line x1="100" y1="68" x2="100" y2="94"/><line x1="85" y1="81" x2="115" y2="81"/>
-            <rect x="165" y="68" width="30" height="26" rx="1"/>
-            <line x1="180" y1="68" x2="180" y2="94"/><line x1="165" y1="81" x2="195" y2="81"/>
-            <rect x="127" y="80" width="26" height="30" rx="1"/>
-            <circle cx="28" cy="72" r="20"/><line x1="28" y1="92" x2="28" y2="110"/>
-            <circle cx="252" cy="72" r="20"/><line x1="252" y1="92" x2="252" y2="110"/>
-          </svg>
+        <div class="calc-field">
+          <label>Loan Term</label>
+          <div class="val-row"><span class="cval" id="cTermVal">20 years</span></div>
+          <input type="range" id="cTerm" min="5" max="30" step="1" value="20" oninput="calcBond()">
         </div>
+        <button class="calc-btn" onclick="openListProp()">Get pre-approved</button>
       </div>
-      <div class="calc-right">
-        <div class="calc-right-hd">
-          <button class="sm-close" onclick="closeCalc()">&#x2715;</button>
-        </div>
-        <div class="calc-field2">
-          <div class="calc-field2-hd">
-            <div class="calc-field2-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-            <span class="calc-field2-lbl">Purchase Price</span>
-            <span class="calc-field2-val" id="cPriceVal">R 2 000 000</span>
+      <div>
+        <div class="calc-result">
+          <div class="calc-monthly-label">Monthly Repayment</div>
+          <div class="calc-monthly" id="cMonthly">R 15 840</div>
+          <div class="calc-monthly-note">on a R 1 800 000 bond</div>
+          <hr class="calc-divider">
+          <div class="calc-row"><span class="ck">Purchase price</span><span class="cv" id="cRowPrice">R 2 000 000</span></div>
+          <div class="calc-row"><span class="ck">Deposit</span><span class="cv" id="cRowDeposit">R 200 000</span></div>
+          <div class="calc-row"><span class="ck">Loan amount</span><span class="cv" id="cRowLoan">R 1 800 000</span></div>
+          <div class="calc-row"><span class="ck">Total interest</span><span class="cv" id="cRowInterest">R 2 001 571</span></div>
+          <div class="calc-row"><span class="ck">Total repayment</span><span class="cv" id="cRowTotal">R 3 801 571</span></div>
+          <div class="calc-duty">
+            <div class="calc-duty-title">Transfer &amp; Registration Costs</div>
+            <div class="calc-row"><span class="ck">Transfer duty</span><span class="cv" id="cDuty">R 27 000</span></div>
+            <div class="calc-row"><span class="ck">Bond registration</span><span class="cv" id="cBondReg">≈ R 32 000</span></div>
+            <div class="calc-row" style="border-top:1px solid rgba(255,255,255,.15);margin-top:6px;padding-top:8px;font-weight:700"><span class="ck">Est. total cost</span><span class="cv" id="cTotalCost">R 2 059 000</span></div>
           </div>
-          <input class="calc-slider" type="range" id="cPrice" min="500000" max="20000000" step="50000" value="2000000" oninput="calcBond()">
-          <div class="calc-minmax"><span>R 500 000</span><span>R 20 000 000</span></div>
         </div>
-        <div class="calc-field2">
-          <div class="calc-field2-hd">
-            <div class="calc-field2-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
-            <span class="calc-field2-lbl">Deposit</span>
-            <span class="calc-field2-val" id="cDepositRand">R 200 000</span>
-          </div>
-          <input class="calc-slider" type="range" id="cDeposit" min="0" max="5000000" step="10000" value="200000" oninput="calcBond()">
-          <div class="calc-minmax"><span>R 0</span><span>R 5 000 000</span></div>
-        </div>
-        <div class="calc-field2">
-          <div class="calc-field2-hd">
-            <div class="calc-field2-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></div>
-            <span class="calc-field2-lbl">Interest Rate</span>
-            <span class="calc-field2-val" id="cRateVal">11.75%</span>
-          </div>
-          <input class="calc-slider" type="range" id="cRate" min="6" max="20" step="0.25" value="11.75" oninput="calcBond()">
-          <div class="calc-minmax"><span>6%</span><span>20%</span></div>
-        </div>
-        <div class="calc-field2">
-          <div class="calc-field2-hd">
-            <div class="calc-field2-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-            <span class="calc-field2-lbl">Loan Term</span>
-            <span class="calc-field2-val" id="cTermVal">20 years</span>
-          </div>
-          <input class="calc-slider" type="range" id="cTerm" min="5" max="30" step="1" value="20" oninput="calcBond()">
-          <div class="calc-minmax"><span>5 years</span><span>30 years</span></div>
-        </div>
-        <div class="calc-disclaimer">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          These calculations are estimates only and do not constitute a quote.
-        </div>
-        <span id="cDepositVal" style="display:none"></span>
-        <span id="cDuty" style="display:none"></span>
-        <span id="cBondReg" style="display:none"></span>
-        <span id="cTotalCost" style="display:none"></span>
       </div>
     </div>
   </div>
-
+</div>
 <div class="backdrop" id="signInBackdrop" onclick="if(event.target===this)closeSignIn()">
   <div class="auth-modal">
     <button class="sm-close" onclick="closeSignIn()" style="position:absolute;top:14px;right:16px">✕</button>
@@ -3171,48 +3074,38 @@ function bondRegFee(loan) {
 }
 
 function calcBond() {
-  var price   = parseInt(document.getElementById('cPrice').value);
-  var deposit = parseInt(document.getElementById('cDeposit').value);
-  var rate    = parseFloat(document.getElementById('cRate').value);
-  var term    = parseInt(document.getElementById('cTerm').value);
+  const price  = parseInt(document.getElementById('cPrice').value);
+  const depPct = parseInt(document.getElementById('cDeposit').value);
+  const rate   = parseFloat(document.getElementById('cRate').value);
+  const term   = parseInt(document.getElementById('cTerm').value);
 
-  var loan    = price - deposit;
-  if (loan < 0) loan = 0;
-  var r       = rate / 100 / 12;
-  var n       = term * 12;
-  var monthly = r > 0 ? loan * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1) : loan/n;
-  var totalRep = monthly * n;
-  var totalInt = totalRep - loan;
-  var duty     = transferDuty(price);
-  var reg      = bondRegFee(loan);
-  var totalCost = price + duty + reg;
+  const deposit = price * depPct / 100;
+  const loan    = price - deposit;
+  const r       = rate / 100 / 12;
+  const n       = term * 12;
+  const monthly = loan * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
+  const totalRep = monthly * n;
+  const totalInt = totalRep - loan;
+  const duty     = transferDuty(price);
+  const reg      = bondRegFee(loan);
+  const totalCost = price + duty + reg;
 
-  document.getElementById('cPriceVal').textContent   = fmtR(price);
-  document.getElementById('cDepositRand').textContent = fmtR(deposit);
-  document.getElementById('cRateVal').textContent    = rate.toFixed(2) + '%';
-  document.getElementById('cTermVal').textContent    = term + ' year' + (term===1?'':'s');
+  document.getElementById('cPriceVal').textContent  = fmtR(price);
+  document.getElementById('cDepositVal').textContent = depPct + '%';
+  document.getElementById('cDepositRand').textContent= fmtR(deposit);
+  document.getElementById('cRateVal').textContent   = rate.toFixed(2) + '%';
+  document.getElementById('cTermVal').textContent   = term + ' year' + (term===1?'':'s');
 
-  document.getElementById('cMonthly').textContent    = fmtR(monthly);
-  var note = document.querySelector('.calc-monthly-note');
-  if (note) note.textContent = 'on a ' + fmtR(loan) + ' bond';
-  document.getElementById('cRowPrice').textContent    = fmtR(price);
-  document.getElementById('cRowDeposit').textContent  = fmtR(deposit);
-  document.getElementById('cRowLoan').textContent     = fmtR(loan);
-  document.getElementById('cRowInterest').textContent = fmtR(totalInt);
-  document.getElementById('cRowTotal').textContent    = fmtR(totalRep);
-  var d = document.getElementById('cDuty'); if(d) d.textContent = duty===0?'R 0 (exempt)':fmtR(duty);
-  var br = document.getElementById('cBondReg'); if(br) br.textContent = '\u2248 '+fmtR(reg);
-  var tc = document.getElementById('cTotalCost'); if(tc) tc.textContent = fmtR(totalCost);
-
-  _sliderFill('cPrice',500000,20000000);
-  _sliderFill('cDeposit',0,5000000);
-  _sliderFill('cRate',6,20);
-  _sliderFill('cTerm',5,30);
-}
-function _sliderFill(id,mn,mx) {
-  var el = document.getElementById(id); if(!el) return;
-  var pct = (parseFloat(el.value)-mn)/(mx-mn)*100;
-  el.style.background = 'linear-gradient(to right,var(--navy) '+pct+'%,#e2e8f0 '+pct+'%)';
+  document.getElementById('cMonthly').textContent   = fmtR(monthly);
+  document.querySelector('.calc-monthly-note').textContent = 'on a ' + fmtR(loan) + ' bond';
+  document.getElementById('cRowPrice').textContent   = fmtR(price);
+  document.getElementById('cRowDeposit').textContent = fmtR(deposit);
+  document.getElementById('cRowLoan').textContent    = fmtR(loan);
+  document.getElementById('cRowInterest').textContent= fmtR(totalInt);
+  document.getElementById('cRowTotal').textContent   = fmtR(totalRep);
+  const d = document.getElementById('cDuty'); if(d) d.textContent = duty===0?'R 0 (exempt)':fmtR(duty);
+  const br = document.getElementById('cBondReg'); if(br) br.textContent = '≈ '+fmtR(reg);
+  const tc = document.getElementById('cTotalCost'); if(tc) tc.textContent = fmtR(totalCost);
 }
 
 // ── Auth state ────────────────────────────────────────────────────────────────
