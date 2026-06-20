@@ -1492,8 +1492,8 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
 .detail-sidebar { position:sticky; top:80px; }
 .detail-agent-card { background:var(--white); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px; margin-bottom:20px; }
 .detail-agent-card h4 { font-size:13px; font-weight:700; color:var(--ink-3); text-transform:uppercase; letter-spacing:.4px; margin-bottom:14px; }
-.detail-stats { display:flex; gap:20px; flex-wrap:wrap; padding:18px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin-bottom:22px; }
-.detail-stat { display:flex; flex-direction:column; align-items:center; gap:3px; min-width:60px; }
+.detail-stats { display:flex; gap:12px; padding:18px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin-bottom:22px; }
+.detail-stat { display:flex; flex-direction:column; align-items:center; gap:3px; flex:1; }
 .detail-stat .ds-icon { color:var(--sage); }
 .detail-stat .ds-lbl { font-size:10.5px; color:var(--ink-4); text-transform:uppercase; letter-spacing:.4px; font-weight:600; }
 .detail-stat .ds-val { font-size:16px; font-weight:700; }
@@ -1643,45 +1643,6 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
 
         <div class="detail-pills" id="detailPills"></div>
 
-        <!-- Inline bond calc -->
-        <div style="background:var(--navy);border-radius:var(--r-lg);padding:24px;margin-top:8px">
-          <div style="color:#fff;font-size:16px;font-weight:700;margin-bottom:18px">Bond Calculator</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-            <div>
-              <div class="calc-field">
-                <label style="color:rgba(255,255,255,.6)">Purchase Price</label>
-                <div class="val-row"><span class="cval" id="cPriceVal">R 2 000 000</span></div>
-                <input type="range" id="cPrice" min="500000" max="20000000" step="50000" value="2000000" oninput="calcBond()">
-              </div>
-              <div class="calc-field">
-                <label style="color:rgba(255,255,255,.6)">Deposit</label>
-                <div class="val-row"><span class="cval" id="cDepositVal">10%</span><span class="csub" id="cDepositRand">R 200 000</span></div>
-                <input type="range" id="cDeposit" min="0" max="50" step="1" value="10" oninput="calcBond()">
-              </div>
-              <div class="calc-field">
-                <label style="color:rgba(255,255,255,.6)">Interest Rate</label>
-                <div class="val-row"><span class="cval" id="cRateVal">11.75%</span></div>
-                <input type="range" id="cRate" min="8" max="18" step="0.25" value="11.75" oninput="calcBond()">
-              </div>
-              <div class="calc-field">
-                <label style="color:rgba(255,255,255,.6)">Loan Term</label>
-                <div class="val-row"><span class="cval" id="cTermVal">20 years</span></div>
-                <input type="range" id="cTerm" min="5" max="30" step="1" value="20" oninput="calcBond()">
-              </div>
-            </div>
-            <div class="calc-result" style="background:rgba(255,255,255,.08)">
-              <div class="calc-monthly-label">Monthly Repayment</div>
-              <div class="calc-monthly" id="cMonthly">R 15 840</div>
-              <div class="calc-monthly-note">on a R 1 800 000 bond</div>
-              <hr class="calc-divider">
-              <div class="calc-row"><span class="ck">Purchase price</span><span class="cv" id="cRowPrice">R 2 000 000</span></div>
-              <div class="calc-row"><span class="ck">Deposit</span><span class="cv" id="cRowDeposit">R 200 000</span></div>
-              <div class="calc-row"><span class="ck">Loan amount</span><span class="cv" id="cRowLoan">R 1 800 000</span></div>
-              <div class="calc-row"><span class="ck">Total interest</span><span class="cv" id="cRowInterest">—</span></div>
-              <div class="calc-row"><span class="ck">Total repayment</span><span class="cv" id="cRowTotal">—</span></div>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- Right col / sidebar -->
