@@ -1768,9 +1768,6 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
       <button class="btn-ghost" id="navSignInBtn" onclick="openSignIn()">Sign In</button>
       <button class="btn-primary" onclick="openListProp()">List Property</button>
     </div>
-    <button class="mob-heart-nav" onclick="toast('Saved properties coming soon')" aria-label="Saved">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-    </button>
     <button class="hamburger" onclick="openDrawer()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -1790,17 +1787,6 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
   <div class="mfb-search">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     <input id="mfbLoc" type="text" placeholder="Search suburb, city or estate" oninput="document.getElementById('sLoc').value=this.value">
-  </div>
-  <div class="mfb-loc-row">
-    <button class="mfb-loc-btn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-      <span id="mfbLocLabel">All Areas</span>
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
-    <button class="mfb-save-search" onclick="toast('Search saved!')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-      Save Search
-    </button>
   </div>
   <div class="mfb-pills">
     <button id="mfbModeBtn" class="mfb-pill mfb-mode" onclick="mfbToggleMode()">
