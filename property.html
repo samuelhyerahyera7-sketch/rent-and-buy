@@ -482,6 +482,22 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   transition: background .15s;
 }
 .m-close:hover { background: rgba(0,0,0,.6); }
+.detail-back-btn {
+  position: absolute; top: 14px; left: 14px; z-index: 10;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 20px;
+  background: rgba(0,0,0,.38); backdrop-filter: blur(6px);
+  color: #fff; border: none; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: background .15s;
+}
+.detail-back-btn:hover { background: rgba(0,0,0,.55); }
+.detail-breadcrumb {
+  padding: 14px 0; font-size: 13px; color: var(--ink-3);
+  display: flex; align-items: center; gap: 6px;
+  min-width: 0; flex-wrap: nowrap; overflow: hidden;
+}
+.detail-breadcrumb a { color: var(--ink-3); white-space: nowrap; }
+.detail-bread-title { color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
 .m-gallery { position: relative; height: 380px; }
 .m-gallery img { height: 100%; }
 .m-thumbs { display: flex; gap: 8px; padding: 12px 20px; border-bottom: 1px solid var(--line); overflow-x: auto; }
@@ -923,6 +939,9 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   .stats-band .w { flex-wrap: wrap; gap: 28px; justify-content: center; }
 }
 @media (max-width: 540px) {
+  .detail-gallery { border-radius: 0; margin: 0 -32px; height: 300px; }
+  .detail-breadcrumb { padding: 10px 0; }
+  .detail-bread-title { max-width: 140px; }
   .prop-grid { grid-template-columns: 1fr; gap: 12px; padding: 0 5px; }
   .p-card { display: block; border-radius: 0; box-shadow: none; overflow: hidden; border: none; border-bottom: 1px solid var(--line); }
   .p-feats { gap: 6px 14px; flex-wrap: wrap; }
@@ -1575,18 +1594,21 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
 <div id="propertyDetail">
   <div class="w">
     <!-- Breadcrumb -->
-    <div style="padding:14px 0;font-size:13px;color:var(--ink-3);display:flex;align-items:center;gap:6px">
-      <a href="index.html" style="color:var(--ink-3)">Home</a>
+    <div class="detail-breadcrumb">
+      <a href="index.html">Home</a>
       <span>›</span>
-      <a id="breadMode" href="search.html?mode=buy" style="color:var(--ink-3)">For Sale</a>
+      <a id="breadMode" href="search.html?mode=buy">For Sale</a>
       <span>›</span>
-      <span id="breadTitle" style="color:var(--ink)">Property</span>
+      <span id="breadTitle" class="detail-bread-title">Property</span>
     </div>
 
     <!-- Gallery -->
     <div class="detail-gallery" id="detailGallery">
       <img id="detailMainImg" src="" alt="Property photo">
-      <button class="m-close" onclick="history.back()" style="position:absolute;top:14px;left:14px;right:auto">&#8592; Back</button>
+      <button class="detail-back-btn" onclick="history.back()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
       <div style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;padding:4px 10px;border-radius:6px" id="detailImgCount">1 / 1</div>
       <button onclick="detailSlide(-1)" style="position:absolute;top:50%;left:12px;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.92);border:none;cursor:pointer;font-size:18px;color:var(--ink-2);display:flex;align-items:center;justify-content:center" id="prevBtn">&#8249;</button>
       <button onclick="detailSlide(1)"  style="position:absolute;top:50%;right:12px;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.92);border:none;cursor:pointer;font-size:18px;color:var(--ink-2);display:flex;align-items:center;justify-content:center" id="nextBtn">&#8250;</button>
