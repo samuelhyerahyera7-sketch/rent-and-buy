@@ -648,14 +648,25 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 }
 .calc-btn:hover { background: #245d44; }
 @media (max-width: 640px) {
-  .calc-modal { max-width: 100%; width: calc(100vw - 32px); margin: 16px; }
-  .calc-body { grid-template-columns: 1fr; gap: 20px; padding: 20px 16px; }
-  .calc-head { padding: 16px 20px; }
-  .calc-monthly { font-size: 26px; white-space: nowrap; }
-  .calc-result { padding: 18px 16px; }
-  .calc-row { flex-wrap: nowrap; gap: 8px; }
+  .backdrop.open { padding: 12px; align-items: flex-end; }
+  .calc-modal { max-width: 100%; width: 100%; margin: 0; border-radius: 20px 20px 16px 16px; max-height: 92vh; overflow-y: auto; }
+  .calc-head { padding: 16px 18px; }
+  .calc-head h2 { font-size: 16px; }
+  .calc-body { grid-template-columns: 1fr; gap: 0; padding: 0; display: flex; flex-direction: column; }
+  .calc-result { order: -1; border-radius: 0; padding: 20px 18px; }
+  .calc-monthly-label { font-size: 10px; margin-bottom: 4px; }
+  .calc-monthly { font-size: 30px; white-space: nowrap; margin-bottom: 2px; }
+  .calc-monthly-note { font-size: 11px; margin-bottom: 14px; }
+  .calc-divider { margin: 12px 0; }
+  .calc-row { flex-wrap: nowrap; gap: 8px; font-size: 12px; padding: 3px 0; }
   .calc-row .ck { flex-shrink: 0; }
   .calc-row .cv { text-align: right; white-space: nowrap; }
+  .calc-duty-title { font-size: 10px; margin-bottom: 6px; }
+  .calc-inputs { padding: 18px 18px 6px; }
+  .calc-field { margin-bottom: 16px; }
+  .calc-field label { font-size: 10px; margin-bottom: 4px; }
+  .calc-field .cval { font-size: 14px; }
+  .calc-btn { margin-top: 0; padding: 11px; font-size: 14px; }
 }
 
 /* ── Hamburger / Drawer ─────────────────────── */
@@ -1646,20 +1657,20 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
   .topbar { display: none; }
 
   /* ── Vertical cards ── */
-  .prop-grid { gap: 8px; grid-template-columns: 1fr; padding: 8px 0 0; }
+  .prop-grid { gap: 12px; grid-template-columns: 1fr; padding: 12px 10px 0; }
   .p-card {
-    border-radius: 0; display: block; border-left: none; border-right: none;
-    box-shadow: none; background: var(--white); overflow: hidden;
+    border-radius: 14px; display: block;
+    box-shadow: 0 1px 6px rgba(0,0,0,.08); background: var(--white); overflow: hidden;
+    border: 1px solid var(--line);
   }
-  .p-card:hover { transform: none; box-shadow: none; }
+  .p-card:hover { transform: none; }
   .p-img { height: 220px; width: 100%; }
   .p-img img { width: 100%; height: 100%; object-fit: cover; }
   .p-body { padding: 14px 16px 8px; }
   .p-price { font-size: 22px; font-weight: 800; color: var(--sage); margin-bottom: 4px; letter-spacing: -.4px; }
   .p-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; line-height: 1.3; color: var(--ink); }
   .p-loc { font-size: 13px; margin-bottom: 8px; color: var(--ink-3); }
-  .p-feats { gap: 14px; flex-wrap: nowrap; padding-top: 0; border-top: none; overflow-x: auto; scrollbar-width: none; }
-  .p-feats::-webkit-scrollbar { display: none; }
+  .p-feats { gap: 6px 14px; flex-wrap: wrap; padding-top: 8px; border-top: 1px solid var(--line); overflow: visible; }
   .p-feat { font-size: 13px; gap: 4px; white-space: nowrap; }
   .p-foot { padding: 10px 16px 16px; background: transparent; border-top: none; }
   .agent-row { gap: 8px; min-width: 0; }
@@ -4886,6 +4897,7 @@ setTimeout(initInlineMap,300);
 </nav>
 </body>
 </html>
+
 
 
 

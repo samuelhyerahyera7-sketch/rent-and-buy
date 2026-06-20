@@ -648,14 +648,25 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 }
 .calc-btn:hover { background: #245d44; }
 @media (max-width: 640px) {
-  .calc-modal { max-width: 100%; width: calc(100vw - 32px); margin: 16px; }
-  .calc-body { grid-template-columns: 1fr; gap: 20px; padding: 20px 16px; }
-  .calc-head { padding: 16px 20px; }
-  .calc-monthly { font-size: 26px; white-space: nowrap; }
-  .calc-result { padding: 18px 16px; }
-  .calc-row { flex-wrap: nowrap; gap: 8px; }
+  .backdrop.open { padding: 12px; align-items: flex-end; }
+  .calc-modal { max-width: 100%; width: 100%; margin: 0; border-radius: 20px 20px 16px 16px; max-height: 92vh; overflow-y: auto; }
+  .calc-head { padding: 16px 18px; }
+  .calc-head h2 { font-size: 16px; }
+  .calc-body { grid-template-columns: 1fr; gap: 0; padding: 0; display: flex; flex-direction: column; }
+  .calc-result { order: -1; border-radius: 0; padding: 20px 18px; }
+  .calc-monthly-label { font-size: 10px; margin-bottom: 4px; }
+  .calc-monthly { font-size: 30px; white-space: nowrap; margin-bottom: 2px; }
+  .calc-monthly-note { font-size: 11px; margin-bottom: 14px; }
+  .calc-divider { margin: 12px 0; }
+  .calc-row { flex-wrap: nowrap; gap: 8px; font-size: 12px; padding: 3px 0; }
   .calc-row .ck { flex-shrink: 0; }
   .calc-row .cv { text-align: right; white-space: nowrap; }
+  .calc-duty-title { font-size: 10px; margin-bottom: 6px; }
+  .calc-inputs { padding: 18px 18px 6px; }
+  .calc-field { margin-bottom: 16px; }
+  .calc-field label { font-size: 10px; margin-bottom: 4px; }
+  .calc-field .cval { font-size: 14px; }
+  .calc-btn { margin-top: 0; padding: 11px; font-size: 14px; }
 }
 
 /* ── Hamburger / Drawer ─────────────────────── */
@@ -4512,5 +4523,6 @@ calcBond();
 </script>
 </body>
 </html>
+
 
 
