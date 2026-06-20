@@ -4506,21 +4506,6 @@ function goAgents() { window.location = 'search.html?mode=buy#agents'; }
 function scrollToListings() { document.getElementById('listings-section').scrollIntoView({behavior:'smooth',block:'start'}); }
 function switchMode(m,e){ if(e)e.preventDefault(); window.location='search.html?mode='+m; }
 
-// Render featured (cards link to property.html)
-function renderFeatured() {
-  document.getElementById('featGrid').innerHTML = DATA.filter(p=>p.featured).map(p=>`
-    <div class="feat-card" onclick="openModal(${p.id})">
-      <img src="${p.imgs[0]}" alt="${p.title}" loading="lazy">
-      <div class="feat-overlay"></div>
-      <div class="feat-body">
-        <span class="feat-tag${p.mode==='rent'?' rent':p.mode==='new'?' new':''}">${p.mode==='rent'?'To Rent':p.mode==='new'?'New Development':'For Sale'}</span>
-        <h3>${p.title}</h3>
-        <div class="price">${fmtPrice(p.price, p.mode)}</div>
-        <div class="loc">${p.suburb}, ${p.city}</div>
-      </div>
-    </div>
-  `).join('');
-}
 
 // Render latest 6 buy listings
 function renderListings() {
@@ -4573,9 +4558,9 @@ function setTab(el, m) {
 }
 
 // Init
-renderFeatured();
-renderListings();
-renderAreas();
+try { renderFeatured(); } catch(e) {}
+try { renderListings(); } catch(e) {}
+try { renderAreas(); } catch(e) {}
 
 // Swipe hint
 window.addEventListener('DOMContentLoaded', function() {
