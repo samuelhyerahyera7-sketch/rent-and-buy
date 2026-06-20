@@ -1681,9 +1681,9 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
   .topbar { display: none; }
 
   /* ── Vertical cards ── */
-  .prop-grid { gap: 12px; grid-template-columns: 1fr; padding: 12px 0 0; }
+  .prop-grid { gap: 12px; grid-template-columns: 1fr; padding: 12px 5px 0; }
   .p-card {
-    border-radius: 0; display: block;
+    border-radius: 12px; display: block; box-shadow: 0 1px 5px rgba(0,0,0,.08); overflow: hidden; border: 1px solid var(--line);
     box-shadow: 0 1px 6px rgba(0,0,0,.08); background: var(--white); overflow: hidden;
     border: 1px solid var(--line);
   }
@@ -4990,6 +4990,7 @@ setTimeout(initInlineMap,300);
 </nav>
 </body>
 </html>
+
 
 
 
