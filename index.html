@@ -1504,6 +1504,67 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
 .detail-loc { font-size:14px; color:var(--ink-3); display:flex; align-items:center; gap:5px; margin-bottom:22px; }
 .similar-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; margin-top:24px; }
 @media(max-width:900px){ .detail-layout{grid-template-columns:1fr;} .detail-sidebar{position:static;} }
+
+/* ── Agency directory (Property24 style) ─────────────────── */
+.agency-dir-header {
+  background: var(--navy); color: #fff;
+  padding: 28px 32px; margin: 0 -32px 0; text-align: center;
+}
+.agency-dir-header h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.agency-dir-header p  { font-size: 14px; opacity: .8; }
+.agency-search-wrap {
+  display: flex; gap: 10px; margin: 24px 0; flex-wrap: wrap;
+}
+.agency-search-wrap input {
+  flex: 1; min-width: 200px; padding: 11px 16px;
+  border: 1px solid var(--line); border-radius: var(--r);
+  font-size: 14px; font-family: var(--font); color: var(--ink);
+  background: var(--white); outline: none; transition: border .15s;
+}
+.agency-search-wrap input:focus { border-color: var(--sage); }
+.agency-search-wrap select {
+  padding: 11px 14px; border: 1px solid var(--line); border-radius: var(--r);
+  font-size: 14px; font-family: var(--font); color: var(--ink);
+  background: var(--white); outline: none; cursor: pointer;
+}
+.agency-count {
+  font-size: 14px; color: var(--ink-3); padding: 10px 0 18px;
+  border-bottom: 1px solid var(--line); margin-bottom: 0;
+}
+.agency-count strong { color: var(--ink); }
+.agency-list { display: flex; flex-direction: column; }
+.agency-list-item {
+  padding: 28px 0; border-bottom: 1px solid var(--line);
+}
+.agency-list-name {
+  font-size: 16px; font-weight: 700; color: var(--navy);
+  margin-bottom: 20px; cursor: pointer; text-decoration: none; display: block;
+}
+.agency-list-name:hover { color: var(--sage); text-decoration: underline; }
+.agency-list-logo-wrap {
+  margin-bottom: 20px;
+}
+.agency-list-logo {
+  width: 100%; height: 160px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--navy-l); border: 1px solid var(--line); border-radius: 8px;
+  flex-direction: column; gap: 6px; color: var(--navy);
+}
+.agency-list-logo-abbr {
+  font-size: 24px; font-weight: 900; letter-spacing: 1px; line-height: 1; color: var(--navy);
+}
+.agency-list-logo-full {
+  font-size: 11px; font-weight: 600; letter-spacing: .4px; color: var(--ink-3);
+  text-align: center; padding: 0 12px; line-height: 1.4;
+}
+.agency-list-btn {
+  display: block; width: 100%; padding: 13px 20px;
+  border: 1.5px solid var(--sage); border-radius: 4px;
+  background: var(--white); color: var(--sage);
+  font-size: 14px; font-weight: 500; font-family: var(--font);
+  cursor: pointer; transition: all .15s; text-align: center;
+}
+.agency-list-btn:hover { background: var(--sage); color: #fff; }
 </style>
 </head>
 <body>
@@ -1636,12 +1697,13 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
     <button class="mob-search-go" onclick="closeMobSearch();doSearch()">Search</button>
   </div>
 </div>
-<div class="hero">
+<div class="hero" id="heroSection">
   <div class="hero-overlay"></div>
   <div class="hero-inner">
     <div class="hero-tabs" id="heroTabs">
       <button class="hero-tab on" data-mode="buy" onclick="setTab(this,'buy')">Buy</button>
       <button class="hero-tab" data-mode="rent" onclick="setTab(this,'rent')">Rent</button>
+      <button class="hero-tab" data-mode="list" onclick="openListProp()">List Property</button>
       <button class="hero-tab" data-mode="new" onclick="setTab(this,'new')" style="position:relative">Developments<span class="swipe-line" id="tabsScrollHint"></span></button>
       <button class="hero-tab" data-mode="agents" onclick="setTab(this,'agents')">Agents</button>
       <button class="hero-tab" data-mode="sold" onclick="setTab(this,'sold')">Sold Prices</button>
@@ -1765,6 +1827,17 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
   <div class="prop-grid" id="listGrid"></div>
   <div style="text-align:center;margin-top:32px">
     <a href="search.html?mode=buy" style="display:inline-block;padding:13px 32px;background:var(--navy);color:#fff;border-radius:8px;font-size:15px;font-weight:700;text-decoration:none">View all properties</a>
+  </div>
+</div>
+<!-- Agencies Directory (shown when Agents tab is active) -->
+<div id="agents-section" style="display:none">
+  <div class="agency-dir-header">
+    <h2>Estate Agencies in South Africa</h2>
+    <p>Browse all registered estate agencies</p>
+  </div>
+  <div class="section" style="padding-top:24px;padding-bottom:56px">
+    <div class="agency-count" id="agencyCount"></div>
+    <div class="agency-list" id="agenciesGrid"></div>
   </div>
 </div>
 <!-- Stats -->
@@ -2607,12 +2680,12 @@ const DATA = [
 const AREAS = [
   {name:'Cape Town',img:'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70'},
   {name:'Johannesburg',img:'https://images.unsplash.com/photo-1577948000111-9c970dfe3743?w=400&q=70'},
-  {name:'Durban',img:'https://images.unsplash.com/photo-1601439678777-b2b3c56fa627?w=400&q=70'},
-  {name:'Pretoria',img:'https://images.unsplash.com/photo-1549981284-e0ceae4c7f8f?w=400&q=70'},
-  {name:'Stellenbosch',img:'https://images.unsplash.com/photo-1585059895524-72359e06133a?w=400&q=70'},
-  {name:'Sandton',img:'https://images.unsplash.com/photo-1626879565534-abe5c06e1b32?w=400&q=70'},
-  {name:'Umhlanga',img:'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=70'},
-  {name:'Gqeberha',img:'https://images.unsplash.com/photo-1501621667575-af81f1f0bacc?w=400&q=70'},
+  {name:'Durban',img:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80'},
+  {name:'Pretoria',img:'https://images.unsplash.com/photo-1614075565833-7d31bb969f71?w=400&q=80'},
+  {name:'Stellenbosch',img:'https://images.unsplash.com/photo-1638012858969-fac36ad2ea32?w=400&q=80'},
+  {name:'Sandton',img:'https://images.unsplash.com/photo-1637459297091-7fe9bc76b745?w=400&q=80'},
+  {name:'Umhlanga',img:'https://images.unsplash.com/photo-1650202034326-a4ad00d239f5?w=400&q=80'},
+  {name:'Gqeberha',img:'https://images.unsplash.com/photo-1658636859097-1f20d2ffd45c?w=400&q=80'},
 ];
 
 // ── State ─────────────────────────────────────────────────────────────────────
@@ -2961,6 +3034,58 @@ function setTab(el, m) {
   } else {
     renderListings();
   }
+}
+
+var AGENCIES_DATA = [
+  { name:'Pam Golding Properties', abbr:'PGP', color:'#c0392b', bg:'#fdf0f0', tagline:"South Africa's leading residential property company", listings:4200, agents:500, provinces:['Gauteng','Western Cape','KwaZulu-Natal','Eastern Cape','Mpumalanga'], founded:1976 },
+  { name:'RE/MAX SA', abbr:'RE/MAX', color:'#cc0000', bg:'#fff0f0', tagline:"The world's largest real estate network", listings:5100, agents:1200, provinces:['All Provinces'], founded:1991 },
+  { name:'Seeff Properties', abbr:'SEEFF', color:'#003580', bg:'#e8f0fb', tagline:'Premium real estate since 1964', listings:2800, agents:380, provinces:['Gauteng','Western Cape','KwaZulu-Natal'], founded:1964 },
+  { name:'Rawson Properties', abbr:'RP', color:'#1a6b2f', bg:'#f0fff4', tagline:'The franchise network that works', listings:3600, agents:450, provinces:['Gauteng','Western Cape','KwaZulu-Natal','Eastern Cape'], founded:1982 },
+  { name:'Harcourts', abbr:'HC', color:'#1a237e', bg:'#e8eaf6', tagline:'People first, always', listings:3200, agents:420, provinces:['Gauteng','Western Cape','KwaZulu-Natal','Eastern Cape'], founded:1888 },
+  { name:"Sotheby's International Realty", abbr:'SIR', color:'#2c2c2c', bg:'#f5f5f5', tagline:'The finest homes in South Africa', listings:980, agents:150, provinces:['Gauteng','Western Cape','KwaZulu-Natal'], founded:1976 },
+  { name:'Jawitz Properties', abbr:'JP', color:'#b45309', bg:'#fef3c7', tagline:'Inspired by service', listings:2100, agents:280, provinces:['Gauteng','KwaZulu-Natal','Western Cape'], founded:1950 },
+  { name:'Just Property', abbr:'JT', color:'#0e7490', bg:'#e0f7fa', tagline:'A better property experience', listings:1800, agents:320, provinces:['Gauteng','Western Cape','KwaZulu-Natal','Eastern Cape'], founded:2006 },
+  { name:'Century 21 SA', abbr:'C21', color:'#9a7d0a', bg:'#fffbe6', tagline:'Relentlessly remarkable', listings:2400, agents:340, provinces:['All Provinces'], founded:2000 },
+  { name:'Chas Everitt International', abbr:'CEI', color:'#154360', bg:'#eaf4fc', tagline:'International standards, local knowledge', listings:1900, agents:260, provinces:['Gauteng','Western Cape','KwaZulu-Natal','Limpopo'], founded:1975 },
+  { name:'eXp Realty SA', abbr:'eXp', color:'#5c35a5', bg:'#f3e8ff', tagline:'The agent-owned cloud brokerage', listings:1500, agents:400, provinces:['Gauteng','Western Cape','KwaZulu-Natal'], founded:2022 },
+  { name:'Engel & Völkers', abbr:'E&V', color:'#8b0000', bg:'#fff5f5', tagline:'Extraordinary places, extraordinary people', listings:820, agents:120, provinces:['Gauteng','Western Cape','KwaZulu-Natal'], founded:2007 },
+  { name:'RealNet Properties', abbr:'RN', color:'#00695c', bg:'#e0f2f1', tagline:'Focused on property. Focused on you.', listings:1200, agents:180, provinces:['Gauteng','North West','Limpopo','Mpumalanga'], founded:1996 },
+  { name:'Fine & Country SA', abbr:'F&C', color:'#3e2723', bg:'#efebe9', tagline:'A global brand with a local heart', listings:640, agents:95, provinces:['Western Cape','Gauteng','KwaZulu-Natal'], founded:2009 },
+  { name:'Dogon Group Properties', abbr:'DGP', color:'#37474f', bg:'#eceff1', tagline:"Cape Town's premier property specialists", listings:720, agents:85, provinces:['Western Cape'], founded:1985 },
+  { name:'Leapfrog Property Group', abbr:'LPG', color:'#2e7d32', bg:'#e8f5e9', tagline:'Positive about property', listings:1100, agents:160, provinces:['Gauteng','Western Cape'], founded:2007 },
+  { name:'Knight Frank SA', abbr:'KF', color:'#1a237e', bg:'#e8eaf6', tagline:'Independently minded, globally connected', listings:560, agents:75, provinces:['Gauteng','Western Cape'], founded:1896 },
+  { name:'Meridian Realty', abbr:'MR', color:'#1565c0', bg:'#e3f2fd', tagline:'Setting the standard in real estate', listings:900, agents:140, provinces:['Gauteng'], founded:2005 }
+];
+
+function renderAgencies() {
+  var q = (document.getElementById('agentSearch') ? document.getElementById('agentSearch').value : '').toLowerCase();
+  var prov = document.getElementById('agentCity') ? document.getElementById('agentCity').value : '';
+  var list = AGENCIES_DATA.filter(function(a) {
+    if (prov && !a.provinces.some(function(p){ return p === prov || p === 'All Provinces'; })) return false;
+    if (q && !(a.name + ' ' + a.tagline + ' ' + a.provinces.join(' ')).toLowerCase().includes(q)) return false;
+    return true;
+  });
+  var countEl = document.getElementById('agencyCount');
+  if (countEl) {
+    var total = AGENCIES_DATA.length;
+    countEl.innerHTML = 'Showing: <strong>1 – ' + list.length + '</strong> of <strong>' + total + '</strong>';
+  }
+  var grid = document.getElementById('agenciesGrid');
+  if (!grid) return;
+  if (!list.length) { grid.innerHTML = '<p style="color:var(--ink-3);padding:32px 0">No agencies found.</p>'; return; }
+  grid.innerHTML = list.map(function(a) {
+    var safeName = a.name.replace(/'/g, "\\'");
+    return '<div class="agency-list-item">' +
+      '<a class="agency-list-name" onclick="toast(\'Opening ' + safeName + ' listings…\')">' + a.name + '</a>' +
+      '<div class="agency-list-logo-wrap">' +
+        '<div class="agency-list-logo">' +
+          '<div class="agency-list-logo-abbr">' + a.abbr + '</div>' +
+          '<div class="agency-list-logo-full">' + a.name + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<button class="agency-list-btn" onclick="toast(\'Opening ' + safeName + ' estate agencies…\')">View ' + a.name + ' estate agencies</button>' +
+    '</div>';
+  }).join('');
 }
 
 const AGENTS_DATA = [
@@ -3676,8 +3801,13 @@ function lwFilesAdded(files) {
     if (f.size > maxSize) { toast(f.name + ' exceeds 10MB'); continue; }
     (function(file) {
       var url = URL.createObjectURL(file);
-      LW.photos.push({ file: file, url: url, isObjectUrl: true });
+      var photo = { file: file, url: url, isObjectUrl: true, dataUrl: null };
+      LW.photos.push(photo);
       lwRenderPhotoGrid();
+      // Read as base64 so it can survive draft saves
+      var reader = new FileReader();
+      reader.onload = function(e) { photo.dataUrl = e.target.result; };
+      reader.readAsDataURL(file);
     })(f);
   }
   // reset input so same file can be re-added
@@ -4003,7 +4133,9 @@ function lwSaveDraft() {
       email:    document.getElementById('lw-email').value,
       phone:    document.getElementById('lw-phone').value,
       agency:   document.getElementById('lw-agency').value,
-      step:     LW.step
+      step:     LW.step,
+      coverIdx: LW.coverIdx,
+      photoData: LW.photos.map(function(p){ return { dataUrl: p.dataUrl, caption: p.caption || '' }; }).filter(function(p){ return !!p.dataUrl; })
     };
     localStorage.setItem('rab_lw_draft', JSON.stringify(draft));
     var as = document.getElementById('lwAutosave');
@@ -4024,6 +4156,15 @@ function lwRestoreDraft() {
     // Restore field values
     var fields = ['title','price','rental','deposit','size','erf','beds','baths','garages','address','suburb','city','province','postal','desc','name','email','phone','agency'];
     fields.forEach(function(f){ var el = document.getElementById('lw-'+f); if (el && d[f] !== undefined) el.value = d[f]; });
+    // Restore photos from saved base64 data
+    if (d.photoData && d.photoData.length) {
+      LW.photos = [];
+      d.photoData.forEach(function(p) {
+        if (p.dataUrl) LW.photos.push({ file: null, url: p.dataUrl, isObjectUrl: false, dataUrl: p.dataUrl, caption: p.caption || '' });
+      });
+      LW.coverIdx = d.coverIdx || 0;
+      lwRenderPhotoGrid();
+    }
     // Hide banner, go to saved step
     lwDismissDraftBanner();
     lwGoToStep(d.step || 0);
@@ -4540,13 +4681,25 @@ function renderAreas() {
   `).join('');
 }
 
-// Index-specific setTab — just switches the active tab UI, no renderListings
+// Index-specific setTab — switches tabs and shows/hides the agencies section
 function setTab(el, m) {
   document.querySelectorAll('.hero-tab').forEach(function(t){ t.classList.remove('on'); });
   el.classList.add('on');
   var titles = {buy:'Find Property for Sale', rent:'Find Property to Rent', new:'New Developments', agents:'Find a Property Agent', sold:'Recently Sold Properties'};
   var h = document.getElementById('heroTitle');
   if (h) h.textContent = titles[m] || 'Find Property';
+  var isAgents = m === 'agents';
+  var hero = document.getElementById('heroSection');
+  var fs = document.getElementById('featured-section');
+  var ls = document.getElementById('listings-section');
+  var as = document.getElementById('agents-section');
+  if (hero) hero.style.display = isAgents ? 'none' : '';
+  if (fs) fs.style.display = isAgents ? 'none' : '';
+  if (ls) ls.style.display = isAgents ? 'none' : '';
+  if (as) {
+    as.style.display = isAgents ? 'block' : 'none';
+    if (isAgents) { renderAgencies(); as.scrollIntoView({behavior:'smooth', block:'start'}); }
+  }
 }
 
 // Init
