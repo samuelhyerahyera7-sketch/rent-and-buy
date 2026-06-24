@@ -1505,6 +1505,34 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
 .similar-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; margin-top:24px; }
 @media(max-width:900px){ .detail-layout{grid-template-columns:1fr;} .detail-sidebar{position:static;} }
 
+/* ── My Listings dashboard ───────────────────────────────── */
+.mld-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px; }
+.mld-stat { background:var(--navy-l); border-radius:10px; padding:16px 12px; text-align:center; }
+.mld-stat-n { display:block; font-size:28px; font-weight:800; color:var(--navy); line-height:1.1; }
+.mld-stat-l { font-size:12px; color:var(--ink-3); font-weight:500; margin-top:4px; display:block; }
+.mld-list {}
+.mld-item { display:flex; align-items:flex-start; gap:14px; padding:16px 0; border-bottom:1px solid var(--line); }
+.mld-thumb { width:88px; height:68px; flex-shrink:0; border-radius:8px; overflow:hidden; background:var(--navy-l); }
+.mld-thumb img { width:100%; height:100%; object-fit:cover; }
+.mld-thumb-empty { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--ink-3); }
+.mld-info { flex:1; min-width:0; }
+.mld-title { font-size:14px; font-weight:700; color:var(--navy); margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.mld-sub { font-size:12px; color:var(--ink-3); margin-bottom:4px; }
+.mld-price { font-size:14px; font-weight:700; color:var(--sage); margin-bottom:6px; }
+.mld-meta { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.mld-badge { font-size:11px; font-weight:600; padding:2px 8px; border-radius:20px; text-transform:capitalize; }
+.mld-badge-active { background:#dcfce7; color:#166534; }
+.mld-badge-sold { background:#fee2e2; color:#991b1b; }
+.mld-days,.mld-views { font-size:12px; color:var(--ink-3); }
+.mld-actions { display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
+.mld-btn-delete,.mld-btn-sold { padding:7px 13px; border-radius:6px; font-size:12px; cursor:pointer; font-family:var(--font); font-weight:500; transition:all .15s; }
+.mld-btn-delete { border:1.5px solid #dc2626; background:none; color:#dc2626; }
+.mld-btn-delete:hover { background:#dc2626; color:#fff; }
+.mld-btn-sold { border:1.5px solid var(--sage); background:none; color:var(--sage); }
+.mld-btn-sold:hover { background:var(--sage); color:#fff; }
+.mld-empty { text-align:center; padding:48px 0; color:var(--ink-3); }
+.mld-empty p { margin-bottom:18px; font-size:15px; }
+
 /* ── Agency directory (Property24 style) ─────────────────── */
 .agency-dir-header {
   background: var(--navy); color: #fff;
@@ -1643,7 +1671,6 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
     </div>
     <div class="drawer-btns">
       <button class="btn-ghost" id="drawerAuthBtn" onclick="openSignIn();closeDrawer()">Sign In</button>
-      <button class="btn-primary" onclick="openListProp();closeDrawer()">List Property</button>
     </div>
   </div>
 </div>
@@ -2056,6 +2083,15 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
     </p>
   </div>
 </div>
+<!-- My Listings Dashboard -->
+<div class="backdrop" id="myListingsBackdrop" onclick="if(event.target===this)closeMyListings()">
+  <div class="auth-modal" style="max-width:720px;width:95vw;max-height:82vh;overflow-y:auto;padding:28px 28px 32px">
+    <button class="sm-close" onclick="closeMyListings()" style="position:absolute;top:14px;right:16px">✕</button>
+    <h2 style="font-size:20px;font-weight:700;color:var(--navy);margin-bottom:20px">My Listings</h2>
+    <div id="myListingsBody"></div>
+  </div>
+</div>
+
 <!-- Listing Wizard -->
 <div id="listingWizard" class="lw-overlay">
 
@@ -3231,7 +3267,7 @@ function toast(msg) {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeModal(); closeCalc(); closeSignIn(); closeListProp(); }
+  if (e.key === 'Escape') { closeModal(); closeCalc(); closeSignIn(); closeListProp(); closeMyListings(); }
 });
 
 // ── Navigation helpers ────────────────────────────────────────────────────────
@@ -3448,7 +3484,7 @@ function updateAuthNav(user) {
             '<div style="font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:2px">' + fullName + '</div>' +
             '<div style="font-size:12px;color:var(--ink-3)">' + user.email + '</div>' +
           '</div>' +
-          '<button onclick="toast(\'My listings coming soon\')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:var(--ink);font-family:var(--font)">My listings</button>' +
+          '<button onclick="openMyListings()" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:var(--ink);font-family:var(--font)">My listings</button>' +
           '<button onclick="openListProp()" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:var(--ink);font-family:var(--font)">List a property</button>' +
           '<button onclick="signOut()" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:#dc2626;font-family:var(--font)">Sign out</button>' +
         '</div>';
@@ -3564,6 +3600,82 @@ var LW_STEPS = [
   { title: 'Contact details',      sub: 'Step 7 of 8 — How to reach you' },
   { title: 'Preview & publish',    sub: 'Step 8 of 8 — Review your listing' }
 ];
+
+// ── My Listings dashboard ─────────────────────────────────────────────────────
+function openMyListings() {
+  if (!currentUser) { openSignIn(); return; }
+  var dd = document.getElementById('userDropdown');
+  if (dd) dd.style.display = 'none';
+  document.getElementById('myListingsBackdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  loadMyListings();
+}
+function closeMyListings() {
+  var el = document.getElementById('myListingsBackdrop');
+  if (el) el.classList.remove('open');
+  document.body.style.overflow = '';
+}
+async function loadMyListings() {
+  var body = document.getElementById('myListingsBody');
+  body.innerHTML = '<div style="text-align:center;padding:48px 0;color:var(--ink-3)"><svg style="display:block;margin:0 auto 12px;animation:spin 1s linear infinite;color:var(--sage)" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>Loading your listings…</div>';
+  var res = await sb.from('properties').select('*').eq('agent_email', currentUser.email).order('created_at', {ascending: false});
+  if (res.error) {
+    body.innerHTML = '<p style="text-align:center;padding:48px 0;color:var(--ink-3)">Could not load listings — please try again.</p>';
+    return;
+  }
+  var listings = res.data || [];
+  if (!listings.length) {
+    body.innerHTML = '<div class="mld-empty"><p>You have no active listings yet.</p><button class="btn-primary" onclick="closeMyListings();openListProp()">List a property</button></div>';
+    return;
+  }
+  var active = listings.filter(function(l){ return l.status !== 'sold'; }).length;
+  var totalViews = listings.reduce(function(s, l){ return s + (l.views || 0); }, 0);
+  body.innerHTML =
+    '<div class="mld-stats">' +
+      '<div class="mld-stat"><span class="mld-stat-n">' + listings.length + '</span><span class="mld-stat-l">Total Listings</span></div>' +
+      '<div class="mld-stat"><span class="mld-stat-n">' + active + '</span><span class="mld-stat-l">Active</span></div>' +
+      '<div class="mld-stat"><span class="mld-stat-n">' + totalViews + '</span><span class="mld-stat-l">Total Views</span></div>' +
+    '</div>' +
+    '<div class="mld-list">' +
+    listings.map(function(l) {
+      var img = l.imgs && l.imgs[0];
+      var days = l.created_at ? Math.floor((Date.now() - new Date(l.created_at)) / 86400000) : 0;
+      var price = 'R ' + Number(l.price).toLocaleString('en-ZA');
+      var isSold = l.status === 'sold';
+      var loc = [l.suburb, l.city].filter(Boolean).join(', ');
+      return '<div class="mld-item">' +
+        '<div class="mld-thumb">' + (img ? '<img src="' + img + '" alt="">' : '<div class="mld-thumb-empty">No photo</div>') + '</div>' +
+        '<div class="mld-info">' +
+          '<div class="mld-title">' + (l.title || 'Untitled') + '</div>' +
+          (loc ? '<div class="mld-sub">' + loc + '</div>' : '') +
+          '<div class="mld-price">' + price + '</div>' +
+          '<div class="mld-meta">' +
+            '<span class="mld-badge ' + (isSold ? 'mld-badge-sold' : 'mld-badge-active') + '">' + (isSold ? 'Sold' : 'Active') + '</span>' +
+            '<span class="mld-days">' + days + ' day' + (days === 1 ? '' : 's') + ' on market</span>' +
+            '<span class="mld-views">&#128065; ' + (l.views || 0) + ' views</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="mld-actions">' +
+          '<button class="mld-btn-delete" onclick="deleteMyListing(\'' + l.id + '\')">Delete</button>' +
+          (!isSold ? '<button class="mld-btn-sold" onclick="markMyListingSold(\'' + l.id + '\')">Mark Sold</button>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('') +
+    '</div>';
+}
+async function deleteMyListing(id) {
+  if (!confirm('Delete this listing? This cannot be undone.')) return;
+  var res = await sb.from('properties').delete().eq('id', id).eq('agent_email', currentUser.email);
+  if (res.error) { toast('Could not delete — please try again'); return; }
+  toast('Listing deleted');
+  loadMyListings();
+}
+async function markMyListingSold(id) {
+  var res = await sb.from('properties').update({ status: 'sold' }).eq('id', id).eq('agent_email', currentUser.email);
+  if (res.error) { toast('Could not update — please try again'); return; }
+  toast('Marked as sold!');
+  loadMyListings();
+}
 
 function openListProp() {
   if (!currentUser) {
