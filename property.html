@@ -4493,8 +4493,19 @@ function loadProperty(id) {
 
 // Init
 var _id = new URLSearchParams(location.search).get('id');
-if (_id) loadProperty(parseInt(_id));
-else { document.getElementById('propertyDetail').innerHTML = '<div class="section" style="text-align:center;padding:80px 0"><h2>No property selected</h2><p><a href="search.html?mode=buy">Browse properties</a></p></div>'; }
+if (_id) {
+  loadProperty(parseInt(_id));
+  // Increment view count (fire-and-forget)
+  (async function() {
+    try {
+      var r = await sb.from('properties').select('views').eq('id', _id).single();
+      var v = (r.data && r.data.views) || 0;
+      await sb.from('properties').update({ views: v + 1 }).eq('id', _id);
+    } catch(e) {}
+  })();
+} else {
+  document.getElementById('propertyDetail').innerHTML = '<div class="section" style="text-align:center;padding:80px 0"><h2>No property selected</h2><p><a href="search.html?mode=buy">Browse properties</a></p></div>';
+}
 calcBond();
 </script>
 
