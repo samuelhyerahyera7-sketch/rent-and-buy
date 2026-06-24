@@ -4214,10 +4214,15 @@ async function lwPublish() {
   // Clear draft
   try { localStorage.removeItem('rab_lw_draft'); } catch(e){}
 
-  // Show success screen
+  // Show success screen then redirect to the new listing
   document.getElementById('lwFooter').style.display = 'none';
   document.querySelectorAll('.lw-step-panel').forEach(function(p) { p.classList.remove('active'); });
   document.getElementById('lwSuccess').classList.add('show');
+  var newId = row.id;
+  setTimeout(function() {
+    closeListProp();
+    window.location = 'property.html?id=' + newId;
+  }, 2500);
 }
 
 // ── Draft save / restore ──────────────────────────────────────────────────────
