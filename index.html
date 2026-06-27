@@ -4837,7 +4837,7 @@ function goSearch() {
   var mode = document.querySelector('.hero-tab.on')?.dataset?.mode || 'buy';
   window.location = 'search.html?mode=' + mode + (loc ? '&q=' + encodeURIComponent(loc) : '');
 }
-function goSearchMap() { goSearch(); }
+function goSearchMap() { openMap(); }
 function goAgents() { window.location = 'search.html?mode=buy#agents'; }
 function scrollToListings() { document.getElementById('listings-section').scrollIntoView({behavior:'smooth',block:'start'}); }
 function switchMode(m,e){ if(e)e.preventDefault(); window.location='search.html?mode='+m; }
@@ -4923,7 +4923,6 @@ window.addEventListener('DOMContentLoaded', function() {
 
 // Mobile search
 function doSearch() { goSearch(); }
-function openMap() { goSearchMap(); }
 
 // Open listing wizard if redirected from dashboard
 if (localStorage.getItem('rab_openList') === '1') {
