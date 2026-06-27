@@ -3452,11 +3452,14 @@ function signOut() {
 function toggleUserMenu(e) {
   e.stopPropagation();
   var dd = document.getElementById('userDropdown');
-  if (dd) dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+  if (!dd) return;
+  var isOpen = dd.style.display !== 'none';
+  dd.style.display = isOpen ? 'none' : 'block';
 }
-document.addEventListener('click', function() {
+document.addEventListener('click', function(e) {
+  var av = document.getElementById('navUserAvatar');
   var dd = document.getElementById('userDropdown');
-  if (dd) dd.style.display = 'none';
+  if (dd && av && !av.contains(e.target)) dd.style.display = 'none';
 });
 function updateAuthNav(user) {
   var nav = document.querySelector('.nav-right');
@@ -3476,9 +3479,9 @@ function updateAuthNav(user) {
       el.id = 'navUserAvatar';
       el.style.cssText = 'display:flex;align-items:center;gap:8px;cursor:pointer;position:relative';
       el.innerHTML =
-        '<div onclick="toggleUserMenu(event)" style="display:flex;align-items:center;gap:7px">' +
+        '<div onclick="toggleUserMenu(event)" style="display:flex;align-items:center;gap:7px;cursor:pointer">' +
           '<div style="width:34px;height:34px;border-radius:50%;background:var(--sage);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center">' + initials + '</div>' +
-          '<span style="font-size:13.5px;font-weight:600;color:var(--ink-2)">' + fullName + '</span>' +
+          '<span style="font-size:13.5px;font-weight:600;color:var(--ink-2)">' + first + '</span>' +
           '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--ink-3)"><polyline points="6 9 12 15 18 9"/></svg>' +
         '</div>' +
         '<div id="userDropdown" style="display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow-m);min-width:200px;z-index:300;padding:6px 0;white-space:nowrap">' +
@@ -3488,8 +3491,17 @@ function updateAuthNav(user) {
           '</div>' +
           '<a href="dashboard.html" style="display:block;width:100%;text-align:left;padding:10px 16px;font-size:13.5px;color:var(--ink);font-family:var(--font)">My listings</a>' +
           '<button onclick="openListProp()" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:var(--ink);font-family:var(--font)">List a property</button>' +
-          '<button onclick="signOut()" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:#dc2626;font-family:var(--font)">Sign out</button>' +
+          '<button onclick="signOut()" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:var(--sage);font-weight:600;font-family:var(--font)">Sign out</button>' +
         '</div>';
+      // Always-visible green Sign Out button
+      var soBtn = document.createElement('button');
+      soBtn.id = 'navSignOutBtn';
+      soBtn.onclick = signOut;
+      soBtn.textContent = 'Sign out';
+      soBtn.style.cssText = 'padding:7px 16px;border:2px solid var(--sage);border-radius:7px;background:none;color:var(--sage);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font)';
+      soBtn.onmouseenter = function(){ this.style.background='var(--sage)'; this.style.color='#fff'; };
+      soBtn.onmouseleave = function(){ this.style.background='none'; this.style.color='var(--sage)'; };
+      el.appendChild(soBtn);
       nav.insertBefore(el, nav.querySelector('.btn-primary'));
     } else {
       avatarEl.style.display = 'flex';
@@ -3497,6 +3509,7 @@ function updateAuthNav(user) {
   } else {
     if (signInBtn) signInBtn.style.display = '';
     if (avatarEl) avatarEl.style.display = 'none';
+    var sob = document.getElementById('navSignOutBtn'); if (sob) sob.style.display = 'none';
     if (drawerSignIn) { drawerSignIn.textContent = 'Sign In'; drawerSignIn.onclick = function(){ openSignIn(); closeDrawer(); }; }
   }
 }
