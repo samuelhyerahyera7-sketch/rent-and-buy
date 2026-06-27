@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seller Dashboard — Rent&amp;Buy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+:root {
+  --navy:#1a3355;--navy-l:#eef2f8;--sage:#2d7a56;--sage-l:#edf6f1;
+  --ink:#1a1a2e;--ink-2:#374151;--ink-3:#6b7280;
+  --line:#e5e7eb;--line-2:#f3f4f6;--white:#fff;--page:#f9fafb;
+  --font:'Inter',sans-serif;--r:8px;--r-lg:14px;
+  --shadow-s:0 1px 4px rgba(0,0,0,.08);--shadow-m:0 4px 16px rgba(0,0,0,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--page);color:var(--ink);min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--font);cursor:pointer}
+
+/* ── Top nav ── */
+.top-nav{background:var(--white);border-bottom:1px solid var(--line);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.nav-logo{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800}
+.lo-r{color:var(--navy)}.lo-a{color:var(--sage)}.lo-b{color:var(--ink-3)}
+.nav-logo svg{width:28px;height:28px}
+.nav-right-d{display:flex;align-items:center;gap:10px}
+.btn-ghost-sm{padding:7px 14px;border:1.5px solid var(--line);border-radius:6px;background:var(--white);font-size:13px;font-weight:500;color:var(--ink-2)}
+.btn-sage{padding:7px 16px;border:none;border-radius:6px;background:var(--sage);color:#fff;font-size:13px;font-weight:600}
+.btn-sage:hover{background:#245d44}
+.user-pill{display:flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--line);border-radius:20px;font-size:13px;font-weight:600;background:var(--white)}
+.user-av{width:26px;height:26px;border-radius:50%;background:var(--sage);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+/* ── Layout ── */
+.dash-wrap{display:flex;min-height:calc(100vh - 56px)}
+.dash-sidebar{width:220px;flex-shrink:0;background:var(--white);border-right:1px solid var(--line);padding:24px 0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+.dash-sidebar h6{font-size:10px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.8px;padding:0 20px 8px}
+.dash-nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:14px;font-weight:500;color:var(--ink-2);cursor:pointer;transition:all .15s;border-left:3px solid transparent}
+.dash-nav-item svg{width:18px;height:18px;flex-shrink:0;color:var(--ink-3)}
+.dash-nav-item:hover{background:var(--page);color:var(--navy)}
+.dash-nav-item.on{background:var(--sage-l);color:var(--sage);border-left-color:var(--sage);font-weight:600}
+.dash-nav-item.on svg{color:var(--sage)}
+.dash-nav-badge{margin-left:auto;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px}
+.dash-main{flex:1;padding:28px 32px;min-width:0}
+
+/* ── Section headings ── */
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.section-title{font-size:20px;font-weight:800;color:var(--navy)}
+.section-sub{font-size:13px;color:var(--ink-3);margin-top:2px}
+
+/* ── Stat cards ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat-card.c1::before{background:var(--navy)}.stat-card.c2::before{background:var(--sage)}
+.stat-card.c3::before{background:#f59e0b}.stat-card.c4::before{background:#8b5cf6}
+.stat-n{font-size:32px;font-weight:800;color:var(--navy);line-height:1.1;margin-bottom:4px}
+.stat-l{font-size:12px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.4px}
+.stat-icon{position:absolute;right:16px;top:16px;opacity:.12;font-size:36px}
+
+/* ── Listing cards ── */
+.listing-grid{display:flex;flex-direction:column;gap:16px}
+.listing-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;display:flex;gap:0}
+.listing-img{width:140px;flex-shrink:0;position:relative}
+.listing-img img{width:100%;height:100%;object-fit:cover;display:block}
+.listing-img-empty{width:100%;height:100%;background:var(--navy-l);display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-size:12px;min-height:120px}
+.listing-body{flex:1;padding:16px 20px;min-width:0}
+.listing-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px}
+.listing-title{font-size:15px;font-weight:700;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.listing-loc{font-size:12px;color:var(--ink-3);margin-bottom:8px}
+.listing-price{font-size:17px;font-weight:800;color:var(--sage);margin-bottom:10px}
+.listing-price-hist{font-size:11px;color:var(--ink-3);font-weight:400;margin-left:8px}
+.listing-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.listing-meta span{font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:4px}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-active{background:#dcfce7;color:#166534}
+.badge-sold{background:#fee2e2;color:#991b1b}
+.badge-paused{background:#fef3c7;color:#92400e}
+.listing-actions{display:flex;flex-wrap:wrap;gap:8px}
+.act-btn{padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;border:1.5px solid var(--line);background:var(--white);color:var(--ink-2);transition:all .15s}
+.act-btn:hover{border-color:var(--navy);color:var(--navy)}
+.act-btn.danger{border-color:#fca5a5;color:#dc2626}
+.act-btn.danger:hover{background:#dc2626;color:#fff;border-color:#dc2626}
+.act-btn.primary{border-color:var(--sage);color:var(--sage)}
+.act-btn.primary:hover{background:var(--sage);color:#fff}
+.act-btn.warn{border-color:#f59e0b;color:#92400e}
+.act-btn.warn:hover{background:#f59e0b;color:#fff}
+
+/* ── Messages ── */
+.msg-list{display:flex;flex-direction:column;gap:12px}
+.msg-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;position:relative}
+.msg-card.unread{border-left:4px solid var(--sage)}
+.msg-card.unread::after{content:'New';position:absolute;top:14px;right:14px;background:var(--sage);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+.msg-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.msg-av{width:36px;height:36px;border-radius:50%;background:var(--navy-l);color:var(--navy);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.msg-name{font-size:14px;font-weight:700;color:var(--navy)}
+.msg-prop{font-size:12px;color:var(--ink-3)}
+.msg-date{margin-left:auto;font-size:11px;color:var(--ink-3)}
+.msg-contact{display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.msg-contact a{font-size:12px;color:var(--sage);display:flex;align-items:center;gap:4px}
+.msg-text{font-size:14px;color:var(--ink-2);line-height:1.6;margin-bottom:14px}
+.msg-actions{display:flex;gap:8px}
+.msg-btn{padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;border:1.5px solid var(--line);background:var(--white);color:var(--ink-2)}
+.msg-btn.reply{border-color:var(--sage);color:var(--sage)}
+.msg-btn.reply:hover{background:var(--sage);color:#fff}
+.msg-btn.wa{border-color:#25D366;color:#25D366}
+.msg-btn.wa:hover{background:#25D366;color:#fff}
+.msg-btn.read-btn{color:var(--ink-3)}
+
+/* ── Price history ── */
+.price-hist-list{margin-top:8px}
+.ph-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--line-2);font-size:13px}
+.ph-row:last-child{border:none}
+.ph-price{font-weight:700;color:var(--navy)}
+.ph-date{color:var(--ink-3);font-size:12px}
+.ph-badge{font-size:10px;font-weight:600;padding:1px 7px;border-radius:8px}
+.ph-down{background:#fee2e2;color:#991b1b}.ph-up{background:#dcfce7;color:#166534}
+
+/* ── Edit modal ── */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;align-items:center;justify-content:center;padding:20px}
+.modal-backdrop.open{display:flex}
+.modal-box{background:var(--white);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.2)}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--line)}
+.modal-hd h3{font-size:17px;font-weight:700;color:var(--navy)}
+.modal-close{width:30px;height:30px;border:none;background:var(--page);border-radius:6px;font-size:18px;color:var(--ink-3);display:flex;align-items:center;justify-content:center}
+.modal-body{padding:24px}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;padding:10px 13px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--font);font-size:14px;color:var(--ink);background:var(--white);outline:none}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--sage)}
+.field textarea{resize:vertical;min-height:100px}
+.price-wrap{position:relative}.price-wrap input{padding-left:28px}
+.price-wrap span{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:600;color:var(--ink-3)}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end}
+.btn-cancel{padding:9px 18px;border:1.5px solid var(--line);border-radius:7px;background:var(--white);font-size:14px;font-weight:500;color:var(--ink-2)}
+.btn-save{padding:9px 22px;border:none;border-radius:7px;background:var(--sage);color:#fff;font-size:14px;font-weight:600}
+.btn-save:hover{background:#245d44}
+
+/* ── Empty states ── */
+.empty-state{text-align:center;padding:64px 24px;color:var(--ink-3)}
+.empty-state h3{font-size:18px;font-weight:700;color:var(--ink-2);margin-bottom:8px}
+.empty-state p{font-size:14px;margin-bottom:20px}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a2e;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── Loading ── */
+.spinner-wrap{display:flex;align-items:center;justify-content:center;padding:60px;color:var(--ink-3)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin .9s linear infinite;display:block}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  .dash-wrap{flex-direction:column}
+  .dash-sidebar{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--line);padding:8px 0;display:flex;overflow-x:auto}
+  .dash-nav-item{flex-direction:column;gap:4px;padding:8px 16px;font-size:11px;border-left:none;border-bottom:3px solid transparent;white-space:nowrap}
+  .dash-nav-item.on{border-left:none;border-bottom-color:var(--sage)}
+  .dash-nav-item svg{width:20px;height:20px}
+  .dash-sidebar h6{display:none}
+  .dash-main{padding:16px}
+  .stat-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+  .listing-card{flex-direction:column}
+  .listing-img{width:100%;height:180px}
+}
+</style>
+</head>
+<body>
+
+<!-- Top nav -->
+<nav class="top-nav">
+  <a href="index.html" class="nav-logo">
+    <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="36" height="36" rx="8" fill="#1a3355"/>
+      <path d="M18 7L6 16v13h8v-8h8v8h8V16L18 7z" fill="white"/>
+    </svg>
+    <span><span class="lo-r">Rent</span><span class="lo-a">&amp;</span><span class="lo-b">Buy</span></span>
+  </a>
+  <div class="nav-right-d">
+    <a href="index.html" class="btn-ghost-sm">Back to site</a>
+    <button class="btn-sage" onclick="openListPropPage()">+ List Property</button>
+    <div class="user-pill" id="userPill">
+      <div class="user-av" id="userAv">?</div>
+      <span id="userName">Loading…</span>
+    </div>
+  </div>
+</nav>
+
+<div class="dash-wrap">
+  <!-- Sidebar -->
+  <aside class="dash-sidebar">
+    <h6>Dashboard</h6>
+    <div class="dash-nav-item on" id="nav-overview" onclick="showSection('overview')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Overview
+    </div>
+    <div class="dash-nav-item" id="nav-listings" onclick="showSection('listings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      My Listings
+    </div>
+    <div class="dash-nav-item" id="nav-messages" onclick="showSection('messages')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Messages
+      <span class="dash-nav-badge" id="unreadBadge" style="display:none">0</span>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="dash-main">
+
+    <!-- Overview -->
+    <section id="sec-overview">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Overview</div>
+          <div class="section-sub" id="overviewGreeting">Welcome back</div>
+        </div>
+        <button class="btn-sage" onclick="showSection('listings');setTimeout(openListPropPage,100)">+ New Listing</button>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card c1"><div class="stat-n" id="ov-listings">–</div><div class="stat-l">Total Listings</div><div class="stat-icon">🏠</div></div>
+        <div class="stat-card c2"><div class="stat-n" id="ov-active">–</div><div class="stat-l">Active</div><div class="stat-icon">✅</div></div>
+        <div class="stat-card c3"><div class="stat-n" id="ov-views">–</div><div class="stat-l">Total Views</div><div class="stat-icon">👁</div></div>
+        <div class="stat-card c4"><div class="stat-n" id="ov-enq">–</div><div class="stat-l">Enquiries</div><div class="stat-icon">✉</div></div>
+      </div>
+      <div class="section-head" style="margin-top:8px"><div class="section-title" style="font-size:16px">Recent Messages</div><button class="btn-ghost-sm" onclick="showSection('messages')">View all</button></div>
+      <div id="ov-recent-msgs"><div class="spinner-wrap"><svg class="spin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></div></div>
+    </section>
+
+    <!-- My Listings -->
+    <section id="sec-listings" style="display:none">
+      <div class="section-head">
+        <div><div class="section-title">My Listings</div><div class="section-sub" id="listingCount"></div></div>
+        <button class="btn-sage" onclick="openListPropPage()">+ New Listing</button>
+      </div>
+      <div id="listingsContainer"><div class="spinner-wrap"><svg class="spin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></div></div>
+    </section>
+
+    <!-- Messages -->
+    <section id="sec-messages" style="display:none">
+      <div class="section-head">
+        <div><div class="section-title">Messages</div><div class="section-sub" id="msgCount"></div></div>
+        <button class="btn-ghost-sm" onclick="markAllRead()">Mark all read</button>
+      </div>
+      <div id="messagesContainer"><div class="spinner-wrap"><svg class="spin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></div></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-backdrop" id="editModal" onclick="if(event.target===this)closeEdit()">
+  <div class="modal-box">
+    <div class="modal-hd">
+      <h3>Edit Listing</h3>
+      <button class="modal-close" onclick="closeEdit()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label>Title</label><input id="ed-title" type="text" maxlength="100"></div>
+      <div class="field"><label>Price</label><div class="price-wrap"><span>R</span><input id="ed-price" type="number" min="0"></div></div>
+      <div class="field"><label>Price History</label><div class="price-hist-list" id="ed-price-hist"></div></div>
+      <div class="field"><label>Description</label><textarea id="ed-desc" rows="5"></textarea></div>
+      <div class="field"><label>Status</label>
+        <select id="ed-status">
+          <option value="active">Active — visible to buyers</option>
+          <option value="paused">Paused — hidden from search</option>
+          <option value="sold">Sold</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeEdit()">Cancel</button>
+      <button class="btn-save" id="ed-save-btn" onclick="saveEdit()">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const SB_URL = 'https://auth.rentandbuy.co.za';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuaWJjaGRlZ2pieXB0eW5pam14Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDM5OTIsImV4cCI6MjA5NzExOTk5Mn0.rEq9Ymb1lPdAqepYXS7TXntgVtEVr5x1_Iz-v6zJzPg';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+
+var currentUser = null;
+var allListings = [];
+var allMessages = [];
+var editingListing = null;
+var toastTimer;
+
+// ── Auth guard ────────────────────────────────────────────────────────────────
+sb.auth.onAuthStateChange(function(event, session) {
+  currentUser = session ? session.user : null;
+  if (!currentUser) {
+    window.location = 'index.html';
+    return;
+  }
+  var meta = currentUser.user_metadata || {};
+  var name = meta.full_name || currentUser.email.split('@')[0];
+  var initials = name.split(' ').map(function(w){ return w[0]||''; }).join('').substring(0,2).toUpperCase();
+  document.getElementById('userAv').textContent = initials;
+  document.getElementById('userName').textContent = name;
+  document.getElementById('overviewGreeting').textContent = 'Welcome back, ' + name.split(' ')[0];
+  loadAll();
+});
+
+// ── Load everything ───────────────────────────────────────────────────────────
+async function loadAll() {
+  var [lRes, eRes] = await Promise.all([
+    sb.from('properties').select('*').eq('agent_email', currentUser.email).order('created_at', {ascending: false}),
+    sb.from('enquiries').select('*').order('created_at', {ascending: false})
+  ]);
+  allListings = (lRes.error ? [] : lRes.data) || [];
+  var ids = allListings.map(function(l){ return l.id; });
+  // Filter messages to only listings owned by this user
+  allMessages = ((eRes.error ? [] : eRes.data) || []).filter(function(e){ return ids.indexOf(e.property_id) > -1; });
+
+  renderOverview();
+  renderListings();
+  renderMessages();
+  updateUnreadBadge();
+}
+
+// ── Overview ──────────────────────────────────────────────────────────────────
+function renderOverview() {
+  var active = allListings.filter(function(l){ return l.status === 'active'; }).length;
+  var views  = allListings.reduce(function(s,l){ return s + (l.views||0); }, 0);
+  document.getElementById('ov-listings').textContent = allListings.length;
+  document.getElementById('ov-active').textContent   = active;
+  document.getElementById('ov-views').textContent    = views;
+  document.getElementById('ov-enq').textContent      = allMessages.length;
+
+  var recent = allMessages.slice(0, 5);
+  var el = document.getElementById('ov-recent-msgs');
+  if (!recent.length) {
+    el.innerHTML = '<div class="empty-state" style="padding:32px 0"><p>No messages yet. When buyers enquire about your properties, they\'ll appear here.</p></div>';
+    return;
+  }
+  el.innerHTML = '<div class="msg-list">' + recent.map(function(m){ return renderMsgCard(m, true); }).join('') + '</div>';
+}
+
+// ── Listings ──────────────────────────────────────────────────────────────────
+function renderListings() {
+  var el = document.getElementById('listingsContainer');
+  document.getElementById('listingCount').textContent = allListings.length + ' listing' + (allListings.length !== 1 ? 's' : '');
+
+  var enqMap = {};
+  allMessages.forEach(function(m){ enqMap[m.property_id] = (enqMap[m.property_id]||0)+1; });
+
+  if (!allListings.length) {
+    el.innerHTML = '<div class="empty-state"><h3>No listings yet</h3><p>Start by listing your first property.</p><button class="btn-sage" onclick="openListPropPage()">+ List a Property</button></div>';
+    return;
+  }
+  el.innerHTML = '<div class="listing-grid">' + allListings.map(function(l){ return renderListingCard(l, enqMap[l.id]||0); }).join('') + '</div>';
+}
+
+function renderListingCard(l, enqCount) {
+  var img = l.imgs && l.imgs[0];
+  var days = daysAgo(l.renewed_at || l.created_at);
+  var price = fmtPrice(l.price);
+  var loc = [l.suburb, l.city].filter(Boolean).join(', ');
+  var status = l.status || 'active';
+  var hist = l.price_history ? JSON.parse(typeof l.price_history === 'string' ? l.price_history : JSON.stringify(l.price_history)) : [];
+  var lastChange = hist.length ? (hist[hist.length-1].price > l.price ? ' ▼ reduced' : '') : '';
+  return '<div class="listing-card" id="lcard-'+l.id+'">' +
+    '<div class="listing-img">' + (img ? '<img src="'+img+'" alt="">' : '<div class="listing-img-empty">No photo</div>') + '</div>' +
+    '<div class="listing-body">' +
+      '<div class="listing-top">' +
+        '<div><div class="listing-title">'+escHtml(l.title||'Untitled')+'</div>' +
+        (loc ? '<div class="listing-loc">'+escHtml(loc)+'</div>' : '') + '</div>' +
+        '<span class="badge badge-'+status+'">'+capFirst(status)+'</span>' +
+      '</div>' +
+      '<div class="listing-price">'+price+'<span class="listing-price-hist">'+lastChange+'</span></div>' +
+      '<div class="listing-meta">' +
+        '<span>👁 '+( l.views||0)+' views</span>' +
+        '<span>✉ '+enqCount+' enquir'+(enqCount===1?'y':'ies')+'</span>' +
+        '<span>📅 '+days+' day'+(days===1?'':'s')+' listed</span>' +
+      '</div>' +
+      '<div class="listing-actions">' +
+        '<button class="act-btn primary" onclick="openEdit(\''+l.id+'\')">✏️ Edit</button>' +
+        (status==='paused'
+          ? '<button class="act-btn" onclick="togglePause(\''+l.id+'\',\'active\')">▶ Reactivate</button>'
+          : status==='active' ? '<button class="act-btn warn" onclick="togglePause(\''+l.id+'\',\'paused\')">⏸ Pause</button>' : '') +
+        (status!=='sold' ? '<button class="act-btn" onclick="renewListing(\''+l.id+'\')">🔄 Renew</button>' : '') +
+        '<button class="act-btn" onclick="shareWA(\''+l.id+'\',\''+escAttr(l.title)+'\')">🟢 Share</button>' +
+        (status!=='sold' ? '<button class="act-btn warn" onclick="markSold(\''+l.id+'\')">🏷 Mark Sold</button>' : '') +
+        '<button class="act-btn danger" onclick="deleteListing(\''+l.id+'\')">🗑 Delete</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+// ── Messages ──────────────────────────────────────────────────────────────────
+function renderMessages() {
+  var el = document.getElementById('messagesContainer');
+  var unread = allMessages.filter(function(m){ return !m.read; }).length;
+  document.getElementById('msgCount').textContent = allMessages.length + ' message' + (allMessages.length!==1?'s':'') + (unread?' · '+unread+' unread':'');
+
+  if (!allMessages.length) {
+    el.innerHTML = '<div class="empty-state"><h3>No messages yet</h3><p>When buyers contact you about your listings, their messages will appear here.</p></div>';
+    return;
+  }
+  el.innerHTML = '<div class="msg-list">' + allMessages.map(function(m){ return renderMsgCard(m, false); }).join('') + '</div>';
+}
+
+function renderMsgCard(m, compact) {
+  var propTitle = (allListings.find(function(l){ return l.id === m.property_id; })||{}).title || 'Property';
+  var initials = (m.visitor_name||'?').split(' ').map(function(w){ return w[0]||''; }).join('').substring(0,2).toUpperCase();
+  var date = fmtDate(m.created_at);
+  var waLink = m.visitor_phone ? 'https://wa.me/'+m.visitor_phone.replace(/\D/g,'') : null;
+  return '<div class="msg-card'+(m.read?'':' unread')+'" id="msg-'+m.id+'">' +
+    '<div class="msg-head">' +
+      '<div class="msg-av">'+initials+'</div>' +
+      '<div><div class="msg-name">'+escHtml(m.visitor_name||'Unknown')+'</div>' +
+      '<div class="msg-prop">Re: '+escHtml(propTitle)+'</div></div>' +
+      '<div class="msg-date">'+date+'</div>' +
+    '</div>' +
+    '<div class="msg-contact">' +
+      '<a href="mailto:'+m.visitor_email+'">✉ '+m.visitor_email+'</a>' +
+      (m.visitor_phone ? '<a href="tel:'+m.visitor_phone+'">📞 '+m.visitor_phone+'</a>' : '') +
+    '</div>' +
+    '<div class="msg-text">'+escHtml(m.visitor_message||'')+'</div>' +
+    (!compact ? '<div class="msg-actions">' +
+      '<button class="msg-btn reply" onclick="replyEmail(\''+m.visitor_email+'\',\''+escAttr(propTitle)+'\')">✉ Reply by email</button>' +
+      (waLink ? '<button class="msg-btn wa" onclick="replyWA(\''+m.visitor_phone+'\',\''+escAttr(propTitle)+'\')">🟢 WhatsApp</button>' : '') +
+      (!m.read ? '<button class="msg-btn read-btn" onclick="markRead(\''+m.id+'\')">Mark as read</button>' : '') +
+    '</div>' : '') +
+  '</div>';
+}
+
+// ── Section nav ───────────────────────────────────────────────────────────────
+function showSection(name) {
+  ['overview','listings','messages'].forEach(function(s){
+    document.getElementById('sec-'+s).style.display = s===name?'':'none';
+    document.getElementById('nav-'+s).classList.toggle('on', s===name);
+  });
+}
+
+// ── Edit listing ──────────────────────────────────────────────────────────────
+function openEdit(id) {
+  editingListing = allListings.find(function(l){ return String(l.id)===String(id); });
+  if (!editingListing) return;
+  document.getElementById('ed-title').value = editingListing.title || '';
+  document.getElementById('ed-price').value = editingListing.price || '';
+  document.getElementById('ed-desc').value  = editingListing.description || '';
+  document.getElementById('ed-status').value = editingListing.status || 'active';
+  // Price history
+  var hist = [];
+  try { hist = editingListing.price_history ? (typeof editingListing.price_history==='string'?JSON.parse(editingListing.price_history):editingListing.price_history) : []; } catch(e){}
+  var histEl = document.getElementById('ed-price-hist');
+  if (!hist.length) {
+    histEl.innerHTML = '<p style="color:var(--ink-3);font-size:13px">No price changes yet.</p>';
+  } else {
+    histEl.innerHTML = hist.slice().reverse().map(function(h, i, arr){
+      var next = arr[i+1];
+      var dir = next ? (h.price < next.price ? 'ph-down' : 'ph-up') : '';
+      return '<div class="ph-row"><span class="ph-price">'+fmtPrice(h.price)+'</span><div style="display:flex;gap:8px;align-items:center">' +
+        (dir ? '<span class="ph-badge '+dir+'">'+(dir==='ph-down'?'Reduced':'Increased')+'</span>' : '') +
+        '<span class="ph-date">'+fmtDate(h.changed_at)+'</span></div></div>';
+    }).join('');
+  }
+  document.getElementById('editModal').classList.add('open');
+}
+function closeEdit() { document.getElementById('editModal').classList.remove('open'); editingListing = null; }
+
+async function saveEdit() {
+  if (!editingListing) return;
+  var btn = document.getElementById('ed-save-btn');
+  btn.textContent = 'Saving…'; btn.disabled = true;
+  var newPrice = parseInt(document.getElementById('ed-price').value) || 0;
+  var oldPrice = editingListing.price || 0;
+  // Append to price history if price changed
+  var hist = [];
+  try { hist = editingListing.price_history ? (typeof editingListing.price_history==='string'?JSON.parse(editingListing.price_history):editingListing.price_history) : []; } catch(e){}
+  if (newPrice !== oldPrice) {
+    hist.push({ price: oldPrice, changed_at: new Date().toISOString() });
+  }
+  var payload = {
+    title:        document.getElementById('ed-title').value.trim(),
+    price:        newPrice,
+    description:  document.getElementById('ed-desc').value.trim(),
+    status:       document.getElementById('ed-status').value,
+    price_history: hist
+  };
+  var res = await sb.from('properties').update(payload).eq('id', editingListing.id).eq('agent_email', currentUser.email);
+  btn.textContent = 'Save changes'; btn.disabled = false;
+  if (res.error) { toast('Could not save — please try again'); return; }
+  toast('Listing updated!');
+  closeEdit();
+  loadAll();
+}
+
+// ── Listing actions ───────────────────────────────────────────────────────────
+async function togglePause(id, newStatus) {
+  var res = await sb.from('properties').update({status: newStatus}).eq('id', id).eq('agent_email', currentUser.email);
+  if (res.error) { toast('Could not update'); return; }
+  toast(newStatus === 'paused' ? 'Listing paused — hidden from search' : 'Listing reactivated!');
+  loadAll();
+}
+async function renewListing(id) {
+  var res = await sb.from('properties').update({renewed_at: new Date().toISOString()}).eq('id', id).eq('agent_email', currentUser.email);
+  if (res.error) { toast('Could not renew'); return; }
+  toast('Listing renewed — days on market reset to 0');
+  loadAll();
+}
+async function markSold(id) {
+  var res = await sb.from('properties').update({status:'sold'}).eq('id', id).eq('agent_email', currentUser.email);
+  if (res.error) { toast('Could not update'); return; }
+  toast('Marked as sold!');
+  loadAll();
+}
+async function deleteListing(id) {
+  if (!confirm('Delete this listing? This cannot be undone.')) return;
+  var res = await sb.from('properties').delete().eq('id', id).eq('agent_email', currentUser.email);
+  if (res.error) { toast('Could not delete — please try again'); return; }
+  toast('Listing deleted');
+  loadAll();
+}
+function shareWA(id, title) {
+  var url = window.location.origin + '/property.html?id=' + id;
+  window.open('https://wa.me/?text=' + encodeURIComponent((title||'Property') + '\n' + url));
+}
+
+// ── Message actions ───────────────────────────────────────────────────────────
+function replyEmail(email, propTitle) {
+  window.location = 'mailto:'+email+'?subject='+encodeURIComponent('Re: Your enquiry about '+propTitle)+'&body='+encodeURIComponent('Hi,\n\nThank you for your interest in '+propTitle+'.\n\n');
+}
+function replyWA(phone, propTitle) {
+  var clean = phone.replace(/\D/g,'');
+  if (clean.startsWith('0')) clean = '27' + clean.substring(1);
+  window.open('https://wa.me/'+clean+'?text='+encodeURIComponent('Hi, thank you for your enquiry about '+propTitle+'. '));
+}
+async function markRead(id) {
+  await sb.from('enquiries').update({read: true}).eq('id', id);
+  var msg = allMessages.find(function(m){ return String(m.id)===String(id); });
+  if (msg) msg.read = true;
+  updateUnreadBadge();
+  var card = document.getElementById('msg-'+id);
+  if (card) { card.classList.remove('unread'); var rb = card.querySelector('.read-btn'); if(rb) rb.remove(); }
+}
+async function markAllRead() {
+  var ids = allMessages.filter(function(m){ return !m.read; }).map(function(m){ return m.id; });
+  if (!ids.length) { toast('All messages already read'); return; }
+  await sb.from('enquiries').update({read: true}).in('id', ids);
+  allMessages.forEach(function(m){ m.read = true; });
+  updateUnreadBadge();
+  renderMessages();
+  toast('All messages marked as read');
+}
+function updateUnreadBadge() {
+  var unread = allMessages.filter(function(m){ return !m.read; }).length;
+  var badge = document.getElementById('unreadBadge');
+  if (unread > 0) { badge.textContent = unread; badge.style.display = ''; }
+  else { badge.style.display = 'none'; }
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function fmtPrice(p) { return 'R ' + Number(p||0).toLocaleString('en-ZA'); }
+function fmtDate(d) { return d ? new Date(d).toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'}) : ''; }
+function daysAgo(d) { return d ? Math.floor((Date.now()-new Date(d))/86400000) : 0; }
+function capFirst(s) { return s ? s.charAt(0).toUpperCase()+s.slice(1) : s; }
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function escAttr(s) { return String(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function openListPropPage() { window.location = 'index.html#list'; localStorage.setItem('rab_openList','1'); }
+function toast(msg) {
+  clearTimeout(toastTimer);
+  var el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 3000);
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeEdit(); });
+</script>
+
+</body>
+</html>

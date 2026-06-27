@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -3486,7 +3486,7 @@ function updateAuthNav(user) {
             '<div style="font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:2px">' + fullName + '</div>' +
             '<div style="font-size:12px;color:var(--ink-3)">' + user.email + '</div>' +
           '</div>' +
-          '<button onclick="openMyListings()" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:var(--ink);font-family:var(--font)">My listings</button>' +
+          '<a href="dashboard.html" style="display:block;width:100%;text-align:left;padding:10px 16px;font-size:13.5px;color:var(--ink);font-family:var(--font)">My listings</a>' +
           '<button onclick="openListProp()" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:var(--ink);font-family:var(--font)">List a property</button>' +
           '<button onclick="signOut()" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:#dc2626;font-family:var(--font)">Sign out</button>' +
         '</div>';
@@ -4892,6 +4892,12 @@ window.addEventListener('DOMContentLoaded', function() {
 // Mobile search
 function doSearch() { goSearch(); }
 function openMap() { goSearchMap(); }
+
+// Open listing wizard if redirected from dashboard
+if (localStorage.getItem('rab_openList') === '1') {
+  localStorage.removeItem('rab_openList');
+  window.addEventListener('DOMContentLoaded', function(){ setTimeout(openListProp, 400); });
+}
 </script>
 </body>
 </html>
