@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Rent&amp;Buy</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+:root{--navy:#1a3355;--navy-l:#eef2f8;--sage:#2d7a56;--sage-l:#edf6f1;--red:#dc2626;--amber:#f59e0b;
+  --ink:#1a1a2e;--ink-2:#374151;--ink-3:#6b7280;--line:#e5e7eb;--line-2:#f3f4f6;--white:#fff;--page:#f9fafb;
+  --font:'Inter',sans-serif;--r:8px;--shadow-m:0 4px 16px rgba(0,0,0,.10)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--page);color:var(--ink);min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--font);cursor:pointer}
+.top-nav{background:var(--navy);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.nav-logo{font-size:16px;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px}
+.admin-badge{background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:.5px}
+.nav-r{display:flex;align-items:center;gap:10px}
+.btn-signout{padding:7px 14px;border:1.5px solid rgba(255,255,255,.3);border-radius:6px;background:none;color:#fff;font-size:12px;font-weight:600;cursor:pointer}
+.btn-signout:hover{background:rgba(255,255,255,.1)}
+.dash-wrap{display:flex;min-height:calc(100vh - 56px)}
+.sidebar{width:210px;flex-shrink:0;background:var(--white);border-right:1px solid var(--line);padding:20px 0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13.5px;font-weight:500;color:var(--ink-2);cursor:pointer;border-left:3px solid transparent;transition:all .15s}
+.nav-item:hover{background:var(--page);color:var(--navy)}
+.nav-item.on{background:var(--navy-l);color:var(--navy);border-left-color:var(--navy);font-weight:700}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;color:var(--ink-3)}
+.nav-item.on svg{color:var(--navy)}
+.nav-badge{margin-left:auto;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px}
+.main{flex:1;padding:28px 32px;min-width:0}
+.section{display:none}
+.section.on{display:block}
+.section-title{font-size:20px;font-weight:800;color:var(--navy);margin-bottom:20px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:20px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat-card.c1::before{background:var(--navy)}.stat-card.c2::before{background:var(--sage)}
+.stat-card.c3::before{background:var(--amber)}.stat-card.c4::before{background:#8b5cf6}
+.stat-n{font-size:32px;font-weight:800;color:var(--navy);margin-bottom:4px}
+.stat-l{font-size:11px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.5px}
+.table-wrap{background:var(--white);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:24px}
+.table-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);gap:12px;flex-wrap:wrap}
+.table-title{font-size:15px;font-weight:700;color:var(--navy)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:11px 16px;font-size:11px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--line);background:var(--page)}
+td{padding:12px 16px;font-size:13px;color:var(--ink-2);border-bottom:1px solid var(--line-2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-active{background:#dcfce7;color:#166534}.badge-sold{background:#fee2e2;color:#991b1b}
+.badge-paused{background:#fef3c7;color:#92400e}.badge-pending{background:#dbeafe;color:#1e40af}
+.badge-verified{background:#dcfce7;color:#166534}.badge-unverified{background:#f3f4f6;color:var(--ink-3)}
+.act{display:flex;gap:6px;flex-wrap:wrap}
+.btn-sm{padding:5px 10px;border-radius:5px;font-size:11px;font-weight:600;border:1.5px solid var(--line);background:var(--white);color:var(--ink-2);cursor:pointer;white-space:nowrap}
+.btn-sm:hover{border-color:var(--navy);color:var(--navy)}
+.btn-sm.red{border-color:#fca5a5;color:var(--red)}
+.btn-sm.red:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-sm.green{border-color:#86efac;color:#166534}
+.btn-sm.green:hover{background:#166534;color:#fff;border-color:#166534}
+.btn-sm.sage{border-color:var(--sage);color:var(--sage)}
+.btn-sm.sage:hover{background:var(--sage);color:#fff}
+.search-bar{padding:8px 12px;border:1.5px solid var(--line);border-radius:7px;font-size:13px;font-family:var(--font);color:var(--ink);background:var(--white);outline:none;width:240px}
+.search-bar:focus{border-color:var(--navy)}
+.empty-row td{text-align:center;color:var(--ink-3);padding:32px}
+.add-form{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:24px;margin-bottom:24px}
+.add-form h3{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:16px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--ink-3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px}
+.field input,.field select,.field textarea{width:100%;padding:9px 12px;border:1.5px solid var(--line);border-radius:7px;font-family:var(--font);font-size:13px;color:var(--ink);background:var(--white);outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--navy)}
+.form-actions{display:flex;gap:10px;margin-top:16px}
+.btn-add{padding:9px 20px;border:none;border-radius:7px;background:var(--navy);color:#fff;font-size:13px;font-weight:600;cursor:pointer}
+.btn-add:hover{background:#142a44}
+.btn-cancel-sm{padding:9px 16px;border:1.5px solid var(--line);border-radius:7px;background:var(--white);font-size:13px;font-weight:500;color:var(--ink-2);cursor:pointer}
+.msg-preview{max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink-3);font-size:12px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a2e;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#authGate{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--navy)}
+.auth-box{background:#fff;border-radius:16px;padding:40px;max-width:360px;width:90%;text-align:center}
+.auth-box h2{font-size:20px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.auth-box p{font-size:13px;color:var(--ink-3);margin-bottom:24px}
+.auth-input{width:100%;padding:10px 13px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--font);font-size:14px;margin-bottom:12px;outline:none}
+.auth-input:focus{border-color:var(--navy)}
+.btn-login{width:100%;padding:11px;border:none;border-radius:8px;background:var(--navy);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+.btn-login:hover{background:#142a44}
+@media(max-width:768px){
+  .sidebar{display:none}
+  .main{padding:16px}
+  .stat-grid{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+  .form-grid{grid-template-columns:1fr}
+  table{font-size:12px}
+  th,td{padding:8px 10px}
+  .section-title{font-size:17px}
+  .mobile-nav{display:flex!important}
+}
+.mobile-nav{display:none;background:var(--white);border-bottom:1px solid var(--line);overflow-x:auto;padding:0}
+.mob-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px;font-size:10px;font-weight:600;color:var(--ink-3);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;min-width:60px}
+.mob-nav-item.on{color:var(--navy);border-bottom-color:var(--navy)}
+</style>
+</head>
+<body>
+
+<div id="authGate" style="display:none">
+  <div class="auth-box">
+    <h2>Admin Access</h2>
+    <p>Sign in with your admin account to continue</p>
+    <input class="auth-input" id="adEmail" type="email" placeholder="Email address">
+    <input class="auth-input" id="adPass" type="password" placeholder="Password">
+    <button class="btn-login" onclick="adminLogin()">Sign In</button>
+    <p id="adErr" style="color:#dc2626;font-size:12px;margin-top:12px"></p>
+  </div>
+</div>
+
+<div id="appShell" style="display:none">
+<nav class="top-nav">
+  <div class="nav-logo">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Rent&amp;Buy Admin
+    <span class="admin-badge">ADMIN</span>
+  </div>
+  <div class="nav-r">
+    <span id="adminName" style="font-size:12px;color:rgba(255,255,255,.7)"></span>
+    <button class="btn-signout" onclick="adminSignOut()">Sign out</button>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <div class="mob-nav-item on" onclick="showSec('overview')">Overview</div>
+  <div class="mob-nav-item" onclick="showSec('listings')">Listings</div>
+  <div class="mob-nav-item" onclick="showSec('enquiries')">Enquiries</div>
+  <div class="mob-nav-item" onclick="showSec('agencies')">Agencies</div>
+  <div class="mob-nav-item" onclick="showSec('users')">Users</div>
+</div>
+
+<div class="dash-wrap">
+  <aside class="sidebar">
+    <div class="nav-item on" id="nav-overview" onclick="showSec('overview')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Overview
+    </div>
+    <div class="nav-item" id="nav-listings" onclick="showSec('listings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+      Listings
+      <span class="nav-badge" id="listingsBadge" style="display:none">0</span>
+    </div>
+    <div class="nav-item" id="nav-enquiries" onclick="showSec('enquiries')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Enquiries
+      <span class="nav-badge" id="enquiriesBadge" style="display:none">0</span>
+    </div>
+    <div class="nav-item" id="nav-agencies" onclick="showSec('agencies')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+      Agencies
+    </div>
+    <div class="nav-item" id="nav-users" onclick="showSec('users')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      Users
+    </div>
+    <div style="margin-top:24px;padding:0 20px">
+      <a href="index.html" style="font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:6px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to site
+      </a>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- OVERVIEW -->
+    <div class="section on" id="sec-overview">
+      <div class="section-title">Overview</div>
+      <div class="stat-grid">
+        <div class="stat-card c1"><div class="stat-n" id="st-listings">–</div><div class="stat-l">Total Listings</div></div>
+        <div class="stat-card c2"><div class="stat-n" id="st-enquiries">–</div><div class="stat-l">Total Enquiries</div></div>
+        <div class="stat-card c3"><div class="stat-n" id="st-agencies">–</div><div class="stat-l">Agencies</div></div>
+        <div class="stat-card c4"><div class="stat-n" id="st-users">–</div><div class="stat-l">Registered Users</div></div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-head"><div class="table-title">Recent Listings</div></div>
+        <table><thead><tr><th>Title</th><th>Type</th><th>Price</th><th>Posted by</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody id="recentListings"><tr class="empty-row"><td colspan="6">Loading…</td></tr></tbody></table>
+      </div>
+      <div class="table-wrap">
+        <div class="table-head"><div class="table-title">Recent Enquiries</div></div>
+        <table><thead><tr><th>From</th><th>Property</th><th>Message</th><th>Date</th></tr></thead>
+        <tbody id="recentEnquiries"><tr class="empty-row"><td colspan="4">Loading…</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <!-- LISTINGS -->
+    <div class="section" id="sec-listings">
+      <div class="section-title">All Listings</div>
+      <div class="table-wrap">
+        <div class="table-head">
+          <div class="table-title" id="listingsCount">All listings</div>
+          <input class="search-bar" placeholder="Search by title, city…" oninput="filterListings(this.value)">
+        </div>
+        <table><thead><tr><th>Title</th><th>Mode</th><th>Price</th><th>City</th><th>Agent email</th><th>Status</th><th>Views</th><th>Actions</th></tr></thead>
+        <tbody id="allListings"><tr class="empty-row"><td colspan="8">Loading…</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <!-- ENQUIRIES -->
+    <div class="section" id="sec-enquiries">
+      <div class="section-title">All Enquiries</div>
+      <div class="table-wrap">
+        <div class="table-head">
+          <div class="table-title" id="enquiriesCount">All enquiries</div>
+          <input class="search-bar" placeholder="Search by name, email…" oninput="filterEnquiries(this.value)">
+        </div>
+        <table><thead><tr><th>From</th><th>Email</th><th>Phone</th><th>Property</th><th>Message</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody id="allEnquiries"><tr class="empty-row"><td colspan="7">Loading…</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <!-- AGENCIES -->
+    <div class="section" id="sec-agencies">
+      <div class="section-title">Agency Directory</div>
+      <div class="add-form" id="addAgencyForm">
+        <h3>Add New Agency</h3>
+        <div class="form-grid">
+          <div class="field"><label>Agency Name *</label><input id="ag-name" placeholder="e.g. Pam Golding Properties"></div>
+          <div class="field"><label>Abbreviation</label><input id="ag-abbr" placeholder="e.g. PGP"></div>
+          <div class="field"><label>Tagline</label><input id="ag-tagline" placeholder="e.g. South Africa's leading agency"></div>
+          <div class="field"><label>Website</label><input id="ag-website" placeholder="https://example.co.za"></div>
+          <div class="field"><label>Contact Email</label><input id="ag-email" type="email" placeholder="info@agency.co.za"></div>
+          <div class="field"><label>Phone</label><input id="ag-phone" placeholder="+27 11 000 0000"></div>
+          <div class="field"><label>Brand Colour (hex)</label><input id="ag-color" placeholder="#1a3355"></div>
+          <div class="field"><label>Provinces (comma-separated)</label><input id="ag-provinces" placeholder="Gauteng, Western Cape"></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-add" onclick="addAgency()">Add Agency</button>
+          <button class="btn-cancel-sm" onclick="document.getElementById('addAgencyForm').style.display='none'">Cancel</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-head">
+          <div class="table-title" id="agenciesCount">Registered agencies</div>
+          <button class="btn-sm sage" onclick="document.getElementById('addAgencyForm').style.display='block'">+ Add Agency</button>
+        </div>
+        <table><thead><tr><th>Name</th><th>Email</th><th>Website</th><th>Provinces</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="agenciesTable"><tr class="empty-row"><td colspan="6">Loading…</td></tr></tbody></table>
+      </div>
+      <div style="background:#fffbe6;border:1px solid #fde68a;border-radius:10px;padding:16px 20px;margin-top:8px">
+        <strong style="font-size:13px;color:#92400e">How agencies get listed:</strong>
+        <p style="font-size:13px;color:#78350f;margin-top:4px">
+          Agencies can email <a href="mailto:admin@rentandbuy.co.za?subject=Agency Registration Request" style="color:var(--sage)">admin@rentandbuy.co.za</a> with their details. You then add them here and toggle them to Verified so they appear on the site. Unverified agencies are hidden from the public directory.
+        </p>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="section" id="sec-users">
+      <div class="section-title">Registered Users</div>
+      <div class="table-wrap">
+        <div class="table-head">
+          <div class="table-title" id="usersCount">All users</div>
+          <input class="search-bar" placeholder="Search by email…" oninput="filterUsers(this.value)">
+        </div>
+        <table><thead><tr><th>Email</th><th>Name</th><th>Joined</th><th>Listings</th></tr></thead>
+        <tbody id="allUsers"><tr class="empty-row"><td colspan="4">Loading…</td></tr></tbody></table>
+      </div>
+    </div>
+
+  </main>
+</div>
+</div>
+
+<div class="toast" id="toastEl"></div>
+
+<script>
+const SB_URL = 'https://auth.rentandbuy.co.za';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuaWJjaGRlZ2pieXB0eW5pam14Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDM5OTIsImV4cCI6MjA5NzExOTk5Mn0.rEq9Ymb1lPdAqepYXS7TXntgVtEVr5x1_Iz-v6zJzPg';
+const ADMIN_EMAIL = 'deniloans6@gmail.com';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+
+let allListingsData = [], allEnquiriesData = [], allAgenciesData = [], allUsersData = [];
+let tt;
+
+function toast(msg) {
+  const el = document.getElementById('toastEl');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(tt); tt = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+function fmt(n) { return 'R ' + (n||0).toLocaleString('en-ZA'); }
+function fmtDate(d) { return d ? new Date(d).toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'}) : '–'; }
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+async function adminLogin() {
+  const email = document.getElementById('adEmail').value.trim();
+  const pass  = document.getElementById('adPass').value;
+  const errEl = document.getElementById('adErr');
+  errEl.textContent = '';
+  if (email !== ADMIN_EMAIL) { errEl.textContent = 'Access denied — not an admin account.'; return; }
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (error) { errEl.textContent = error.message; return; }
+  bootAdmin(data.user);
+}
+
+function adminSignOut() {
+  sb.auth.signOut();
+  document.getElementById('appShell').style.display = 'none';
+  document.getElementById('authGate').style.display = 'flex';
+}
+
+async function bootAdmin(user) {
+  if (!user || user.email !== ADMIN_EMAIL) {
+    document.getElementById('authGate').style.display = 'flex';
+    document.getElementById('appShell').style.display = 'none';
+    return;
+  }
+  document.getElementById('authGate').style.display = 'none';
+  document.getElementById('appShell').style.display = 'block';
+  document.getElementById('adminName').textContent = user.email;
+  await Promise.all([loadListings(), loadEnquiries(), loadAgencies(), loadUsers()]);
+  renderOverview();
+}
+
+sb.auth.onAuthStateChange(function(event, session) {
+  if (session && session.user) {
+    bootAdmin(session.user);
+  } else {
+    document.getElementById('authGate').style.display = 'flex';
+    document.getElementById('appShell').style.display = 'none';
+  }
+});
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+function showSec(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.nav-item,.mob-nav-item').forEach(n => n.classList.remove('on'));
+  document.getElementById('sec-' + id).classList.add('on');
+  const ni = document.getElementById('nav-' + id);
+  if (ni) ni.classList.add('on');
+  document.querySelectorAll('.mob-nav-item').forEach(n => { if(n.textContent.toLowerCase().includes(id.substring(0,4))) n.classList.add('on'); });
+}
+
+// ── Listings ─────────────────────────────────────────────────────────────────
+async function loadListings() {
+  const { data } = await sb.from('properties').select('*').order('created_at', { ascending: false });
+  allListingsData = data || [];
+  const badge = document.getElementById('listingsBadge');
+  if (allListingsData.length) { badge.textContent = allListingsData.length; badge.style.display = 'inline-block'; }
+  renderListingsTable(allListingsData);
+}
+
+function renderListingsTable(list) {
+  document.getElementById('listingsCount').textContent = list.length + ' listing' + (list.length !== 1 ? 's' : '');
+  const tbody = document.getElementById('allListings');
+  if (!list.length) { tbody.innerHTML = '<tr class="empty-row"><td colspan="8">No listings yet.</td></tr>'; return; }
+  tbody.innerHTML = list.map(p => `
+    <tr>
+      <td><a href="property.html?id=${p.id}" target="_blank" style="color:var(--navy);font-weight:600">${p.title||'Untitled'}</a></td>
+      <td><span style="text-transform:capitalize">${p.mode||'–'}</span></td>
+      <td>${p.price ? fmt(p.price) : '–'}</td>
+      <td>${p.city||'–'}</td>
+      <td style="font-size:11px;color:var(--ink-3)">${p.agent_email||'–'}</td>
+      <td><span class="badge badge-${p.status||'active'}">${p.status||'active'}</span></td>
+      <td>${p.views||0}</td>
+      <td><div class="act">
+        <a href="property.html?id=${p.id}" target="_blank" class="btn-sm">View</a>
+        <button class="btn-sm red" onclick="deleteListing(${p.id},'${(p.title||'').replace(/'/g,"\\'")}')">Delete</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+function filterListings(q) {
+  q = q.toLowerCase();
+  renderListingsTable(q ? allListingsData.filter(p => (p.title+' '+p.city+' '+p.agent_email).toLowerCase().includes(q)) : allListingsData);
+}
+
+async function deleteListing(id, title) {
+  if (!confirm('Delete "' + title + '"? This cannot be undone.')) return;
+  const { error } = await sb.from('properties').delete().eq('id', id);
+  if (error) { toast('Error: ' + error.message); return; }
+  toast('Listing deleted');
+  await loadListings();
+  renderOverview();
+}
+
+// ── Enquiries ─────────────────────────────────────────────────────────────────
+async function loadEnquiries() {
+  const { data } = await sb.from('enquiries').select('*, properties(title)').order('created_at', { ascending: false });
+  allEnquiriesData = data || [];
+  const badge = document.getElementById('enquiriesBadge');
+  const unread = allEnquiriesData.filter(e => !e.read).length;
+  if (unread) { badge.textContent = unread; badge.style.display = 'inline-block'; }
+  renderEnquiriesTable(allEnquiriesData);
+}
+
+function renderEnquiriesTable(list) {
+  document.getElementById('enquiriesCount').textContent = list.length + ' enquir' + (list.length !== 1 ? 'ies' : 'y');
+  const tbody = document.getElementById('allEnquiries');
+  if (!list.length) { tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No enquiries yet.</td></tr>'; return; }
+  tbody.innerHTML = list.map(e => `
+    <tr style="${!e.read?'background:#f0fdf4':''}">
+      <td><strong>${e.visitor_name||'–'}</strong></td>
+      <td><a href="mailto:${e.visitor_email||''}" style="color:var(--sage)">${e.visitor_email||'–'}</a></td>
+      <td>${e.visitor_phone||'–'}</td>
+      <td style="font-size:12px">${e.properties?.title||('Property #'+(e.property_id||'?'))}</td>
+      <td><div class="msg-preview">${e.visitor_message||''}</div></td>
+      <td style="font-size:11px;white-space:nowrap">${fmtDate(e.created_at)}</td>
+      <td><div class="act">
+        <a href="mailto:${e.visitor_email||''}?subject=Re: ${encodeURIComponent(e.properties?.title||'Your enquiry')}" class="btn-sm sage">Reply</a>
+        <button class="btn-sm red" onclick="deleteEnquiry(${e.id})">Delete</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+function filterEnquiries(q) {
+  q = q.toLowerCase();
+  renderEnquiriesTable(q ? allEnquiriesData.filter(e => (e.visitor_name+' '+e.visitor_email+' '+e.visitor_message).toLowerCase().includes(q)) : allEnquiriesData);
+}
+
+async function deleteEnquiry(id) {
+  if (!confirm('Delete this enquiry?')) return;
+  const { error } = await sb.from('enquiries').delete().eq('id', id);
+  if (error) { toast('Error: ' + error.message); return; }
+  toast('Enquiry deleted');
+  await loadEnquiries();
+}
+
+// ── Agencies ──────────────────────────────────────────────────────────────────
+async function loadAgencies() {
+  const { data } = await sb.from('agencies').select('*').order('name');
+  allAgenciesData = data || [];
+  renderAgenciesTable(allAgenciesData);
+}
+
+function renderAgenciesTable(list) {
+  document.getElementById('agenciesCount').textContent = list.length + ' agenc' + (list.length !== 1 ? 'ies' : 'y');
+  const tbody = document.getElementById('agenciesTable');
+  if (!list.length) { tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No agencies added yet. Use the form above to add one.</td></tr>'; return; }
+  tbody.innerHTML = list.map(a => `
+    <tr>
+      <td><strong>${a.name}</strong><br><span style="font-size:11px;color:var(--ink-3)">${a.tagline||''}</span></td>
+      <td><a href="mailto:${a.email||''}" style="color:var(--sage);font-size:12px">${a.email||'–'}</a></td>
+      <td><a href="${a.website||'#'}" target="_blank" style="color:var(--navy);font-size:12px">${a.website||'–'}</a></td>
+      <td style="font-size:11px">${(a.provinces||[]).join(', ')||'All'}</td>
+      <td><span class="badge ${a.verified?'badge-verified':'badge-unverified'}">${a.verified?'Verified':'Pending'}</span></td>
+      <td><div class="act">
+        <button class="btn-sm ${a.verified?'':'green'}" onclick="toggleVerify(${a.id},${!a.verified})">${a.verified?'Unverify':'Verify'}</button>
+        <button class="btn-sm red" onclick="deleteAgency(${a.id},'${a.name.replace(/'/g,"\\'")}')">Remove</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+async function addAgency() {
+  const name = document.getElementById('ag-name').value.trim();
+  if (!name) { toast('Agency name is required'); return; }
+  const provinces = document.getElementById('ag-provinces').value.split(',').map(p=>p.trim()).filter(Boolean);
+  const { error } = await sb.from('agencies').insert([{
+    name,
+    abbr:     document.getElementById('ag-abbr').value.trim() || name.substring(0,3).toUpperCase(),
+    tagline:  document.getElementById('ag-tagline').value.trim() || null,
+    website:  document.getElementById('ag-website').value.trim() || null,
+    email:    document.getElementById('ag-email').value.trim() || null,
+    phone:    document.getElementById('ag-phone').value.trim() || null,
+    color:    document.getElementById('ag-color').value.trim() || '#1a3355',
+    bg:       '#eef2f8',
+    provinces: provinces.length ? provinces : ['All Provinces'],
+    verified: true
+  }]);
+  if (error) { toast('Error: ' + error.message); return; }
+  toast('Agency added and verified');
+  ['ag-name','ag-abbr','ag-tagline','ag-website','ag-email','ag-phone','ag-color','ag-provinces'].forEach(id => document.getElementById(id).value = '');
+  await loadAgencies();
+  renderOverview();
+}
+
+async function toggleVerify(id, verified) {
+  const { error } = await sb.from('agencies').update({ verified }).eq('id', id);
+  if (error) { toast('Error: ' + error.message); return; }
+  toast(verified ? 'Agency verified — now visible on site' : 'Agency hidden from public directory');
+  await loadAgencies();
+}
+
+async function deleteAgency(id, name) {
+  if (!confirm('Remove "' + name + '" from the directory?')) return;
+  const { error } = await sb.from('agencies').delete().eq('id', id);
+  if (error) { toast('Error: ' + error.message); return; }
+  toast('Agency removed');
+  await loadAgencies();
+  renderOverview();
+}
+
+// ── Users ─────────────────────────────────────────────────────────────────────
+async function loadUsers() {
+  // Count per agent_email from properties as a proxy for users
+  const { data } = await sb.from('properties').select('agent_email, created_at').order('created_at', { ascending: false });
+  const map = {};
+  (data||[]).forEach(p => {
+    if (!p.agent_email) return;
+    if (!map[p.agent_email]) map[p.agent_email] = { email: p.agent_email, joined: p.created_at, listings: 0 };
+    map[p.agent_email].listings++;
+  });
+  allUsersData = Object.values(map);
+  renderUsersTable(allUsersData);
+  document.getElementById('st-users').textContent = allUsersData.length;
+}
+
+function renderUsersTable(list) {
+  document.getElementById('usersCount').textContent = list.length + ' user' + (list.length !== 1 ? 's' : '') + ' with listings';
+  const tbody = document.getElementById('allUsers');
+  if (!list.length) { tbody.innerHTML = '<tr class="empty-row"><td colspan="4">No users with listings yet.</td></tr>'; return; }
+  tbody.innerHTML = list.map(u => `
+    <tr>
+      <td><a href="mailto:${u.email}" style="color:var(--sage)">${u.email}</a></td>
+      <td style="color:var(--ink-3);font-size:12px">–</td>
+      <td style="font-size:12px">${fmtDate(u.joined)}</td>
+      <td><strong>${u.listings}</strong></td>
+    </tr>
+  `).join('');
+}
+
+function filterUsers(q) {
+  q = q.toLowerCase();
+  renderUsersTable(q ? allUsersData.filter(u => u.email.toLowerCase().includes(q)) : allUsersData);
+}
+
+// ── Overview ──────────────────────────────────────────────────────────────────
+function renderOverview() {
+  document.getElementById('st-listings').textContent  = allListingsData.length;
+  document.getElementById('st-enquiries').textContent = allEnquiriesData.length;
+  document.getElementById('st-agencies').textContent  = allAgenciesData.length;
+
+  const recent5L = allListingsData.slice(0,5);
+  document.getElementById('recentListings').innerHTML = recent5L.length
+    ? recent5L.map(p => `<tr>
+        <td><a href="property.html?id=${p.id}" target="_blank" style="color:var(--navy);font-weight:600">${p.title||'Untitled'}</a></td>
+        <td style="text-transform:capitalize">${p.mode||'–'}</td>
+        <td>${p.price?fmt(p.price):'–'}</td>
+        <td style="font-size:11px;color:var(--ink-3)">${p.agent_email||'–'}</td>
+        <td><span class="badge badge-${p.status||'active'}">${p.status||'active'}</span></td>
+        <td style="font-size:11px;white-space:nowrap">${fmtDate(p.created_at)}</td>
+      </tr>`).join('')
+    : '<tr class="empty-row"><td colspan="6">No listings yet.</td></tr>';
+
+  const recent5E = allEnquiriesData.slice(0,5);
+  document.getElementById('recentEnquiries').innerHTML = recent5E.length
+    ? recent5E.map(e => `<tr>
+        <td><strong>${e.visitor_name||'–'}</strong><br><span style="font-size:11px;color:var(--ink-3)">${e.visitor_email||''}</span></td>
+        <td style="font-size:12px">${e.properties?.title||'Property #'+(e.property_id||'?')}</td>
+        <td><div class="msg-preview">${e.visitor_message||''}</div></td>
+        <td style="font-size:11px;white-space:nowrap">${fmtDate(e.created_at)}</td>
+      </tr>`).join('')
+    : '<tr class="empty-row"><td colspan="4">No enquiries yet.</td></tr>';
+}
+</script>
+</body>
+</html>
