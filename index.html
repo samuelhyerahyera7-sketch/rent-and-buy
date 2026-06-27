@@ -685,7 +685,7 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 }
 .drawer-overlay {
   display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45);
-  z-index: 1200; opacity: 0; transition: opacity .25s;
+  z-index: 1200; opacity: 0; transition: opacity .25s; touch-action: none;
 }
 .drawer-overlay.open { display: block; opacity: 1; }
 .drawer {
@@ -3045,15 +3045,24 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 
 // Drawer
+var _drawerScrollY = 0;
 function openDrawer() {
   document.getElementById('drawer').classList.add('open');
   document.getElementById('drawerOverlay').classList.add('open');
+  _drawerScrollY = window.scrollY || window.pageYOffset;
+  document.body.style.position = 'fixed';
+  document.body.style.top = '-' + _drawerScrollY + 'px';
+  document.body.style.width = '100%';
   document.body.style.overflow = 'hidden';
 }
 function closeDrawer() {
   document.getElementById('drawer').classList.remove('open');
   document.getElementById('drawerOverlay').classList.remove('open');
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.width = '';
   document.body.style.overflow = '';
+  window.scrollTo(0, _drawerScrollY);
   ['buy','rent','new'].forEach(function(m) {
     var btn = document.getElementById('dacc-' + m);
     var body = document.getElementById('dacc-body-' + m);
