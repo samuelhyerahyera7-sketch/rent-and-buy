@@ -1688,6 +1688,7 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
       <a class="drawer-link" href="mailto:hello@rentandbuy.co.za?subject=Advertising Packages">Advertise with Us</a>
     </div>
     <div class="drawer-btns">
+      <a href="dashboard.html" id="drawerDashBtn" style="display:none;width:100%;text-align:center;padding:11px;border:1.5px solid var(--line);border-radius:7px;font-size:14px;font-weight:600;color:var(--navy);font-family:var(--font)">My Listings</a>
       <button class="btn-ghost" id="drawerAuthBtn" onclick="openSignIn();closeDrawer()">Sign In</button>
     </div>
   </div>
@@ -3483,7 +3484,7 @@ function updateAuthNav(user) {
   var signInBtn  = document.getElementById('navSignInBtn');
   var avatarEl   = document.getElementById('navUserAvatar');
   var signOutBtn = document.getElementById('navSignOutBtn');
-  var drawerSignIn = document.querySelector('.drawer-btns .btn-ghost');
+  var drawerSignIn = document.getElementById('drawerAuthBtn');
   if (user) {
     var fullName = (user.user_metadata && user.user_metadata.full_name) ? user.user_metadata.full_name : user.email.split('@')[0];
     var first    = fullName.split(' ')[0];
@@ -3496,16 +3497,28 @@ function updateAuthNav(user) {
     if (fn) fn.textContent = first;
     if (dn) dn.textContent = fullName;
     if (de) de.textContent = user.email;
+    var dashBtn = document.getElementById('drawerDashBtn');
     if (signInBtn)  signInBtn.style.display  = 'none';
     if (avatarEl)   avatarEl.style.display   = 'flex';
     if (signOutBtn) signOutBtn.style.display  = 'inline-block';
-    if (drawerSignIn) { drawerSignIn.textContent = 'Sign Out'; drawerSignIn.onclick = function(){ signOut(); closeDrawer(); }; }
+    if (dashBtn)    dashBtn.style.display     = 'block';
+    if (drawerSignIn) {
+      drawerSignIn.textContent = 'Sign Out';
+      drawerSignIn.style.cssText = 'width:100%;text-align:center;padding:11px;border:2px solid var(--sage);border-radius:7px;background:none;color:var(--sage);font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font)';
+      drawerSignIn.onclick = function(){ signOut(); closeDrawer(); };
+    }
   } else {
+    var dashBtn = document.getElementById('drawerDashBtn');
     if (signInBtn)  signInBtn.style.display  = '';
     if (avatarEl)   avatarEl.style.display   = 'none';
     if (signOutBtn) signOutBtn.style.display  = 'none';
+    if (dashBtn)    dashBtn.style.display     = 'none';
     var dd = document.getElementById('userDropdown'); if (dd) dd.style.display = 'none';
-    if (drawerSignIn) { drawerSignIn.textContent = 'Sign In'; drawerSignIn.onclick = function(){ openSignIn(); closeDrawer(); }; }
+    if (drawerSignIn) {
+      drawerSignIn.textContent = 'Sign In';
+      drawerSignIn.style.cssText = '';
+      drawerSignIn.onclick = function(){ openSignIn(); closeDrawer(); };
+    }
   }
 }
 // ── Auth state listener ───────────────────────────────────────────────────────
