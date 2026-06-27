@@ -2864,7 +2864,8 @@ let mode = 'buy', bedMin = 0, propType = '', sort = 'newest', page = 1;
 let priceMin = 0, priceMax = 999999999;
 const advFeatures = new Set();
 const PER = 6;
-const favs = new Set();
+var _savedFavs = []; try { _savedFavs = JSON.parse(localStorage.getItem('rab_favs') || '[]'); } catch(e){}
+const favs = new Set(_savedFavs);
 
 // ── Supabase ──────────────────────────────────────────────────────────────────
 const SB_URL  = 'https://auth.rentandbuy.co.za';
@@ -3095,6 +3096,7 @@ function toggleFav(e, id) {
   e.stopPropagation();
   if (favs.has(id)) { favs.delete(id); toast('Removed from saved properties'); }
   else { favs.add(id); toast('Saved to your shortlist'); }
+  try { localStorage.setItem('rab_favs', JSON.stringify([...favs])); } catch(e){}
   renderListings();
 }
 

@@ -2730,7 +2730,8 @@ let mode = 'buy', bedMin = 0, propType = '', sort = 'newest', page = 1;
 let priceMin = 0, priceMax = 999999999;
 const advFeatures = new Set();
 const PER = 6;
-const favs = new Set();
+var _savedFavs = []; try { _savedFavs = JSON.parse(localStorage.getItem('rab_favs') || '[]'); } catch(e){}
+const favs = new Set(_savedFavs);
 
 // ── Supabase ──────────────────────────────────────────────────────────────────
 const SB_URL  = 'https://auth.rentandbuy.co.za';
@@ -2972,6 +2973,7 @@ function toggleFav(e, id) {
   e.stopPropagation();
   if (favs.has(id)) { favs.delete(id); toast('Removed from saved properties'); }
   else { favs.add(id); toast('Saved to your shortlist'); }
+  try { localStorage.setItem('rab_favs', JSON.stringify([...favs])); } catch(e){}
   renderListings();
 }
 
@@ -4181,7 +4183,21 @@ async function lwPublish() {
     agent_agency: (LW.userType === 'agent' && document.getElementById('lw-agency').value.trim()) ? document.getElementById('lw-agency').value.trim() : 'Rent and Buy',
     imgs:         imgUrls,
     featured:     document.getElementById('lw-featured').checked,
-    status:       'active'
+    status:       'active',
+    address:      document.getElementById('lw-address').value.trim() || null,
+    postal_code:  document.getElementById('lw-postal').value.trim() || null,
+    deposit:      parseInt(document.getElementById('lw-deposit').value) || null,
+    rates:        parseInt(document.getElementById('lw-rates').value) || null,
+    levy:         parseInt(document.getElementById('lw-levies').value) || null,
+    available_from: document.getElementById('lw-avail').value || null,
+    cover_park:   parseInt(document.getElementById('lw-cover-park').value) || null,
+    open_park:    parseInt(document.getElementById('lw-open-park').value) || null,
+    whatsapp:     document.getElementById('lw-whatsapp').value.trim() || null,
+    show_phone:   document.getElementById('lw-show-phone').checked,
+    show_wa:      document.getElementById('lw-show-wa').checked,
+    show_email:   document.getElementById('lw-show-email').checked,
+    vtour_url:    document.getElementById('lw-vtour').value.trim() || null,
+    video_url:    document.getElementById('lw-video').value.trim() || null
   };
 
   var res = await sb.from('properties').insert([payload]).select().single();

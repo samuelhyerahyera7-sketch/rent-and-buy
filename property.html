@@ -1653,11 +1653,11 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
             <div class="c-info"><strong id="detailAgentName">—</strong><span id="detailAgentAgency">—</span></div>
           </div>
           <div class="c-form">
-            <input type="text" placeholder="Your name">
-            <input type="email" placeholder="Email address">
-            <input type="tel" placeholder="Phone number">
-            <textarea placeholder="I'm interested in this property..."></textarea>
-            <button class="c-send" onclick="toast('Message sent — agent will contact you shortly')">Send message</button>
+            <input id="enq-name" type="text" placeholder="Your name">
+            <input id="enq-email" type="email" placeholder="Email address">
+            <input id="enq-phone" type="tel" placeholder="Phone number">
+            <textarea id="enq-msg" placeholder="I'm interested in this property..."></textarea>
+            <button class="c-send" id="enqSendBtn" onclick="sendEnquiry()">Send message</button>
             <button class="c-call" onclick="toast('Connecting you to the agent...')">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.8a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
               Call agent
@@ -2526,7 +2526,10 @@ let mode = 'buy', bedMin = 0, propType = '', sort = 'newest', page = 1;
 let priceMin = 0, priceMax = 999999999;
 const advFeatures = new Set();
 const PER = 6;
-const favs = new Set();
+// Load favourites from localStorage
+var _savedFavs = [];
+try { _savedFavs = JSON.parse(localStorage.getItem('rab_favs') || '[]'); } catch(e){}
+const favs = new Set(_savedFavs);
 
 // ── Supabase ──────────────────────────────────────────────────────────────────
 const SB_URL  = 'https://auth.rentandbuy.co.za';
@@ -2748,7 +2751,36 @@ function toggleFav(e, id) {
   e.stopPropagation();
   if (favs.has(id)) { favs.delete(id); toast('Removed from saved properties'); }
   else { favs.add(id); toast('Saved to your shortlist'); }
+  try { localStorage.setItem('rab_favs', JSON.stringify([...favs])); } catch(e){}
   renderListings();
+}
+
+// ── Contact / Enquiry ─────────────────────────────────────────────────────────
+async function sendEnquiry() {
+  var name  = document.getElementById('enq-name').value.trim();
+  var email = document.getElementById('enq-email').value.trim();
+  var phone = document.getElementById('enq-phone').value.trim();
+  var msg   = document.getElementById('enq-msg').value.trim();
+  if (!name)  { toast('Please enter your name'); return; }
+  if (!email) { toast('Please enter your email address'); return; }
+  if (!msg)   { toast('Please enter a message'); return; }
+  var btn = document.getElementById('enqSendBtn');
+  btn.textContent = 'Sending…'; btn.disabled = true;
+  var propId = new URLSearchParams(location.search).get('id');
+  var res = await sb.from('enquiries').insert([{
+    property_id:     propId ? parseInt(propId) : null,
+    visitor_name:    name,
+    visitor_email:   email,
+    visitor_phone:   phone || null,
+    visitor_message: msg
+  }]);
+  btn.textContent = 'Send message'; btn.disabled = false;
+  if (res.error) { toast('Could not send — please try again'); return; }
+  toast('Message sent — the agent will contact you shortly');
+  document.getElementById('enq-name').value = '';
+  document.getElementById('enq-email').value = '';
+  document.getElementById('enq-phone').value = '';
+  document.getElementById('enq-msg').value = '';
 }
 
 function fBeds(n, el) {
