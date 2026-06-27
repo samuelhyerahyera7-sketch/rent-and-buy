@@ -28,6 +28,7 @@ button{font-family:var(--font);cursor:pointer}
 .nav-right-d{display:flex;align-items:center;gap:10px}
 .btn-ghost-sm{padding:7px 14px;border:1.5px solid var(--line);border-radius:6px;background:var(--white);font-size:13px;font-weight:500;color:var(--ink-2)}
 .btn-sage{padding:7px 16px;border:none;border-radius:6px;background:var(--sage);color:#fff;font-size:13px;font-weight:600}
+.back-icon-btn{display:none;align-items:center;justify-content:center;width:34px;height:34px;border:1.5px solid var(--line);border-radius:8px;background:var(--white);color:var(--ink-2)}
 .btn-sage:hover{background:#245d44}
 .user-pill{display:flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--line);border-radius:20px;font-size:13px;font-weight:600;background:var(--white)}
 .user-av{width:26px;height:26px;border-radius:50%;background:var(--sage);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
@@ -153,6 +154,18 @@ button{font-family:var(--font);cursor:pointer}
 
 /* ── Responsive ── */
 @media(max-width:768px){
+  /* Nav */
+  .top-nav{padding:0 12px;height:50px}
+  .nav-logo{font-size:16px;gap:7px}
+  .nav-logo svg{width:24px;height:24px}
+  .nav-right-d{gap:6px}
+  .btn-ghost-sm{display:none}
+  .back-icon-btn{display:flex}
+  .btn-sage{font-size:12px;padding:6px 10px}
+  .user-pill{padding:5px 8px;font-size:12px;gap:6px}
+  .user-av{width:22px;height:22px;font-size:10px}
+  #userName{display:none}
+  /* Layout */
   .dash-wrap{flex-direction:column}
   .dash-sidebar{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--line);padding:0;display:flex;overflow-x:hidden}
   .dash-nav-item{flex:1;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 4px;font-size:11px;border-left:none;border-bottom:3px solid transparent;min-width:0}
@@ -160,10 +173,24 @@ button{font-family:var(--font);cursor:pointer}
   .dash-nav-item svg{width:20px;height:20px}
   .dash-nav-badge{margin-left:0;margin-top:2px}
   .dash-sidebar h6{display:none}
-  .dash-main{padding:16px}
-  .stat-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+  .dash-main{padding:12px}
+  /* Stats */
+  .stat-grid{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+  .stat-card{padding:14px 12px}
+  .stat-n{font-size:26px}
+  .stat-icon{display:none}
+  /* Listings */
   .listing-card{flex-direction:column}
-  .listing-img{width:100%;height:180px}
+  .listing-img{width:100%;height:150px}
+  .listing-body{padding:12px}
+  .listing-title{font-size:14px}
+  .listing-price{font-size:15px;margin-bottom:8px}
+  .listing-meta{gap:8px;margin-bottom:10px}
+  .listing-actions{gap:6px}
+  .act-btn{padding:6px 10px;font-size:11px}
+  /* Section head */
+  .section-head{margin-bottom:14px}
+  .section-title{font-size:17px}
 }
 </style>
 </head>
@@ -179,7 +206,13 @@ button{font-family:var(--font);cursor:pointer}
     <span><span class="lo-r">Rent</span><span class="lo-a">&amp;</span><span class="lo-b">Buy</span></span>
   </a>
   <div class="nav-right-d">
-    <a href="index.html" class="btn-ghost-sm">Back to site</a>
+    <a href="index.html" class="btn-ghost-sm" style="display:flex;align-items:center;gap:6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to site
+    </a>
+    <a href="index.html" class="back-icon-btn" title="Back to site">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </a>
     <button class="btn-sage" onclick="openListPropPage()">+ List Property</button>
     <div class="user-pill" id="userPill">
       <div class="user-av" id="userAv">?</div>
