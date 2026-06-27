@@ -109,6 +109,8 @@ nav {
   background: var(--sage); color: var(--white); border: none; transition: all .15s;
 }
 .btn-primary:hover { background: #245d44; }
+#navSignOutBtn:hover { background: var(--sage) !important; color: #fff !important; }
+#navAvatarTrigger:hover { background: var(--navy-l); }
 
 /* ── Hero ───────────────────────────────────── */
 .hero {
@@ -1625,6 +1627,22 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
     </div>
     <div class="nav-right">
       <button class="btn-ghost" id="navSignInBtn" onclick="openSignIn()">Sign In</button>
+      <div id="navUserAvatar" style="display:none;align-items:center;gap:8px;position:relative">
+        <div onclick="toggleUserMenu(event)" style="display:flex;align-items:center;gap:7px;cursor:pointer;padding:4px 6px;border-radius:8px" id="navAvatarTrigger">
+          <div id="navInitialsCircle" style="width:34px;height:34px;border-radius:50%;background:var(--sage);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center">?</div>
+          <span id="navFirstName" style="font-size:13.5px;font-weight:600;color:var(--ink-2)"></span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--ink-3)"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div id="userDropdown" style="display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow-m);min-width:200px;z-index:300;padding:6px 0;white-space:nowrap">
+          <div style="padding:10px 16px 8px;border-bottom:1px solid var(--line-2)">
+            <div id="ddFullName" style="font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:2px"></div>
+            <div id="ddEmail" style="font-size:12px;color:var(--ink-3)"></div>
+          </div>
+          <a href="dashboard.html" style="display:block;padding:10px 16px;font-size:13.5px;color:var(--ink);font-family:var(--font)">My listings</a>
+          <button onclick="openListProp()" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:var(--ink);font-family:var(--font)">List a property</button>
+        </div>
+      </div>
+      <button id="navSignOutBtn" onclick="signOut()" style="display:none;padding:7px 16px;border:2px solid var(--sage);border-radius:7px;background:none;color:var(--sage);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font)">Sign out</button>
       <button class="btn-primary" onclick="openListProp()">List Property</button>
     </div>
     <button class="hamburger" onclick="openDrawer()" aria-label="Menu">
@@ -3462,54 +3480,31 @@ document.addEventListener('click', function(e) {
   if (dd && av && !av.contains(e.target)) dd.style.display = 'none';
 });
 function updateAuthNav(user) {
-  var nav = document.querySelector('.nav-right');
-  if (!nav) return;
-  var signInBtn = document.getElementById('navSignInBtn');
-  var avatarEl  = document.getElementById('navUserAvatar');
-  // Update mobile drawer sign-in button
+  var signInBtn  = document.getElementById('navSignInBtn');
+  var avatarEl   = document.getElementById('navUserAvatar');
+  var signOutBtn = document.getElementById('navSignOutBtn');
   var drawerSignIn = document.querySelector('.drawer-btns .btn-ghost');
   if (user) {
     var fullName = (user.user_metadata && user.user_metadata.full_name) ? user.user_metadata.full_name : user.email.split('@')[0];
-    var first = fullName.split(' ')[0];
+    var first    = fullName.split(' ')[0];
     var initials = fullName.split(' ').map(function(w){ return w[0]||''; }).join('').substring(0,2).toUpperCase();
-    if (signInBtn) signInBtn.style.display = 'none';
+    var ic = document.getElementById('navInitialsCircle');
+    var fn = document.getElementById('navFirstName');
+    var dn = document.getElementById('ddFullName');
+    var de = document.getElementById('ddEmail');
+    if (ic) ic.textContent = initials;
+    if (fn) fn.textContent = first;
+    if (dn) dn.textContent = fullName;
+    if (de) de.textContent = user.email;
+    if (signInBtn)  signInBtn.style.display  = 'none';
+    if (avatarEl)   avatarEl.style.display   = 'flex';
+    if (signOutBtn) signOutBtn.style.display  = 'inline-block';
     if (drawerSignIn) { drawerSignIn.textContent = 'Sign Out'; drawerSignIn.onclick = function(){ signOut(); closeDrawer(); }; }
-    if (!avatarEl) {
-      var el = document.createElement('div');
-      el.id = 'navUserAvatar';
-      el.style.cssText = 'display:flex;align-items:center;gap:8px;cursor:pointer;position:relative';
-      el.innerHTML =
-        '<div onclick="toggleUserMenu(event)" style="display:flex;align-items:center;gap:7px;cursor:pointer">' +
-          '<div style="width:34px;height:34px;border-radius:50%;background:var(--sage);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center">' + initials + '</div>' +
-          '<span style="font-size:13.5px;font-weight:600;color:var(--ink-2)">' + first + '</span>' +
-          '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--ink-3)"><polyline points="6 9 12 15 18 9"/></svg>' +
-        '</div>' +
-        '<div id="userDropdown" style="display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow-m);min-width:200px;z-index:300;padding:6px 0;white-space:nowrap">' +
-          '<div style="padding:10px 16px 8px;border-bottom:1px solid var(--line-2)">' +
-            '<div style="font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:2px">' + fullName + '</div>' +
-            '<div style="font-size:12px;color:var(--ink-3)">' + user.email + '</div>' +
-          '</div>' +
-          '<a href="dashboard.html" style="display:block;width:100%;text-align:left;padding:10px 16px;font-size:13.5px;color:var(--ink);font-family:var(--font)">My listings</a>' +
-          '<button onclick="openListProp()" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:var(--ink);font-family:var(--font)">List a property</button>' +
-          '<button onclick="signOut()" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;font-size:13.5px;cursor:pointer;color:var(--sage);font-weight:600;font-family:var(--font)">Sign out</button>' +
-        '</div>';
-      // Always-visible green Sign Out button
-      var soBtn = document.createElement('button');
-      soBtn.id = 'navSignOutBtn';
-      soBtn.onclick = signOut;
-      soBtn.textContent = 'Sign out';
-      soBtn.style.cssText = 'padding:7px 16px;border:2px solid var(--sage);border-radius:7px;background:none;color:var(--sage);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font)';
-      soBtn.onmouseenter = function(){ this.style.background='var(--sage)'; this.style.color='#fff'; };
-      soBtn.onmouseleave = function(){ this.style.background='none'; this.style.color='var(--sage)'; };
-      el.appendChild(soBtn);
-      nav.insertBefore(el, nav.querySelector('.btn-primary'));
-    } else {
-      avatarEl.style.display = 'flex';
-    }
   } else {
-    if (signInBtn) signInBtn.style.display = '';
-    if (avatarEl) avatarEl.style.display = 'none';
-    var sob = document.getElementById('navSignOutBtn'); if (sob) sob.style.display = 'none';
+    if (signInBtn)  signInBtn.style.display  = '';
+    if (avatarEl)   avatarEl.style.display   = 'none';
+    if (signOutBtn) signOutBtn.style.display  = 'none';
+    var dd = document.getElementById('userDropdown'); if (dd) dd.style.display = 'none';
     if (drawerSignIn) { drawerSignIn.textContent = 'Sign In'; drawerSignIn.onclick = function(){ openSignIn(); closeDrawer(); }; }
   }
 }
