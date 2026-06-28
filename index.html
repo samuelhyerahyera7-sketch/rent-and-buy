@@ -965,21 +965,6 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   }
   .hero-tabs::-webkit-scrollbar { display: none; }
   .hero-tab { white-space: nowrap; padding: 10px 18px; flex-shrink: 0; font-size: 17px; }
-  .swipe-line {
-    display: block; position: absolute; bottom: 0; left: 65%; transform: translateX(-50%);
-    width: 14px; height: 1.5px; background: rgba(255,255,255,.65); border-radius: 1px;
-    animation: swipe-pulse 1.6s ease-in-out 3; pointer-events: none;
-  }
-  .swipe-line::after {
-    content: ''; position: absolute; right: -4px; top: 50%; transform: translateY(-50%);
-    border-left: 5px solid rgba(255,255,255,.65);
-    border-top: 3px solid transparent; border-bottom: 3px solid transparent;
-  }
-  .swipe-line.hidden { opacity: 0; }
-  @keyframes swipe-pulse {
-    0%, 100% { opacity: .4; transform: translateX(calc(-50% + 0px)); }
-    50% { opacity: 1; transform: translateX(calc(-50% + 3px)); }
-  }
 
   /* Filter pills — 2-column grid, Filters full-width */
   .search-filters { display: grid; grid-template-columns: 1fr 1fr; }
@@ -1756,7 +1741,7 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
       <button class="hero-tab on" data-mode="buy" onclick="setTab(this,'buy')">Buy</button>
       <button class="hero-tab" data-mode="rent" onclick="setTab(this,'rent')">Rent</button>
       <button class="hero-tab" data-mode="list" onclick="openListProp()">List Property</button>
-      <button class="hero-tab" data-mode="new" onclick="setTab(this,'new')" style="position:relative">Developments<span class="swipe-line" id="tabsScrollHint"></span></button>
+      <button class="hero-tab" data-mode="new" onclick="setTab(this,'new')">Developments</button>
       <button class="hero-tab" data-mode="agents" onclick="setTab(this,'agents')">Agents</button>
       <button class="hero-tab" data-mode="sold" onclick="setTab(this,'sold')">Sold Prices</button>
     </div>
