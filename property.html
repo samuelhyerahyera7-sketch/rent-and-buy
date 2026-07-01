@@ -1640,6 +1640,11 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
 
         <div class="detail-stats" id="detailStats"></div>
 
+        <button id="detailFavBtn" onclick="toggleDetailFav()" style="display:flex;align-items:center;gap:7px;background:none;border:1.5px solid var(--line);border-radius:8px;padding:9px 18px;font-size:14px;font-weight:600;color:var(--ink-2);cursor:pointer;margin-bottom:20px;transition:all .2s">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Save property
+        </button>
+
         <h3 style="font-size:16px;font-weight:700;margin-bottom:12px">Description</h3>
         <div class="detail-desc" id="detailDesc">—</div>
 
@@ -2579,13 +2584,41 @@ function closeModal() {
 function closeOnBg(e) { if (e.target === document.getElementById('backdrop')) closeModal(); }
 
 // ── Filters / sort / pagination ───────────────────────────────────────────────
-function toggleFav(e, id) {
+async function toggleFav(e, id) {
   e.stopPropagation();
-  if (favs.has(id)) { favs.delete(id); toast('Removed from saved properties'); }
-  else { favs.add(id); toast('Saved to your shortlist'); }
+  if (favs.has(id)) {
+    favs.delete(id);
+    toast('Removed from saved properties');
+    if (currentUser) sb.from('saved_properties').delete().eq('user_id', currentUser.id).eq('property_id', id).then(function(){});
+  } else {
+    favs.add(id);
+    toast('Saved to your shortlist');
+    if (currentUser) sb.from('saved_properties').insert([{user_id: currentUser.id, property_id: id}]).then(function(){});
+  }
   try { localStorage.setItem('rab_favs', JSON.stringify([...favs])); } catch(e){}
   renderListings();
 }
+
+async function toggleDetailFav() {
+  var propId = parseInt(new URLSearchParams(location.search).get('id'));
+  if (!propId) return;
+  var btn = document.getElementById('detailFavBtn');
+  if (favs.has(propId)) {
+    favs.delete(propId);
+    toast('Removed from saved properties');
+    if (currentUser) sb.from('saved_properties').delete().eq('user_id', currentUser.id).eq('property_id', propId).then(function(){});
+    if (btn) { btn.classList.remove('on'); btn.innerHTML = heartEmptyLg + ' Save property'; }
+  } else {
+    favs.add(propId);
+    toast('Saved to your shortlist');
+    if (currentUser) sb.from('saved_properties').insert([{user_id: currentUser.id, property_id: propId}]).then(function(){});
+    else { openSignIn(); return; }
+    if (btn) { btn.classList.add('on'); btn.innerHTML = heartFilledLg + ' Saved'; }
+  }
+  try { localStorage.setItem('rab_favs', JSON.stringify([...favs])); } catch(e){}
+}
+const heartFilledLg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
+const heartEmptyLg  = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
 
 // ── Contact / Enquiry ─────────────────────────────────────────────────────────
 async function sendEnquiry() {
@@ -3100,13 +3133,29 @@ sb.auth.onAuthStateChange(function(event, session) {
     var prompt = document.getElementById('authListPrompt');
     if (prompt) prompt.style.display = 'none';
     if (pending === 'list') {
-      setTimeout(function() {
-        closeSignIn();
-        openListProp();
-      }, 200);
+      setTimeout(function() { closeSignIn(); openListProp(); }, 200);
     } else {
       closeSignIn();
     }
+    // Pre-fill enquiry form with user's name/email
+    var enqName = document.getElementById('enq-name');
+    var enqEmail = document.getElementById('enq-email');
+    if (enqName && !enqName.value) enqName.value = (currentUser.user_metadata && currentUser.user_metadata.full_name) || '';
+    if (enqEmail && !enqEmail.value) enqEmail.value = currentUser.email || '';
+    // Load saved properties and update detail save button
+    sb.from('saved_properties').select('property_id').eq('user_id', currentUser.id).then(function(res) {
+      if (res.data) {
+        res.data.forEach(function(r) { favs.add(r.property_id); });
+        try { localStorage.setItem('rab_favs', JSON.stringify([...favs])); } catch(e){}
+        renderListings();
+        var propId = parseInt(new URLSearchParams(location.search).get('id'));
+        var btn = document.getElementById('detailFavBtn');
+        if (btn && propId && favs.has(propId)) {
+          btn.classList.add('on');
+          btn.innerHTML = heartFilledLg + ' Saved';
+        }
+      }
+    });
   } else if (event === 'SIGNED_OUT') {
     updateAuthNav(null);
   }

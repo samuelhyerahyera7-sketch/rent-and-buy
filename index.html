@@ -2823,10 +2823,18 @@ function closeModal() {
 function closeOnBg(e) { if (e.target === document.getElementById('backdrop')) closeModal(); }
 
 // ── Filters / sort / pagination ───────────────────────────────────────────────
-function toggleFav(e, id) {
+async function toggleFav(e, id) {
   e.stopPropagation();
-  if (favs.has(id)) { favs.delete(id); toast('Removed from saved properties'); }
-  else { favs.add(id); toast('Saved to your shortlist'); }
+  if (favs.has(id)) {
+    favs.delete(id);
+    toast('Removed from saved properties');
+    if (currentUser) sb.from('saved_properties').delete().eq('user_id', currentUser.id).eq('property_id', id).then(function(){});
+  } else {
+    favs.add(id);
+    toast('Saved to your shortlist');
+    if (currentUser) sb.from('saved_properties').insert([{user_id: currentUser.id, property_id: id}]).then(function(){});
+    else toast('Sign in to sync saves across devices');
+  }
   try { localStorage.setItem('rab_favs', JSON.stringify([...favs])); } catch(e){}
   renderListings();
 }
@@ -3344,13 +3352,18 @@ sb.auth.onAuthStateChange(function(event, session) {
     var prompt = document.getElementById('authListPrompt');
     if (prompt) prompt.style.display = 'none';
     if (pending === 'list') {
-      setTimeout(function() {
-        closeSignIn();
-        openListProp();
-      }, 200);
+      setTimeout(function() { closeSignIn(); openListProp(); }, 200);
     } else {
       closeSignIn();
     }
+    // Load saved properties from Supabase and merge with local
+    sb.from('saved_properties').select('property_id').eq('user_id', currentUser.id).then(function(res) {
+      if (res.data) {
+        res.data.forEach(function(r) { favs.add(r.property_id); });
+        try { localStorage.setItem('rab_favs', JSON.stringify([...favs])); } catch(e){}
+        renderListings();
+      }
+    });
   } else if (event === 'SIGNED_OUT') {
     updateAuthNav(null);
   }

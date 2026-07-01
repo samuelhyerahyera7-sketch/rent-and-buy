@@ -239,6 +239,10 @@ button{font-family:var(--font);cursor:pointer}
       Messages
       <span class="dash-nav-badge" id="unreadBadge" style="display:none">0</span>
     </div>
+    <div class="dash-nav-item" id="nav-saved" onclick="showSection('saved')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      Saved
+    </div>
     <div class="dash-nav-item" id="nav-admin" onclick="showSection('admin')" style="display:none;border-top:1px solid var(--line);margin-top:8px;padding-top:8px">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       Admin
@@ -283,6 +287,28 @@ button{font-family:var(--font);cursor:pointer}
         <button class="btn-ghost-sm" onclick="markAllRead()">Mark all read</button>
       </div>
       <div id="messagesContainer"><div class="spinner-wrap"><svg class="spin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></div></div>
+    </section>
+
+    <!-- Saved (buyer) -->
+    <section id="sec-saved" style="display:none">
+      <div class="section-head">
+        <div><div class="section-title">Saved</div><div class="section-sub">Your shortlist, searches &amp; enquiries</div></div>
+      </div>
+      <!-- Sub-tabs -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid var(--line);padding-bottom:0">
+        <button id="stab-props" onclick="savedTab('props')" style="background:none;border:none;padding:8px 14px;font-size:13px;font-weight:600;color:var(--sage);border-bottom:2px solid var(--sage);cursor:pointer">Saved Properties</button>
+        <button id="stab-searches" onclick="savedTab('searches')" style="background:none;border:none;padding:8px 14px;font-size:13px;font-weight:600;color:var(--ink-3);border-bottom:2px solid transparent;cursor:pointer">Saved Searches</button>
+        <button id="stab-enquiries" onclick="savedTab('enquiries')" style="background:none;border:none;padding:8px 14px;font-size:13px;font-weight:600;color:var(--ink-3);border-bottom:2px solid transparent;cursor:pointer">My Enquiries</button>
+      </div>
+      <div id="saved-props-panel">
+        <div id="savedPropsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px"><div class="spinner-wrap"><svg class="spin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></div></div>
+      </div>
+      <div id="saved-searches-panel" style="display:none">
+        <div id="savedSearchesList"><div class="spinner-wrap"><svg class="spin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></div></div>
+      </div>
+      <div id="saved-enquiries-panel" style="display:none">
+        <div id="savedEnquiriesList"><div class="spinner-wrap"><svg class="spin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></div></div>
+      </div>
     </section>
 
     <!-- Admin (owner only) -->
@@ -411,6 +437,11 @@ sb.auth.onAuthStateChange(function(event, session) {
   }
   loadAll();
   if (currentUser.email === ADMIN_EMAIL) loadAdminStats();
+  // Buyer data loads lazily when they click Saved, but pre-warm the enquiry count
+  sb.from('enquiries').select('id', {count:'exact',head:true}).eq('visitor_email', currentUser.email).then(function(res){
+    var badge = document.getElementById('stab-enquiries');
+    if (badge && res.count > 0) badge.textContent = 'My Enquiries (' + res.count + ')';
+  });
 });
 
 // ── Load everything ───────────────────────────────────────────────────────────
@@ -539,12 +570,116 @@ function renderMsgCard(m, compact) {
 
 // ── Section nav ───────────────────────────────────────────────────────────────
 function showSection(name) {
-  ['overview','listings','messages','admin'].forEach(function(s){
+  ['overview','listings','messages','saved','admin'].forEach(function(s){
     var sec = document.getElementById('sec-'+s);
     if (sec) sec.style.display = s===name?'':'none';
     var nav = document.getElementById('nav-'+s);
     if (nav) nav.classList.toggle('on', s===name);
   });
+  if (name === 'saved') loadBuyerData();
+}
+
+var _savedTabActive = 'props';
+function savedTab(tab) {
+  _savedTabActive = tab;
+  ['props','searches','enquiries'].forEach(function(t) {
+    var panel = document.getElementById('saved-'+t+'-panel');
+    var btn   = document.getElementById('stab-'+t);
+    if (panel) panel.style.display = t===tab ? '' : 'none';
+    if (btn) {
+      btn.style.color       = t===tab ? 'var(--sage)' : 'var(--ink-3)';
+      btn.style.borderBottom = t===tab ? '2px solid var(--sage)' : '2px solid transparent';
+    }
+  });
+}
+
+var _buyerDataLoaded = false;
+async function loadBuyerData() {
+  if (_buyerDataLoaded) return;
+  _buyerDataLoaded = true;
+
+  // ── Saved Properties ──────────────────────────────────────────────────────
+  var spRes = await sb.from('saved_properties').select('property_id, created_at, properties(id,title,price,mode,suburb,city,beds,baths,images,status)').eq('user_id', currentUser.id).order('created_at', {ascending:false});
+  var grid = document.getElementById('savedPropsGrid');
+  if (!spRes.data || !spRes.data.length) {
+    grid.innerHTML = '<p style="color:var(--ink-3);padding:32px 0;text-align:center">No saved properties yet. Click the ♥ on any listing to save it here.</p>';
+  } else {
+    grid.innerHTML = spRes.data.map(function(r) {
+      var p = r.properties;
+      if (!p) return '';
+      var img = (p.images && p.images[0]) ? p.images[0] : 'https://placehold.co/300x180?text=No+photo';
+      var price = p.price >= 1000000 ? 'R ' + (p.price/1000000).toFixed(1) + 'M' : p.price >= 1000 ? 'R ' + Math.round(p.price/1000) + 'k' : 'R ' + p.price;
+      return '<div style="border:1px solid var(--line);border-radius:10px;overflow:hidden;cursor:pointer" onclick="window.open(\'property.html?id='+p.id+'\',\'_blank\')">' +
+        '<img src="'+img+'" style="width:100%;height:160px;object-fit:cover" loading="lazy">' +
+        '<div style="padding:12px">' +
+          '<div style="font-weight:700;font-size:15px;color:var(--navy)">'+price+'</div>' +
+          '<div style="font-size:13px;font-weight:600;color:var(--ink);margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escHtml(p.title||'')+'</div>' +
+          '<div style="font-size:12px;color:var(--ink-3)">'+escHtml((p.suburb||'')+(p.city?', '+p.city:''))+'</div>' +
+          '<div style="display:flex;gap:12px;margin-top:8px;font-size:12px;color:var(--ink-2)">' +
+            (p.beds ? '<span>🛏 '+p.beds+'</span>' : '') +
+            (p.baths ? '<span>🚿 '+p.baths+'</span>' : '') +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // ── Saved Searches ────────────────────────────────────────────────────────
+  var ssRes = await sb.from('saved_searches').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:false});
+  var sList = document.getElementById('savedSearchesList');
+  if (!ssRes.data || !ssRes.data.length) {
+    sList.innerHTML = '<p style="color:var(--ink-3);padding:32px 0;text-align:center">No saved searches yet. Use the ♥ Save search button on the search page.</p>';
+  } else {
+    sList.innerHTML = '<div style="display:flex;flex-direction:column;gap:10px">' +
+      ssRes.data.map(function(s) {
+        var f = s.filters || {};
+        var tags = [];
+        if (f.mode) tags.push(f.mode.charAt(0).toUpperCase()+f.mode.slice(1));
+        if (f.q) tags.push('"'+f.q+'"');
+        if (f.bedMin > 0) tags.push(f.bedMin+'+ beds');
+        if (f.priceMin > 0) tags.push('From R'+Math.round(f.priceMin/1000)+'k');
+        if (f.priceMax) tags.push('To R'+Math.round(f.priceMax/1000)+'k');
+        var url = 'search.html?mode='+(f.mode||'buy')+(f.q?'&q='+encodeURIComponent(f.q):'')+(f.bedMin>0?'&beds='+f.bedMin:'');
+        return '<div style="display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:8px;padding:12px 16px;gap:12px;flex-wrap:wrap">' +
+          '<div>' +
+            '<div style="font-weight:600;font-size:14px;color:var(--ink);margin-bottom:4px">'+escHtml(s.name||'Search')+'</div>' +
+            '<div style="display:flex;gap:6px;flex-wrap:wrap">' + tags.map(function(t){ return '<span style="background:var(--line-2);padding:2px 8px;border-radius:12px;font-size:12px;color:var(--ink-2)">'+escHtml(t)+'</span>'; }).join('') + '</div>' +
+          '</div>' +
+          '<div style="display:flex;gap:8px">' +
+            '<a href="'+url+'" class="btn-sage" style="text-decoration:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;color:#fff">Run</a>' +
+            '<button onclick="deleteSavedSearch(\''+s.id+'\')" style="background:none;border:1px solid var(--line);border-radius:6px;padding:6px 12px;font-size:12px;color:var(--ink-3);cursor:pointer">Remove</button>' +
+          '</div>' +
+        '</div>';
+      }).join('') + '</div>';
+  }
+
+  // ── My Enquiries ──────────────────────────────────────────────────────────
+  var eRes = await sb.from('enquiries').select('id,created_at,visitor_message,properties(id,title,suburb,city)').eq('visitor_email', currentUser.email).order('created_at', {ascending:false});
+  var eList = document.getElementById('savedEnquiriesList');
+  if (!eRes.data || !eRes.data.length) {
+    eList.innerHTML = '<p style="color:var(--ink-3);padding:32px 0;text-align:center">No enquiries sent yet. Contact an agent on any property listing.</p>';
+  } else {
+    eList.innerHTML = '<div style="display:flex;flex-direction:column;gap:10px">' +
+      eRes.data.map(function(e) {
+        var p = e.properties;
+        var d = new Date(e.created_at);
+        var ds = d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
+        return '<div style="border:1px solid var(--line);border-radius:8px;padding:14px 16px">' +
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px">' +
+            '<div style="font-weight:600;font-size:14px;color:var(--ink)">'+(p ? '<a href="property.html?id='+p.id+'" style="color:var(--navy);text-decoration:none">'+escHtml(p.title||'Property')+'</a>' : 'Property')+'</div>' +
+            '<span style="font-size:11px;color:var(--ink-3);white-space:nowrap">'+ds+'</span>' +
+          '</div>' +
+          (p ? '<div style="font-size:12px;color:var(--ink-3);margin-bottom:6px">'+escHtml((p.suburb||'')+(p.city?', '+p.city:''))+'</div>' : '') +
+          '<div style="font-size:13px;color:var(--ink-2);background:var(--line-2);padding:8px 10px;border-radius:6px">'+escHtml(e.visitor_message||'')+'</div>' +
+        '</div>';
+      }).join('') + '</div>';
+  }
+}
+
+async function deleteSavedSearch(id) {
+  await sb.from('saved_searches').delete().eq('id', id).eq('user_id', currentUser.id);
+  _buyerDataLoaded = false;
+  loadBuyerData();
 }
 
 // ── Edit listing ──────────────────────────────────────────────────────────────

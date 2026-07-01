@@ -1979,15 +1979,21 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
         <h2 id="listTitle">Properties for Sale</h2>
         <p>Showing <span id="listCount">0</span> properties</p>
       </div>
-      <div class="f-sort" style="margin-left:0">
-        Sort by
-        <select onchange="sortBy(this.value)">
-          <option value="newest">Newest</option>
-          <option value="price-asc">Price: low to high</option>
-          <option value="price-desc">Price: high to low</option>
-          <option value="beds">Most bedrooms</option>
-          <option value="size">Largest</option>
-        </select>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <button onclick="saveSearch()" style="display:flex;align-items:center;gap:6px;background:none;border:1px solid var(--line);border-radius:6px;padding:6px 12px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;white-space:nowrap" title="Save this search to your dashboard">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Save search
+        </button>
+        <div class="f-sort" style="margin-left:0">
+          Sort by
+          <select onchange="sortBy(this.value)">
+            <option value="newest">Newest</option>
+            <option value="price-asc">Price: low to high</option>
+            <option value="price-desc">Price: high to low</option>
+            <option value="beds">Most bedrooms</option>
+            <option value="size">Largest</option>
+          </select>
+        </div>
       </div>
     </div>
     <div class="search-layout">
@@ -2924,12 +2930,29 @@ function closeModal() {
 function closeOnBg(e) { if (e.target === document.getElementById('backdrop')) closeModal(); }
 
 // ── Filters / sort / pagination ───────────────────────────────────────────────
-function toggleFav(e, id) {
+async function toggleFav(e, id) {
   e.stopPropagation();
-  if (favs.has(id)) { favs.delete(id); toast('Removed from saved properties'); }
-  else { favs.add(id); toast('Saved to your shortlist'); }
+  if (favs.has(id)) {
+    favs.delete(id);
+    toast('Removed from saved properties');
+    if (currentUser) sb.from('saved_properties').delete().eq('user_id', currentUser.id).eq('property_id', id).then(function(){});
+  } else {
+    favs.add(id);
+    toast('Saved to your shortlist');
+    if (currentUser) sb.from('saved_properties').insert([{user_id: currentUser.id, property_id: id}]).then(function(){});
+  }
   try { localStorage.setItem('rab_favs', JSON.stringify([...favs])); } catch(e){}
   renderListings();
+}
+
+async function saveSearch() {
+  if (!currentUser) { openSignIn(); return; }
+  var name = ('Search: ' + (document.getElementById('heroQ') ? document.getElementById('heroQ').value.trim() : '') + ' ' + mode).trim();
+  var filters = { mode: mode, bedMin: bedMin, propType: propType, priceMin: priceMin, priceMax: priceMax < 999999999 ? priceMax : null };
+  var q = document.getElementById('heroQ'); if (q && q.value.trim()) filters.q = q.value.trim();
+  var res = await sb.from('saved_searches').insert([{ user_id: currentUser.id, name: name, filters: filters }]);
+  if (res.error) { toast('Could not save search'); return; }
+  toast('Search saved — view in your dashboard');
 }
 
 function fBeds(n, el) {
@@ -3451,13 +3474,17 @@ sb.auth.onAuthStateChange(function(event, session) {
     var prompt = document.getElementById('authListPrompt');
     if (prompt) prompt.style.display = 'none';
     if (pending === 'list') {
-      setTimeout(function() {
-        closeSignIn();
-        openListProp();
-      }, 200);
+      setTimeout(function() { closeSignIn(); openListProp(); }, 200);
     } else {
       closeSignIn();
     }
+    sb.from('saved_properties').select('property_id').eq('user_id', currentUser.id).then(function(res) {
+      if (res.data) {
+        res.data.forEach(function(r) { favs.add(r.property_id); });
+        try { localStorage.setItem('rab_favs', JSON.stringify([...favs])); } catch(e){}
+        renderListings();
+      }
+    });
   } else if (event === 'SIGNED_OUT') {
     updateAuthNav(null);
   }
