@@ -10,7 +10,10 @@
 :root{--navy:#1a3355;--navy-l:#eef2f8;--sage:#2d7a56;--sage-l:#edf6f1;--red:#dc2626;--amber:#f59e0b;
   --ink:#1a1a2e;--ink-2:#374151;--ink-3:#6b7280;--line:#e5e7eb;--line-2:#f3f4f6;--white:#fff;--page:#f9fafb;
   --font:'Inter',sans-serif;--r:8px;--shadow-m:0 4px 16px rgba(0,0,0,.10)}
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+::selection{background:transparent}
+:focus{outline:none}
+:focus-visible{outline:none}
 body{font-family:var(--font);background:var(--page);color:var(--ink);min-height:100vh}
 a{color:inherit;text-decoration:none}
 button{font-family:var(--font);cursor:pointer}
