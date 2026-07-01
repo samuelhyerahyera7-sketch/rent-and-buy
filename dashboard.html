@@ -235,6 +235,10 @@ button{font-family:var(--font);cursor:pointer}
       Messages
       <span class="dash-nav-badge" id="unreadBadge" style="display:none">0</span>
     </div>
+    <div class="dash-nav-item" id="nav-admin" onclick="showSection('admin')" style="display:none;border-top:1px solid var(--line);margin-top:8px;padding-top:8px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Admin
+    </div>
   </aside>
 
   <!-- Main -->
@@ -277,6 +281,69 @@ button{font-family:var(--font);cursor:pointer}
       <div id="messagesContainer"><div class="spinner-wrap"><svg class="spin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></div></div>
     </section>
 
+    <!-- Admin (owner only) -->
+    <section id="sec-admin" style="display:none">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Admin Panel</div>
+          <div class="section-sub">Site management — visible to you only</div>
+        </div>
+        <a href="admin.html" class="btn-sage" style="text-decoration:none;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;color:#fff">Full Admin →</a>
+      </div>
+
+      <!-- Visitor stats -->
+      <div style="font-size:13px;font-weight:700;color:var(--ink-2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px">Website Visitors</div>
+      <div class="stat-grid" style="margin-bottom:28px">
+        <div class="stat-card c1"><div class="stat-n" id="adm-today">–</div><div class="stat-l">Visits Today</div><div class="stat-icon">📅</div></div>
+        <div class="stat-card c2"><div class="stat-n" id="adm-week">–</div><div class="stat-l">This Week</div><div class="stat-icon">📆</div></div>
+        <div class="stat-card c3"><div class="stat-n" id="adm-total">–</div><div class="stat-l">All-time Visits</div><div class="stat-icon">🌍</div></div>
+        <div class="stat-card c4"><div class="stat-n" id="adm-views">–</div><div class="stat-l">Property Views</div><div class="stat-icon">👁</div></div>
+      </div>
+
+      <!-- Site stats -->
+      <div style="font-size:13px;font-weight:700;color:var(--ink-2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px">Site Overview</div>
+      <div class="stat-grid" style="margin-bottom:28px">
+        <div class="stat-card c1"><div class="stat-n" id="adm-listings">–</div><div class="stat-l">Total Listings</div><div class="stat-icon">🏠</div></div>
+        <div class="stat-card c2"><div class="stat-n" id="adm-enq">–</div><div class="stat-l">Total Enquiries</div><div class="stat-icon">✉</div></div>
+        <div class="stat-card c3"><div class="stat-n" id="adm-agencies">–</div><div class="stat-l">Agencies</div><div class="stat-icon">🏢</div></div>
+        <div class="stat-card c4"><div class="stat-n" id="adm-users">–</div><div class="stat-l">Active Agents</div><div class="stat-icon">👤</div></div>
+      </div>
+
+      <!-- Recent listings -->
+      <div class="section-head" style="margin-bottom:12px">
+        <div class="section-title" style="font-size:16px">Recent Listings</div>
+        <a href="admin.html" class="btn-ghost-sm" style="text-decoration:none">Manage all</a>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;margin-bottom:24px">
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr>
+            <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--line);background:var(--page)">Title</th>
+            <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:700;color:var(--ink-3);text-transform:uppercase;border-bottom:1px solid var(--line);background:var(--page)">Mode</th>
+            <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:700;color:var(--ink-3);text-transform:uppercase;border-bottom:1px solid var(--line);background:var(--page)">Price</th>
+            <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:700;color:var(--ink-3);text-transform:uppercase;border-bottom:1px solid var(--line);background:var(--page)">Agent</th>
+            <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:700;color:var(--ink-3);text-transform:uppercase;border-bottom:1px solid var(--line);background:var(--page)">Status</th>
+          </tr></thead>
+          <tbody id="adm-listings-table"><tr><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-3);font-size:13px">Loading…</td></tr></tbody>
+        </table>
+      </div>
+
+      <!-- Recent enquiries -->
+      <div class="section-head" style="margin-bottom:12px">
+        <div class="section-title" style="font-size:16px">Recent Enquiries</div>
+        <a href="admin.html" class="btn-ghost-sm" style="text-decoration:none">Manage all</a>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;margin-bottom:24px">
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr>
+            <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:700;color:var(--ink-3);text-transform:uppercase;border-bottom:1px solid var(--line);background:var(--page)">From</th>
+            <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:700;color:var(--ink-3);text-transform:uppercase;border-bottom:1px solid var(--line);background:var(--page)">Property</th>
+            <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:700;color:var(--ink-3);text-transform:uppercase;border-bottom:1px solid var(--line);background:var(--page)">Date</th>
+          </tr></thead>
+          <tbody id="adm-enq-table"><tr><td colspan="3" style="text-align:center;padding:24px;color:var(--ink-3);font-size:13px">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
   </main>
 </div>
 
@@ -315,6 +382,7 @@ const SB_URL = 'https://auth.rentandbuy.co.za';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuaWJjaGRlZ2pieXB0eW5pam14Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDM5OTIsImV4cCI6MjA5NzExOTk5Mn0.rEq9Ymb1lPdAqepYXS7TXntgVtEVr5x1_Iz-v6zJzPg';
 const sb = supabase.createClient(SB_URL, SB_KEY);
 
+const ADMIN_EMAIL = 'samuelhyera.hyera7@gmail.com';
 var currentUser = null;
 var allListings = [];
 var allMessages = [];
@@ -334,7 +402,11 @@ sb.auth.onAuthStateChange(function(event, session) {
   document.getElementById('userAv').textContent = initials;
   document.getElementById('userName').textContent = name;
   document.getElementById('overviewGreeting').textContent = 'Welcome back, ' + name.split(' ')[0];
+  if (currentUser.email === ADMIN_EMAIL) {
+    document.getElementById('nav-admin').style.display = '';
+  }
   loadAll();
+  if (currentUser.email === ADMIN_EMAIL) loadAdminStats();
 });
 
 // ── Load everything ───────────────────────────────────────────────────────────
@@ -463,9 +535,11 @@ function renderMsgCard(m, compact) {
 
 // ── Section nav ───────────────────────────────────────────────────────────────
 function showSection(name) {
-  ['overview','listings','messages'].forEach(function(s){
-    document.getElementById('sec-'+s).style.display = s===name?'':'none';
-    document.getElementById('nav-'+s).classList.toggle('on', s===name);
+  ['overview','listings','messages','admin'].forEach(function(s){
+    var sec = document.getElementById('sec-'+s);
+    if (sec) sec.style.display = s===name?'':'none';
+    var nav = document.getElementById('nav-'+s);
+    if (nav) nav.classList.toggle('on', s===name);
   });
 }
 
@@ -602,6 +676,65 @@ function toast(msg) {
   toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 3000);
 }
 document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeEdit(); });
+
+// ── Admin stats ───────────────────────────────────────────────────────────────
+async function loadAdminStats() {
+  var today = new Date(); today.setHours(0,0,0,0);
+  var weekAgo = new Date(Date.now() - 7*24*60*60*1000);
+
+  var [allProps, allEnq, allAgencies, visits] = await Promise.all([
+    sb.from('properties').select('id,title,mode,price,agent_email,status,views,created_at').order('created_at',{ascending:false}),
+    sb.from('enquiries').select('id,visitor_name,visitor_email,created_at,property_id,properties(title)').order('created_at',{ascending:false}),
+    sb.from('agencies').select('id'),
+    sb.from('site_visits').select('visited_at')
+  ]);
+
+  // Site overview stats
+  var props    = allProps.data  || [];
+  var enqs     = allEnq.data   || [];
+  var agencies = allAgencies.data || [];
+  var totalViews = props.reduce(function(s,p){ return s+(p.views||0); },0);
+
+  document.getElementById('adm-listings').textContent  = props.length;
+  document.getElementById('adm-enq').textContent       = enqs.length;
+  document.getElementById('adm-agencies').textContent  = agencies.length;
+  var agents = new Set(props.map(function(p){ return p.agent_email; }).filter(Boolean));
+  document.getElementById('adm-users').textContent     = agents.size;
+  document.getElementById('adm-views').textContent     = totalViews.toLocaleString('en-ZA');
+
+  // Visitor stats
+  var vs = visits.data || [];
+  var todayCount = vs.filter(function(v){ return new Date(v.visited_at) >= today; }).length;
+  var weekCount  = vs.filter(function(v){ return new Date(v.visited_at) >= weekAgo; }).length;
+  document.getElementById('adm-today').textContent = todayCount;
+  document.getElementById('adm-week').textContent  = weekCount;
+  document.getElementById('adm-total').textContent = vs.length;
+
+  // Recent listings table
+  var ltbody = document.getElementById('adm-listings-table');
+  ltbody.innerHTML = props.length ? props.slice(0,8).map(function(p){
+    var badge = p.status==='active'?'#dcfce7:#166534':p.status==='sold'?'#fee2e2:#991b1b':'#fef3c7:#92400e';
+    var bc = badge.split(':');
+    return '<tr style="border-bottom:1px solid var(--line-2)">'
+      +'<td style="padding:10px 16px;font-size:13px;font-weight:600;color:var(--navy)">'+escHtml(p.title||'Untitled')+'</td>'
+      +'<td style="padding:10px 16px;font-size:13px;text-transform:capitalize;color:var(--ink-2)">'+( p.mode||'–')+'</td>'
+      +'<td style="padding:10px 16px;font-size:13px;color:var(--ink-2)">R '+(Number(p.price||0).toLocaleString('en-ZA'))+'</td>'
+      +'<td style="padding:10px 16px;font-size:12px;color:var(--ink-3)">'+escHtml(p.agent_email||'–')+'</td>'
+      +'<td style="padding:10px 16px"><span style="background:'+bc[0]+';color:'+bc[1]+';padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600">'+capFirst(p.status||'active')+'</span></td>'
+      +'</tr>';
+  }).join('') : '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-3);font-size:13px">No listings yet.</td></tr>';
+
+  // Recent enquiries table
+  var etbody = document.getElementById('adm-enq-table');
+  etbody.innerHTML = enqs.length ? enqs.slice(0,8).map(function(e){
+    return '<tr style="border-bottom:1px solid var(--line-2)">'
+      +'<td style="padding:10px 16px;font-size:13px;font-weight:600;color:var(--ink)">'
+        +escHtml(e.visitor_name||'–')+'<br><span style="font-size:11px;font-weight:400;color:var(--ink-3)">'+escHtml(e.visitor_email||'')+'</span></td>'
+      +'<td style="padding:10px 16px;font-size:12px;color:var(--ink-2)">'+(e.properties?.title||'Property #'+(e.property_id||'?'))+'</td>'
+      +'<td style="padding:10px 16px;font-size:12px;color:var(--ink-3);white-space:nowrap">'+fmtDate(e.created_at)+'</td>'
+      +'</tr>';
+  }).join('') : '<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--ink-3);font-size:13px">No enquiries yet.</td></tr>';
+}
 </script>
 
 </body>

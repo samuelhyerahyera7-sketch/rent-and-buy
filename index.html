@@ -804,6 +804,9 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
 .search-bar-outer { position: relative; }
 .sb-row { position: relative; }
 
+/* Hide mobile-only focused search button on desktop */
+.sb-focused-search { display: none; }
+
 /* Search bar focused state — mobile only */
 @media (max-width: 900px) {
   .search-bar-outer.sb-focused .search-bar-wrap {
@@ -2384,7 +2387,21 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
         <div class="lw-field"><label>Virtual tour URL <span class="opt">(Matterport, etc.)</span></label>
           <input id="lw-vtour" class="lw-input" type="url" placeholder="https://...">
         </div>
-        <div class="lw-field"><label>YouTube video URL <span class="opt">(optional)</span></label>
+        <div class="lw-field">
+          <label>Video <span class="opt">(optional)</span></label>
+          <div id="lwVideoUploadZone" style="border:2px dashed var(--line);border-radius:10px;padding:20px 16px;text-align:center;cursor:pointer;background:var(--white);margin-bottom:10px;transition:border-color .2s" onclick="document.getElementById('lwVideoInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--sage)'" ondragleave="this.style.borderColor=''" ondrop="lwVideoDrop(event)">
+            <input type="file" id="lwVideoInput" accept="video/*" style="display:none" onchange="lwVideoFileAdded(this.files[0])">
+            <div id="lwVideoPreview" style="display:none;margin-bottom:8px">
+              <video id="lwVideoEl" controls style="width:100%;max-height:180px;border-radius:6px;background:#000"></video>
+              <button type="button" onclick="event.stopPropagation();lwVideoClear()" style="margin-top:6px;padding:4px 12px;border:1px solid var(--line);border-radius:5px;background:#fff;font-size:12px;color:var(--ink-3);cursor:pointer">Remove video</button>
+            </div>
+            <div id="lwVideoPlaceholder">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink-4);margin:0 auto 8px"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+              <div style="font-size:13px;font-weight:600;color:var(--ink-2)">Upload a video</div>
+              <div style="font-size:12px;color:var(--ink-4);margin-top:2px">MP4, MOV, AVI · Max 200 MB</div>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:12px;color:var(--ink-4);margin-bottom:8px">— or paste a video / YouTube URL —</div>
           <input id="lw-video" class="lw-input" type="url" placeholder="https://youtube.com/...">
         </div>
       </div>
@@ -2546,21 +2563,7 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
 <div class="toast" id="toastEl"></div>
 <script>
 // ─────────────────────────────────────────────────────────────────────
-const DATA = [
-  {id:1,mode:'buy',type:'House',price:4850000,beds:4,baths:3,garages:2,size:320,erf:650,
-   title:'Modern home with heated pool',suburb:'Bryanston',city:'Johannesburg',province:'Gauteng',
-   desc:'North-facing family home in sought-after Bryanston. Open-plan kitchen with Caesar stone counters, seamless indoor-outdoor living, solar backup, and heated pool. Walking distance to top schools.',
-   agent:{name:'Rent&Buy',agency:'Rent and Buy',init:'RB'},
-   imgs:['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=900&q=80'],
-   featured:true,days:2,pool:true,pets:true,levy:null,rates:3200},
-
-  {id:4,mode:'rent',type:'Apartment',price:14500,beds:2,baths:1,garages:1,size:75,erf:null,
-   title:'Contemporary apartment, Umhlanga Ridge',suburb:'Umhlanga Ridge',city:'Durban',province:'KwaZulu-Natal',
-   desc:'Modern 2-bedroom apartment in the upmarket Umhlanga Ridge Town Centre. Fully tiled, open-plan layout, small balcony with garden views. Access to shared pool and gym. Fibre-ready.',
-   agent:{name:'Rent&Buy',agency:'Rent and Buy',init:'RB'},
-   imgs:['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=900&q=80'],
-   featured:false,days:3,pool:true,pets:false,levy:1800,rates:null},
-];
+const DATA = [];
 
 const AREAS = [
   {name:'Cape Town',img:'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70'},
@@ -3428,6 +3431,7 @@ var LW = {
   features: [],
   photos: [],       // { file, url, isObjectUrl }
   coverIdx: 0,
+  videoFile: null,
   autoSaveTimer: null,
   autoSaveInterval: null
 };
@@ -4003,6 +4007,32 @@ function lwCarouselBindTouch() {
   }, { passive: true });
 }
 
+// ── Video upload ──────────────────────────────────────────────────────────────
+function lwVideoDrop(e) {
+  e.preventDefault(); e.stopPropagation();
+  document.getElementById('lwVideoUploadZone').style.borderColor = '';
+  var file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('video/')) lwVideoFileAdded(file);
+}
+function lwVideoFileAdded(file) {
+  if (!file) return;
+  if (file.size > 200 * 1024 * 1024) { toast('Video must be under 200 MB'); return; }
+  LW.videoFile = file;
+  var url = URL.createObjectURL(file);
+  document.getElementById('lwVideoEl').src = url;
+  document.getElementById('lwVideoPreview').style.display = '';
+  document.getElementById('lwVideoPlaceholder').style.display = 'none';
+  document.getElementById('lw-video').value = '';
+}
+function lwVideoClear() {
+  LW.videoFile = null;
+  var el = document.getElementById('lwVideoEl');
+  if (el.src) { URL.revokeObjectURL(el.src); el.src = ''; }
+  document.getElementById('lwVideoPreview').style.display = 'none';
+  document.getElementById('lwVideoPlaceholder').style.display = '';
+  document.getElementById('lwVideoInput').value = '';
+}
+
 // ── Publish ───────────────────────────────────────────────────────────────────
 async function lwPublish() {
   var btn = document.getElementById('lwNextBtn');
@@ -4023,6 +4053,20 @@ async function lwPublish() {
       var pub = sb.storage.from('property-images').getPublicUrl(path);
       imgUrls.push(pub.data.publicUrl);
     }
+  }
+
+  // Upload video file if one was selected
+  var videoUrl = null;
+  if (LW.videoFile) {
+    var vExt  = LW.videoFile.name.split('.').pop() || 'mp4';
+    var vPath = 'listings/' + userId + '/' + ts + '/video.' + vExt;
+    btn.textContent = 'Uploading video…';
+    var vUp = await sb.storage.from('property-images').upload(vPath, LW.videoFile, { upsert: true, contentType: LW.videoFile.type });
+    if (!vUp.error) {
+      var vPub = sb.storage.from('property-images').getPublicUrl(vPath);
+      videoUrl = vPub.data.publicUrl;
+    }
+    btn.textContent = 'Publishing…';
   }
 
   // Reorder so cover is first
@@ -4074,7 +4118,7 @@ async function lwPublish() {
     show_wa:      document.getElementById('lw-show-wa').checked,
     show_email:   document.getElementById('lw-show-email').checked,
     vtour_url:    document.getElementById('lw-vtour').value.trim() || null,
-    video_url:    document.getElementById('lw-video').value.trim() || null
+    video_url:    videoUrl || document.getElementById('lw-video').value.trim() || null
   };
 
   var res = await sb.from('properties').insert([payload]).select().single();
@@ -4265,7 +4309,7 @@ function lwReset() {
 async function loadListingsFromSupabase() {
   try {
     var res = await sb.from("properties").select("*").limit(100);
-    if (!res.error && res.data && res.data.length > 0) {
+    if (!res.error && res.data) {
       res.data.forEach(function(row) {
         DATA.push({
           id: row.id, mode: row.mode, type: row.type,
@@ -4292,6 +4336,7 @@ try { renderFeatured(); } catch(e) {}
 try { renderListings(); } catch(e) {}
 try { renderAreas(); } catch(e) {}
 try { loadListingsFromSupabase(); } catch(e) {}
+try { sb.from('site_visits').insert([{page:'home'}]).then(function(){}); } catch(e) {}
 
 // ── Autocomplete ───────────────────────────────────────────────────────────
 var AC_LOCATIONS = [
