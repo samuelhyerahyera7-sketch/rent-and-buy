@@ -1,0 +1,24 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "quello-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000,
+      "autoPort": false
+    },
+    {
+      "name": "fund-me-friend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "../fund-me-friend", "run", "dev", "--", "--port", "3001"],
+      "port": 3001
+    }
+  ,{
+      "name": "studentperks",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "studentperks", "-p", "3002", "--no-clipboard"],
+      "port": 3002
+    }
+  ]
+}
