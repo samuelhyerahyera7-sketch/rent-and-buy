@@ -2401,7 +2401,7 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
             <div id="lwVideoPlaceholder">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink-4);margin:0 auto 8px"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
               <div style="font-size:13px;font-weight:600;color:var(--ink-2)">Upload a video</div>
-              <div style="font-size:12px;color:var(--ink-4);margin-top:2px">MP4, MOV, AVI · Max 200 MB</div>
+              <div style="font-size:12px;color:var(--ink-4);margin-top:2px">MP4, MOV, AVI · Max 50 MB · or use a YouTube link below</div>
             </div>
           </div>
           <div style="text-align:center;font-size:12px;color:var(--ink-4);margin-bottom:8px">— or paste a video / YouTube URL —</div>
@@ -4032,7 +4032,7 @@ function lwVideoDrop(e) {
 }
 function lwVideoFileAdded(file) {
   if (!file) return;
-  if (file.size > 200 * 1024 * 1024) { toast('Video must be under 200 MB'); return; }
+  if (file.size > 50 * 1024 * 1024) { toast('Video must be under 50 MB — or paste a YouTube link below instead'); return; }
   LW.videoFile = file;
   var url = URL.createObjectURL(file);
   document.getElementById('lwVideoEl').src = url;
@@ -4078,10 +4078,18 @@ async function lwPublish() {
     var vPath = 'listings/' + userId + '/' + ts + '/video.' + vExt;
     btn.textContent = 'Uploading video…';
     var vUp = await sb.storage.from('property-images').upload(vPath, LW.videoFile, { upsert: true, contentType: LW.videoFile.type });
-    if (!vUp.error) {
-      var vPub = sb.storage.from('property-images').getPublicUrl(vPath);
-      videoUrl = vPub.data.publicUrl;
+    if (vUp.error) {
+      btn.textContent = 'Publish Listing'; btn.disabled = false;
+      var errMsg = vUp.error.message || '';
+      if (errMsg.toLowerCase().includes('too large') || errMsg.toLowerCase().includes('payload')) {
+        toast('Video is too large — please use a file under 50 MB or paste a YouTube link instead');
+      } else {
+        toast('Video upload failed: ' + errMsg + '. Try a YouTube link instead.');
+      }
+      return;
     }
+    var vPub = sb.storage.from('property-images').getPublicUrl(vPath);
+    videoUrl = vPub.data.publicUrl;
     btn.textContent = 'Publishing…';
   }
 
