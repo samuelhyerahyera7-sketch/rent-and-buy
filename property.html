@@ -4411,9 +4411,7 @@ if (_id) {
   // Increment view count (fire-and-forget)
   (async function() {
     try {
-      var r = await sb.from('properties').select('views').eq('id', _id).single();
-      var v = (r.data && r.data.views) || 0;
-      await sb.from('properties').update({ views: v + 1 }).eq('id', _id);
+      await sb.rpc('increment_views', { prop_id: parseInt(_id) });
     } catch(e) {}
   })();
 } else {
