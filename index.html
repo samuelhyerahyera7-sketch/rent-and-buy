@@ -2392,20 +2392,34 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
         </div>
         <div class="lw-field">
           <label>Video <span class="opt">(optional)</span></label>
-          <div id="lwVideoUploadZone" style="border:2px dashed var(--line);border-radius:10px;padding:20px 16px;text-align:center;cursor:pointer;background:var(--white);margin-bottom:10px;transition:border-color .2s" onclick="document.getElementById('lwVideoInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--sage)'" ondragleave="this.style.borderColor=''" ondrop="lwVideoDrop(event)">
-            <input type="file" id="lwVideoInput" accept="video/*" style="display:none" onchange="lwVideoFileAdded(this.files[0])">
-            <div id="lwVideoPreview" style="display:none;margin-bottom:8px">
-              <video id="lwVideoEl" controls style="width:100%;max-height:180px;border-radius:6px;background:#000"></video>
-              <button type="button" onclick="event.stopPropagation();lwVideoClear()" style="margin-top:6px;padding:4px 12px;border:1px solid var(--line);border-radius:5px;background:#fff;font-size:12px;color:var(--ink-3);cursor:pointer">Remove video</button>
+          <div style="background:var(--navy-l,#eef2f8);border:1.5px solid #c7d8ee;border-radius:10px;padding:14px 16px;margin-bottom:12px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#ef4444"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+              <span style="font-size:13px;font-weight:700;color:var(--ink)">Recommended: Use YouTube</span>
             </div>
-            <div id="lwVideoPlaceholder">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink-4);margin:0 auto 8px"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-              <div style="font-size:13px;font-weight:600;color:var(--ink-2)">Upload a video</div>
-              <div style="font-size:12px;color:var(--ink-4);margin-top:2px">MP4, MOV, AVI · Max 50 MB · or use a YouTube link below</div>
-            </div>
+            <p style="font-size:12px;color:var(--ink-3);margin-bottom:10px">Upload your property tour to YouTube (free, even as unlisted) then paste the link here. Works with any video length.</p>
+            <input id="lw-video" class="lw-input" type="url" placeholder="https://www.youtube.com/watch?v=..." style="margin-bottom:0">
           </div>
-          <div style="text-align:center;font-size:12px;color:var(--ink-4);margin-bottom:8px">— or paste a video / YouTube URL —</div>
-          <input id="lw-video" class="lw-input" type="url" placeholder="https://youtube.com/...">
+          <details style="margin-top:4px">
+            <summary style="font-size:12px;color:var(--ink-3);cursor:pointer;user-select:none;list-style:none;display:flex;align-items:center;gap:4px">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+              Or upload a short clip (under 50 MB)
+            </summary>
+            <div style="margin-top:10px">
+              <div id="lwVideoUploadZone" style="border:2px dashed var(--line);border-radius:10px;padding:16px;text-align:center;cursor:pointer;background:var(--white);transition:border-color .2s" onclick="document.getElementById('lwVideoInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--sage)'" ondragleave="this.style.borderColor=''" ondrop="lwVideoDrop(event)">
+                <input type="file" id="lwVideoInput" accept="video/*" style="display:none" onchange="lwVideoFileAdded(this.files[0])">
+                <div id="lwVideoPreview" style="display:none;margin-bottom:8px">
+                  <video id="lwVideoEl" controls style="width:100%;max-height:180px;border-radius:6px;background:#000"></video>
+                  <button type="button" onclick="event.stopPropagation();lwVideoClear()" style="margin-top:6px;padding:4px 12px;border:1px solid var(--line);border-radius:5px;background:#fff;font-size:12px;color:var(--ink-3);cursor:pointer">Remove</button>
+                </div>
+                <div id="lwVideoPlaceholder">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink-4);margin:0 auto 6px"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                  <div style="font-size:13px;font-weight:600;color:var(--ink-2)">Tap to upload</div>
+                  <div style="font-size:11px;color:var(--ink-4);margin-top:2px">MP4, MOV, AVI · Max 50 MB</div>
+                </div>
+              </div>
+            </div>
+          </details>
         </div>
       </div>
 
