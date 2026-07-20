@@ -134,6 +134,7 @@ tr:hover td{background:#fafafa}
   <div class="mob-nav-item" onclick="showSec('enquiries')">Enquiries</div>
   <div class="mob-nav-item" onclick="showSec('agencies')">Agencies</div>
   <div class="mob-nav-item" onclick="showSec('users')">Users</div>
+  <div class="mob-nav-item" onclick="showSec('blog')">Blog</div>
 </div>
 
 <div class="dash-wrap">
@@ -160,6 +161,10 @@ tr:hover td{background:#fafafa}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
       Users
     </div>
+    <div class="nav-item" id="nav-blog" onclick="showSec('blog')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Blog &amp; Advice
+    </div>
     <div style="margin-top:24px;padding:0 20px">
       <a href="index.html" style="font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:6px">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
@@ -178,6 +183,7 @@ tr:hover td{background:#fafafa}
         <div class="stat-card c2"><div class="stat-n" id="st-enquiries">–</div><div class="stat-l">Total Enquiries</div></div>
         <div class="stat-card c3"><div class="stat-n" id="st-agencies">–</div><div class="stat-l">Agencies</div></div>
         <div class="stat-card c4"><div class="stat-n" id="st-users">–</div><div class="stat-l">Registered Users</div></div>
+        <div class="stat-card c2" style="--before-bg:var(--sage)"><div class="stat-n" id="st-blog">–</div><div class="stat-l">Blog Posts</div></div>
       </div>
       <div class="table-wrap">
         <div class="table-head"><div class="table-title">Recent Listings</div></div>
@@ -266,6 +272,70 @@ tr:hover td{background:#fafafa}
       </div>
     </div>
 
+    <!-- BLOG -->
+    <div class="section" id="sec-blog">
+      <div class="section-title">Blog &amp; Advice</div>
+
+      <!-- Create / Edit form -->
+      <div class="add-form" id="blogPostForm">
+        <h3 id="blogFormTitle">New Post</h3>
+        <input type="hidden" id="bp-id">
+        <div class="form-grid">
+          <div class="field" style="grid-column:1/-1"><label>Title *</label><input id="bp-title" placeholder="e.g. First-Time Buyer's Guide"></div>
+          <div class="field"><label>Category</label>
+            <select id="bp-category">
+              <option value="advice">Advice</option>
+              <option value="buying">Buying</option>
+              <option value="renting">Renting</option>
+              <option value="market">Market</option>
+            </select>
+          </div>
+          <div class="field"><label>Image URL</label><input id="bp-image" placeholder="https://images.unsplash.com/…"></div>
+          <div class="field" style="grid-column:1/-1"><label>Excerpt (shown on homepage)</label><input id="bp-excerpt" placeholder="Short summary shown in the blog card…"></div>
+          <div class="field" style="grid-column:1/-1"><label>Full Content (HTML allowed)</label><textarea id="bp-content" style="height:120px" placeholder="Full article body…"></textarea></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+          <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer">
+            <input type="checkbox" id="bp-published" style="width:15px;height:15px;accent-color:var(--sage)"> Publish immediately
+          </label>
+        </div>
+        <div class="form-actions">
+          <button class="btn-add" onclick="saveBlogPost()">Save Post</button>
+          <button class="btn-cancel-sm" onclick="cancelBlogEdit()">Cancel</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-head">
+          <div class="table-title" id="blogCount">Posts</div>
+          <button class="btn-sm sage" onclick="newBlogPost()">+ New Post</button>
+        </div>
+        <table>
+          <thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody id="blogTable"><tr class="empty-row"><td colspan="6">Loading…</td></tr></tbody>
+        </table>
+      </div>
+
+      <div style="background:#fffbe6;border:1px solid #fde68a;border-radius:10px;padding:16px 20px;margin-top:8px">
+        <strong style="font-size:13px;color:#92400e">Supabase setup required:</strong>
+        <p style="font-size:13px;color:#78350f;margin-top:4px;line-height:1.6">
+          Run this SQL in your Supabase project to create the blog_posts table:<br>
+          <code style="display:block;margin-top:8px;background:#fef9c3;padding:10px 12px;border-radius:6px;font-size:11.5px;white-space:pre-wrap;line-height:1.7">create table blog_posts (
+  id bigserial primary key,
+  title text not null,
+  excerpt text,
+  content text,
+  category text default 'advice',
+  image_url text,
+  author_email text default 'admin@rentandbuy.co.za',
+  published boolean default false,
+  published_at timestamptz,
+  created_at timestamptz default now()
+);</code>
+        </p>
+      </div>
+    </div>
+
   </main>
 </div>
 </div>
@@ -276,9 +346,11 @@ tr:hover td{background:#fafafa}
 const SB_URL = 'https://nysuwlxhppknbyaznsbr.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c3V3bHhocHBrbmJ5YXpuc2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxMDU5NDgsImV4cCI6MjA5OTY4MTk0OH0.CRbom3ZXJsIxAZ5pfaGz3TglkrPmQv11lPh5BfPJRH4';
 const ADMIN_EMAIL = 'samuelhyera.hyera7@gmail.com';
+const ADMIN_EMAILS = [ADMIN_EMAIL, 'admin@rentandbuy.co.za'];
+const BLOG_AUTHOR  = 'admin@rentandbuy.co.za';
 const sb = supabase.createClient(SB_URL, SB_KEY);
 
-let allListingsData = [], allEnquiriesData = [], allAgenciesData = [], allUsersData = [];
+let allListingsData = [], allEnquiriesData = [], allAgenciesData = [], allUsersData = [], allBlogData = [];
 let tt;
 
 function toast(msg) {
@@ -296,7 +368,7 @@ async function adminLogin() {
   const pass  = document.getElementById('adPass').value;
   const errEl = document.getElementById('adErr');
   errEl.textContent = '';
-  if (email !== ADMIN_EMAIL) { errEl.textContent = 'Access denied — not an admin account.'; return; }
+  if (!ADMIN_EMAILS.includes(email)) { errEl.textContent = 'Access denied — not an admin account.'; return; }
   const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
   if (error) { errEl.textContent = error.message; return; }
   bootAdmin(data.user);
@@ -309,7 +381,7 @@ function adminSignOut() {
 }
 
 async function bootAdmin(user) {
-  if (!user || user.email !== ADMIN_EMAIL) {
+  if (!user || !ADMIN_EMAILS.includes(user.email)) {
     document.getElementById('authGate').style.display = 'flex';
     document.getElementById('appShell').style.display = 'none';
     return;
@@ -317,7 +389,7 @@ async function bootAdmin(user) {
   document.getElementById('authGate').style.display = 'none';
   document.getElementById('appShell').style.display = 'block';
   document.getElementById('adminName').textContent = user.email;
-  await Promise.all([loadListings(), loadEnquiries(), loadAgencies(), loadUsers()]);
+  await Promise.all([loadListings(), loadEnquiries(), loadAgencies(), loadUsers(), loadBlogPosts()]);
   renderOverview();
 }
 
@@ -526,11 +598,125 @@ function filterUsers(q) {
   renderUsersTable(q ? allUsersData.filter(u => u.email.toLowerCase().includes(q)) : allUsersData);
 }
 
+// ── Blog ──────────────────────────────────────────────────────────────────────
+async function loadBlogPosts() {
+  const { data } = await sb.from('blog_posts').select('*').order('created_at', { ascending: false });
+  allBlogData = data || [];
+  renderBlogTable(allBlogData);
+}
+
+function renderBlogTable(list) {
+  document.getElementById('blogCount').textContent = list.length + ' post' + (list.length !== 1 ? 's' : '');
+  const tbody = document.getElementById('blogTable');
+  if (!list.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No posts yet. Click "+ New Post" to write one.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(p => `
+    <tr>
+      <td style="max-width:240px"><strong style="font-size:13px">${p.title||'Untitled'}</strong><br>
+        <span style="font-size:11px;color:var(--ink-3);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px">${p.excerpt||''}</span>
+      </td>
+      <td><span class="badge" style="background:${catColor(p.category)};color:#fff;text-transform:capitalize">${p.category||'advice'}</span></td>
+      <td style="font-size:11px;color:var(--ink-3)">${p.author_email||BLOG_AUTHOR}</td>
+      <td><span class="badge ${p.published?'badge-active':'badge-paused'}">${p.published?'Published':'Draft'}</span></td>
+      <td style="font-size:11px;white-space:nowrap">${fmtDate(p.published_at||p.created_at)}</td>
+      <td><div class="act">
+        <button class="btn-sm sage" onclick="editBlogPost(${p.id})">${'Edit'}</button>
+        <button class="btn-sm ${p.published?'':'green'}" onclick="toggleBlogPublish(${p.id},${!p.published})">${p.published?'Unpublish':'Publish'}</button>
+        <button class="btn-sm red" onclick="deleteBlogPost(${p.id},'${(p.title||'').replace(/'/g,"\\'")}')">Delete</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+function catColor(c) {
+  return c==='buying'?'#1e3a5f':c==='renting'?'#b45309':c==='market'?'#7c3aed':'#2d6a4f';
+}
+
+function newBlogPost() {
+  document.getElementById('blogFormTitle').textContent = 'New Post';
+  document.getElementById('bp-id').value = '';
+  ['bp-title','bp-excerpt','bp-image','bp-content'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('bp-category').value = 'advice';
+  document.getElementById('bp-published').checked = false;
+  document.getElementById('blogPostForm').style.display = 'block';
+  document.getElementById('blogPostForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+function editBlogPost(id) {
+  const p = allBlogData.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('blogFormTitle').textContent = 'Edit Post';
+  document.getElementById('bp-id').value      = p.id;
+  document.getElementById('bp-title').value   = p.title || '';
+  document.getElementById('bp-excerpt').value = p.excerpt || '';
+  document.getElementById('bp-image').value   = p.image_url || '';
+  document.getElementById('bp-content').value = p.content || '';
+  document.getElementById('bp-category').value = p.category || 'advice';
+  document.getElementById('bp-published').checked = !!p.published;
+  document.getElementById('blogPostForm').style.display = 'block';
+  document.getElementById('blogPostForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+function cancelBlogEdit() {
+  document.getElementById('blogPostForm').style.display = 'none';
+}
+
+async function saveBlogPost() {
+  const title = document.getElementById('bp-title').value.trim();
+  if (!title) { toast('Title is required'); return; }
+  const id        = document.getElementById('bp-id').value;
+  const published = document.getElementById('bp-published').checked;
+  const payload   = {
+    title,
+    excerpt:      document.getElementById('bp-excerpt').value.trim() || null,
+    content:      document.getElementById('bp-content').value.trim() || null,
+    category:     document.getElementById('bp-category').value,
+    image_url:    document.getElementById('bp-image').value.trim() || null,
+    author_email: BLOG_AUTHOR,
+    published,
+    published_at: published ? new Date().toISOString() : null
+  };
+  let error;
+  if (id) {
+    ({ error } = await sb.from('blog_posts').update(payload).eq('id', id));
+  } else {
+    ({ error } = await sb.from('blog_posts').insert([payload]));
+  }
+  if (error) { toast('Error: ' + error.message); return; }
+  toast(id ? 'Post updated' : 'Post created');
+  cancelBlogEdit();
+  await loadBlogPosts();
+  renderOverview();
+}
+
+async function toggleBlogPublish(id, published) {
+  const { error } = await sb.from('blog_posts').update({
+    published,
+    published_at: published ? new Date().toISOString() : null
+  }).eq('id', id);
+  if (error) { toast('Error: ' + error.message); return; }
+  toast(published ? 'Post published — now live on site' : 'Post moved to draft');
+  await loadBlogPosts();
+  renderOverview();
+}
+
+async function deleteBlogPost(id, title) {
+  if (!confirm('Delete "' + title + '"? This cannot be undone.')) return;
+  const { error } = await sb.from('blog_posts').delete().eq('id', id);
+  if (error) { toast('Error: ' + error.message); return; }
+  toast('Post deleted');
+  await loadBlogPosts();
+  renderOverview();
+}
+
 // ── Overview ──────────────────────────────────────────────────────────────────
 function renderOverview() {
   document.getElementById('st-listings').textContent  = allListingsData.length;
   document.getElementById('st-enquiries').textContent = allEnquiriesData.length;
   document.getElementById('st-agencies').textContent  = allAgenciesData.length;
+  document.getElementById('st-blog').textContent      = allBlogData.length;
 
   const recent5L = allListingsData.slice(0,5);
   document.getElementById('recentListings').innerHTML = recent5L.length
