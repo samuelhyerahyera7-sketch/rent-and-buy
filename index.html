@@ -461,7 +461,7 @@ nav {
 
 /* ── Footer ─────────────────────────────────── */
 footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
-.foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+.foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 36px; margin-bottom: 48px; }
 .foot-brand .logo { font-size: 20px; margin-bottom: 14px; display: block; }
 .foot-brand p { font-size: 13px; line-height: 1.7; color: #93b4d4; max-width: 260px; }
 .foot-socials { display: flex; gap: 8px; margin-top: 20px; }
@@ -583,6 +583,60 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   white-space: nowrap;
 }
 .toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── Blog & Advice ──────────────────────────── */
+.blog-section { background: var(--page); }
+.blog-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px;
+}
+.blog-card {
+  background: var(--white); border-radius: var(--r-lg);
+  border: 1px solid var(--line); overflow: hidden;
+  transition: box-shadow .2s, transform .2s; cursor: pointer;
+  display: flex; flex-direction: column;
+}
+.blog-card:hover { box-shadow: var(--shadow-h); transform: translateY(-3px); }
+.blog-img { height: 200px; overflow: hidden; position: relative; background: var(--line-2); }
+.blog-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
+.blog-card:hover .blog-img img { transform: scale(1.04); }
+.blog-cat {
+  position: absolute; top: 14px; left: 14px;
+  font-size: 10px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 4px; color: var(--white);
+}
+.blog-cat.buying  { background: var(--navy); }
+.blog-cat.renting { background: var(--gold); }
+.blog-cat.advice  { background: var(--sage); }
+.blog-cat.market  { background: #7c3aed; }
+.blog-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+.blog-meta { font-size: 12px; color: var(--ink-4); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.blog-meta span { color: var(--ink-3); }
+.blog-body h3 { font-size: 16px; font-weight: 700; color: var(--ink); line-height: 1.4; margin-bottom: 8px; letter-spacing: -.2px; }
+.blog-body p  { font-size: 13.5px; color: var(--ink-3); line-height: 1.65; flex: 1; }
+.blog-read { margin-top: 16px; font-size: 13px; font-weight: 600; color: var(--sage); display: flex; align-items: center; gap: 5px; }
+.blog-read svg { transition: transform .15s; }
+.blog-card:hover .blog-read svg { transform: translateX(3px); }
+
+/* Blog tips strip */
+.advice-strip { background: var(--navy); }
+.advice-strip .w { padding-top: 48px; padding-bottom: 48px; }
+.advice-strip-head { text-align: center; margin-bottom: 36px; }
+.advice-strip-head h2 { color: var(--white); font-size: 22px; font-weight: 700; letter-spacing: -.2px; margin-bottom: 6px; }
+.advice-strip-head p  { color: #93b4d4; font-size: 14px; }
+.tips-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.tip-card {
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--r-lg); padding: 22px 20px;
+  transition: background .2s;
+}
+.tip-card:hover { background: rgba(255,255,255,.1); }
+.tip-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: rgba(255,255,255,.1); display: flex; align-items: center; justify-content: center;
+  margin-bottom: 14px; color: #6ee7b7; font-size: 20px;
+}
+.tip-card h4 { color: var(--white); font-size: 14px; font-weight: 700; margin-bottom: 7px; }
+.tip-card p  { color: #93b4d4; font-size: 13px; line-height: 1.6; }
 
 /* ── Agents section ─────────────────────────── */
 #agents-section { display: none; }
@@ -944,6 +998,7 @@ footer { background: #0f1f35; color: #93b4d4; padding: 56px 0 28px; }
   .nav-links { display: none; }
   .feat-slider { height: 280px; }
   .foot-grid { grid-template-columns: 1fr 1fr; }
+  .blog-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
   .m-body { grid-template-columns: 1fr; }
   .stats-band .w { flex-wrap: wrap; gap: 28px; justify-content: center; }
 }
@@ -1620,6 +1675,7 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
       <a class="nav-a" href="search.html?mode=commercial" data-mode="commercial">Commercial</a>
       <a class="nav-a" href="search.html?mode=farm" data-mode="farm">Farms</a>
       <a class="nav-a" href="search.html?mode=auction" data-mode="auction">Auctions</a>
+      <a class="nav-a" href="#blog">Blog &amp; Advice</a>
     </div>
     <div class="nav-right">
       <button class="btn-ghost" id="navSignInBtn" onclick="openSignIn()">Sign In</button>
@@ -1681,6 +1737,7 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
       <a class="drawer-link" href="search.html?mode=farm">Farms &amp; Smallholdings</a>
       <a class="drawer-link" href="search.html?mode=auction">Auctions</a>
       <a class="drawer-link" href="#" onclick="openCalc();closeDrawer()">Bond Calculator</a>
+      <a class="drawer-link" href="#blog" onclick="closeDrawer()">Blog &amp; Advice</a>
       <a class="drawer-link" href="mailto:admin@rentandbuy.co.za?subject=Advertising Packages">Advertise with Us</a>
     </div>
     <div class="drawer-btns">
@@ -1893,6 +1950,148 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
     <div class="areas-grid" id="areasGrid"></div>
   </div>
 </div>
+<!-- Blog & Advice -->
+<div class="blog-section" id="blog">
+  <div class="section">
+    <div class="sec-head">
+      <div>
+        <h2>Blog &amp; Advice</h2>
+        <p>Expert tips, market insights, and guides for buyers, renters, and investors</p>
+      </div>
+      <a class="see-all" href="#">View all articles &rarr;</a>
+    </div>
+    <div class="blog-grid">
+      <!-- Article 1 -->
+      <div class="blog-card">
+        <div class="blog-img">
+          <img src="https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?w=600&q=80" alt="First-time buyer guide" loading="lazy">
+          <span class="blog-cat buying">Buying</span>
+        </div>
+        <div class="blog-body">
+          <div class="blog-meta">
+            <span>14 Jul 2026</span> &bull; <span>8 min read</span>
+          </div>
+          <h3>First-Time Buyer's Complete Guide to Purchasing Property in South Africa</h3>
+          <p>From bond pre-approval to transfer costs, we walk you through every step of buying your first home — so nothing catches you off guard.</p>
+          <div class="blog-read">Read article <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+      </div>
+      <!-- Article 2 -->
+      <div class="blog-card">
+        <div class="blog-img">
+          <img src="https://images.unsplash.com/photo-1554469384-e58fac16e23a?w=600&q=80" alt="Rent vs buy" loading="lazy">
+          <span class="blog-cat advice">Advice</span>
+        </div>
+        <div class="blog-body">
+          <div class="blog-meta">
+            <span>9 Jul 2026</span> &bull; <span>6 min read</span>
+          </div>
+          <h3>Rent vs. Buy in 2026: What the Numbers Actually Say</h3>
+          <p>Interest rates are shifting and affordability looks different by city. We break down the real cost comparison across Cape Town, Johannesburg, and Durban.</p>
+          <div class="blog-read">Read article <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+      </div>
+      <!-- Article 3 -->
+      <div class="blog-card">
+        <div class="blog-img">
+          <img src="https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=600&q=80" alt="Property market trends" loading="lazy">
+          <span class="blog-cat market">Market</span>
+        </div>
+        <div class="blog-body">
+          <div class="blog-meta">
+            <span>3 Jul 2026</span> &bull; <span>5 min read</span>
+          </div>
+          <h3>South African Property Market Outlook: Mid-Year 2026 Update</h3>
+          <p>Semigration is reshaping demand in the Western Cape while Gauteng prices are stabilising. Here's what buyers and sellers should know right now.</p>
+          <div class="blog-read">Read article <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+      </div>
+      <!-- Article 4 -->
+      <div class="blog-card">
+        <div class="blog-img">
+          <img src="https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=600&q=80" alt="Renting tips" loading="lazy">
+          <span class="blog-cat renting">Renting</span>
+        </div>
+        <div class="blog-body">
+          <div class="blog-meta">
+            <span>28 Jun 2026</span> &bull; <span>4 min read</span>
+          </div>
+          <h3>What Every Tenant Should Check Before Signing a Lease</h3>
+          <p>Deposit rules, maintenance clauses, early-exit penalties — learn the six things you must confirm before you put pen to paper on your next rental agreement.</p>
+          <div class="blog-read">Read article <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+      </div>
+      <!-- Article 5 -->
+      <div class="blog-card">
+        <div class="blog-img">
+          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80" alt="Renovating to sell" loading="lazy">
+          <span class="blog-cat advice">Advice</span>
+        </div>
+        <div class="blog-body">
+          <div class="blog-meta">
+            <span>20 Jun 2026</span> &bull; <span>7 min read</span>
+          </div>
+          <h3>Which Home Improvements Add the Most Value Before You Sell?</h3>
+          <p>Not every renovation pays off. We rank the upgrades that deliver the best return on investment in the current South African market — from kitchens to kerb appeal.</p>
+          <div class="blog-read">Read article <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+      </div>
+      <!-- Article 6 -->
+      <div class="blog-card">
+        <div class="blog-img">
+          <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=80" alt="Commercial property" loading="lazy">
+          <span class="blog-cat market">Market</span>
+        </div>
+        <div class="blog-body">
+          <div class="blog-meta">
+            <span>15 Jun 2026</span> &bull; <span>5 min read</span>
+          </div>
+          <h3>Commercial Property Investing 101: Is Now the Right Time?</h3>
+          <p>Office vacancies are shrinking and industrial demand is at a decade high. We examine whether commercial property belongs in your 2026 investment portfolio.</p>
+          <div class="blog-read">Read article <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Advice Tips Strip -->
+<div class="advice-strip">
+  <div class="w">
+    <div class="advice-strip-head">
+      <h2>Quick Property Tips</h2>
+      <p>Bite-sized guidance to help you make smarter property decisions</p>
+    </div>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-icon">&#x1F4B3;</div>
+        <h4>Get Bond Pre-Approval First</h4>
+        <p>Knowing your budget before you search saves time and puts you in a stronger position to negotiate when you find the right home.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">&#x1F50D;</div>
+        <h4>Research the Neighbourhood</h4>
+        <p>Visit at different times of day, check school ratings, crime stats, and planned infrastructure projects before committing to any area.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">&#x1F4CB;</div>
+        <h4>Budget Beyond the Bond</h4>
+        <p>Transfer duties, conveyancing fees, and moving costs can add 8–12% to the purchase price. Build these into your budget from day one.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">&#x1F3E0;</div>
+        <h4>Inspect Before You Sign</h4>
+        <p>Always get an independent home inspection. Identifying structural or electrical issues before transfer can save you hundreds of thousands of rands.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">&#x1F4C8;</div>
+        <h4>Think Long-Term Value</h4>
+        <p>Property in high-demand suburbs with good schools and transport links tends to outperform the market over a 10-year horizon.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- CTA -->
 <div class="cta-band">
   <h2>Ready to list your property?</h2>
@@ -1938,6 +2137,16 @@ select.lw-input { appearance: none; background-image: url("data:image/svg+xml,%3
           <li><a href="search.html?mode=rent">Short-term rentals</a></li>
           <li><a href="search.html?mode=commercial">Commercial rentals</a></li>
           <li><a href="mailto:admin@rentandbuy.co.za?subject=Tenant Screening Enquiry">Tenant screening</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Blog &amp; Advice</h4>
+        <ul>
+          <li><a href="#blog">Buying guides</a></li>
+          <li><a href="#blog">Renting tips</a></li>
+          <li><a href="#blog">Market insights</a></li>
+          <li><a href="#blog">Investment advice</a></li>
+          <li><a href="#blog">All articles</a></li>
         </ul>
       </div>
       <div class="foot-col">
